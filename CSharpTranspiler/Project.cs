@@ -11,8 +11,16 @@ using System.IO;
 
 namespace CSharpTranspiler
 {
+	public enum ProjectTypes
+	{
+		Exe,
+		Dll
+	}
+
 	public class Project
 	{
+		public ProjectTypes type;
+		public bool isReleaseBuild;
 		public string filename;
 		public Microsoft.CodeAnalysis.Project project;
 		public List<ObjectBase> allObjects;
@@ -28,6 +36,7 @@ namespace CSharpTranspiler
 
 		public async Task Parse(Microsoft.CodeAnalysis.Project project)
 		{
+			// init main objects
 			this.project = project;
 			allObjects = new List<ObjectBase>();
 			classObjects = new List<ClassObject>();
@@ -35,6 +44,23 @@ namespace CSharpTranspiler
 			interfaceObjects = new List<InterfaceObject>();
 			enumObjects = new List<EnumObject>();
 
+			// validate compiler options
+			var parseOptions = (CSharpParseOptions)project.ParseOptions;
+			if (parseOptions.LanguageVersion != LanguageVersion.CSharp3) throw new Exception("Project lang version must be 3.0: " + project.FilePath);
+
+			var compilationOptions = project.CompilationOptions;
+			if (compilationOptions.Platform != Platform.AnyCpu) throw new Exception("Project platform must be AnyCpu: " + project.FilePath);
+
+			// get project type
+			var kind = compilationOptions.OutputKind;
+			if (kind == OutputKind.DynamicallyLinkedLibrary) type = ProjectTypes.Dll;
+			else if (kind == OutputKind.ConsoleApplication || kind == OutputKind.WindowsApplication) type = ProjectTypes.Exe;
+			else throw new Exception("Unsuported project kind: " + project.FilePath);
+
+			// check optimization level
+			isReleaseBuild = compilationOptions.OptimizationLevel == OptimizationLevel.Release;
+
+			// parse syntax tree
 			var compilation = await project.GetCompilationAsync();
 			foreach (var doc in project.Documents)
 			{

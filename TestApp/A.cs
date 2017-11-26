@@ -1,9 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TestApp.Blaa
+﻿namespace TestApp.Blaa
 {
+	enum MyEnum
+	{
+		A,
+		B,
+		C
+	}
+
 	interface A
 	{
 		

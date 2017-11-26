@@ -27,8 +27,7 @@ namespace CSharpTranspiler.Transpilers
 
 		private static void CompileProject(Project project, string outputPath)
 		{
-			// TODO: check if dll or exe. (dll = .h : exe = .cpp)
-			string path = outputPath + Path.GetFileNameWithoutExtension(project.filename) + ".c";
+			string path = Path.Combine(outputPath, Path.GetFileNameWithoutExtension(project.filename) + (project.type == ProjectTypes.Exe ? ".c" : ".h"));
 			using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None))
 			using (var writer = new StreamWriter(stream))
 			{
@@ -59,7 +58,7 @@ namespace CSharpTranspiler.Transpilers
 		private static void CompileObjectDefinition_Class_Struct(ObjectBase obj, StreamWriter writer)
 		{
 			var type = obj.GetType();
-			writer.WriteLine(string.Format("{0} {1}", type == typeof(ClassObject) ? "class":"struct", obj.fullNameFlat));
+			writer.WriteLine(string.Format("{0} {1}", "struct", obj.fullNameFlat));
 		}
 
 		private static void CompileObject(ObjectBase obj, StreamWriter writer)

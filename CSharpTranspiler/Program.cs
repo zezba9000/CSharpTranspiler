@@ -1,5 +1,6 @@
 ﻿using CSharpTranspiler.Transpilers;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace CSharpTranspiler
@@ -16,9 +17,10 @@ namespace CSharpTranspiler
 		{
 			try
 			{
-				var solution = new Solution(@"D:\Dev\Reign\CSharpTranspiler\TestApp\TestApp.csproj");
+				string path = Path.Combine(Environment.CurrentDirectory, @"..\..\..\");
+				var solution = new Solution(Path.Combine(path, @"TestApp\TestApp.csproj"));
 				await solution.Parse();
-				TranspilerC.CompileSolution(solution, TranspilerC.TargetTypes.VCPP, @"D:\Dev\Reign\CSharpTranspiler\TestOutput\");
+				TranspilerC.CompileSolution(solution, TranspilerC.TargetTypes.VCPP, Path.Combine(path, @"TestOutput\"));
 			}
 			catch (Exception e)
 			{

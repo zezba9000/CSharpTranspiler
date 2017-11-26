@@ -1,6 +1,4 @@
-﻿
-
-namespace TestApp.C
+﻿namespace TestApp.C
 {
 	class B
 	{
