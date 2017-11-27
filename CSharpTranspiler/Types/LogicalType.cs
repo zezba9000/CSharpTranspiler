@@ -8,13 +8,13 @@ using Microsoft.CodeAnalysis;
 
 namespace CSharpTranspiler.Types
 {
-	public abstract class LogicalObject : ObjectBase
+	public abstract class LogicalType : ObjectType
 	{
 		public List<FieldDeclarationSyntax> fields;
 		public List<PropertyDeclarationSyntax> properties;
 		public List<MethodDeclarationSyntax> methods;
 		
-		public LogicalObject(string name, string fullName, TypeDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
+		public LogicalType(string name, string fullName, TypeDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
 		: base(name, fullName, declarationSyntax, semanticModel)
 		{
 			fields = new List<FieldDeclarationSyntax>();

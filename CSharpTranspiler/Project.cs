@@ -26,11 +26,11 @@ namespace CSharpTranspiler
 		public string filename, assemblyName;
 		public List<string> references;
 
-		public List<ObjectBase> allObjects;
-		public List<ClassObject> classObjects;
-		public List<StructObject> structObjects;
-		public List<InterfaceObject> interfaceObjects;
-		public List<EnumObject> enumObjects;
+		public List<ObjectType> allObjects;
+		public List<ClassType> classObjects;
+		public List<StructType> structObjects;
+		public List<InterfaceType> interfaceObjects;
+		public List<EnumType> enumObjects;
 
 		public Project(string filename)
 		{
@@ -42,11 +42,11 @@ namespace CSharpTranspiler
 			// init main objects
 			this.project = project;
 			assemblyName = project.AssemblyName;
-			allObjects = new List<ObjectBase>();
-			classObjects = new List<ClassObject>();
-			structObjects = new List<StructObject>();
-			interfaceObjects = new List<InterfaceObject>();
-			enumObjects = new List<EnumObject>();
+			allObjects = new List<ObjectType>();
+			classObjects = new List<ClassType>();
+			structObjects = new List<StructType>();
+			interfaceObjects = new List<InterfaceType>();
+			enumObjects = new List<EnumType>();
 
 			// validate compiler options
 			var parseOptions = (CSharpParseOptions)project.ParseOptions;
@@ -90,7 +90,7 @@ namespace CSharpTranspiler
 			allObjects.AddRange(classObjects);
 		}
 
-		private bool DoesPartialObjectExist(string fullName, out ObjectBase objBase)
+		private bool DoesPartialObjectExist(string fullName, out ObjectType objBase)
 		{
 			objBase = classObjects.FirstOrDefault(x => x.fullName == fullName);
 			if (objBase != null) return true;
@@ -112,7 +112,7 @@ namespace CSharpTranspiler
 			bool addNew = false;
 			if (Tools.HasKind(modifiers, SyntaxKind.PartialKeyword))
 			{
-				ObjectBase obj;
+				ObjectType obj;
 				if (DoesPartialObjectExist(fullName, out obj)) obj.MergePartial(node, semanticModel);
 				else addNew = true;
 			}
@@ -141,7 +141,7 @@ namespace CSharpTranspiler
 					void AddObjectCallback(string fullName)
 					{
 						string name = classNode.Identifier.ValueText;
-						classObjects.Add(new ClassObject(name, fullName, classNode, semanticModel));
+						classObjects.Add(new ClassType(name, fullName, classNode, semanticModel));
 					}
 
 					AddObject(classNode, syntaxTree, semanticModel, classNode.Modifiers, AddObjectCallback);
@@ -152,7 +152,7 @@ namespace CSharpTranspiler
 					void AddObjectCallback(string fullName)
 					{
 						string name = structNode.Identifier.ValueText;
-						structObjects.Add(new StructObject(name, fullName, structNode, semanticModel));
+						structObjects.Add(new StructType(name, fullName, structNode, semanticModel));
 					}
 
 					AddObject(structNode, syntaxTree, semanticModel, structNode.Modifiers, AddObjectCallback);
@@ -163,7 +163,7 @@ namespace CSharpTranspiler
 					void AddObjectCallback(string fullName)
 					{
 						string name = interfaceNode.Identifier.ValueText;
-						interfaceObjects.Add(new InterfaceObject(name, fullName, interfaceNode, semanticModel));
+						interfaceObjects.Add(new InterfaceType(name, fullName, interfaceNode, semanticModel));
 					}
 
 					AddObject(interfaceNode, syntaxTree, semanticModel, interfaceNode.Modifiers, AddObjectCallback);
@@ -173,7 +173,7 @@ namespace CSharpTranspiler
 					var enumNode = (EnumDeclarationSyntax)node;
 					string name = enumNode.Identifier.ValueText;
 					string fullName = semanticModel.GetDeclaredSymbol(node).ToString();
-					enumObjects.Add(new EnumObject(name, fullName, enumNode, semanticModel));
+					enumObjects.Add(new EnumType(name, fullName, enumNode, semanticModel));
 				}
 			}
 		}

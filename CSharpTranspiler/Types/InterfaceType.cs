@@ -8,9 +8,9 @@ using Microsoft.CodeAnalysis;
 
 namespace CSharpTranspiler.Types
 {
-	public class EnumObject : ObjectBase
+	public class InterfaceType : LogicalType
 	{
-		public EnumObject(string name, string fullName, EnumDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
+		public InterfaceType(string name, string fullName, InterfaceDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
 		: base(name, fullName, declarationSyntax, semanticModel)
 		{
 		}

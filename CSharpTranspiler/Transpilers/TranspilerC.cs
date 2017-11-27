@@ -63,21 +63,21 @@ namespace CSharpTranspiler.Transpilers
 			}
 		}
 
-		private static void WriteObjectDeclares(ObjectBase obj, StreamWriter writer)
+		private static void WriteObjectDeclares(ObjectType obj, StreamWriter writer)
 		{
 			var type = obj.GetType();
-			if (type.IsSubclassOf(typeof(LogicalObject))) writer.WriteLine(string.Format("struct {0};", obj.fullNameFlat));
-			else if (type == typeof(EnumObject)) writer.WriteLine(string.Format("enum {0};", obj.fullNameFlat));
+			if (type.IsSubclassOf(typeof(LogicalType))) writer.WriteLine(string.Format("struct {0};", obj.fullNameFlat));
+			else if (type == typeof(EnumType)) writer.WriteLine(string.Format("enum {0};", obj.fullNameFlat));
 		}
 
-		private static void WriteObject(ObjectBase obj, StreamWriter writer)
+		private static void WriteObject(ObjectType obj, StreamWriter writer)
 		{
 			var type = obj.GetType();
 
 			// get type name
 			string typeName = null;
-			if (type.IsSubclassOf(typeof(LogicalObject))) typeName = "struct";
-			else if (type == typeof(EnumObject)) typeName = "enum";
+			if (type.IsSubclassOf(typeof(LogicalType))) typeName = "struct";
+			else if (type == typeof(EnumType)) typeName = "enum";
 			else throw new Exception("CompileObjectDefinition: Unsuported type: " + type);
 
 			// write type
@@ -89,23 +89,23 @@ namespace CSharpTranspiler.Transpilers
 			writer.WriteLine("};" + Environment.NewLine);
 		}
 
-		private static void WriteObjectBody(ObjectBase obj, Type type, StreamWriter writer)
+		private static void WriteObjectBody(ObjectType obj, Type type, StreamWriter writer)
 		{
-			if (type.IsSubclassOf(typeof(LogicalObject)))
+			if (type.IsSubclassOf(typeof(LogicalType)))
 			{
-				var logicalObj = (LogicalObject)obj;
+				var logicalObj = (LogicalType)obj;
 				foreach (var field in logicalObj.fields)
 				{
 					// TODO
 				}
 			}
-			else if (type == typeof(EnumObject))
+			else if (type == typeof(EnumType))
 			{
 				// TODO
 			}
 		}
 
-		private static void WriteObjectMethods(ObjectBase obj, StreamWriter writer)
+		private static void WriteObjectMethods(ObjectType obj, StreamWriter writer)
 		{
 			// TODO
 		}

@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace CSharpTranspiler.Types
 {
-	public class ClassObject : LogicalObject
+	public class StructType : LogicalType
 	{
-		public ClassObject(string name, string fullName, ClassDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
+		public StructType(string name, string fullName, StructDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
 		: base(name, fullName, declarationSyntax, semanticModel)
 		{
-			
+
 		}
 	}
 }

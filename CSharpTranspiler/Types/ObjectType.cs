@@ -18,9 +18,10 @@ namespace CSharpTranspiler.Types
 		public BaseTypeSyntax baseType;
 		public TypeInfo typeInfo;
 		public string fullName;
+		public bool isInterface;
 	}
 
-	public abstract class ObjectBase
+	public abstract class ObjectType
 	{
 		public List<BaseTypeDeclarationSyntax> declarationSyntaxes;
 
@@ -28,7 +29,7 @@ namespace CSharpTranspiler.Types
 		public List<Modifiers> modifiers;
 		public List<BaseObject> baseObjects;
 		
-		public ObjectBase(string name, string fullName, BaseTypeDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
+		public ObjectType(string name, string fullName, BaseTypeDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
 		{
 			this.name = name;
 			this.fullName = fullName;
@@ -94,7 +95,8 @@ namespace CSharpTranspiler.Types
 					{
 						baseType = baseType,
 						typeInfo = typeInfo,
-						fullName = typeSymbol.ToDisplayString()
+						fullName = typeSymbol.ToDisplayString(),
+						isInterface = typeSymbol.TypeKind == TypeKind.Interface
 					};
 					
 					baseObjects.Add(obj);

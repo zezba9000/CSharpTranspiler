@@ -99,6 +99,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Declaration\FieldDeclaration.cs" />
+    <Compile Include="Declaration\MethodDeclaration.cs" />
+    <Compile Include="Declaration\PropertyDeclaration.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -106,12 +109,12 @@
     <Compile Include="Syntax\Modifiers.cs" />
     <Compile Include="Tools.cs" />
     <Compile Include="Transpilers\TranspilerC.cs" />
-    <Compile Include="Types\ClassObject.cs" />
-    <Compile Include="Types\EnumObject.cs" />
-    <Compile Include="Types\InterfaceObject.cs" />
-    <Compile Include="Types\LogicalObject.cs" />
-    <Compile Include="Types\ObjectBase.cs" />
-    <Compile Include="Types\StructObject.cs" />
+    <Compile Include="Types\ClassType.cs" />
+    <Compile Include="Types\EnumType.cs" />
+    <Compile Include="Types\InterfaceType.cs" />
+    <Compile Include="Types\LogicalType.cs" />
+    <Compile Include="Types\ObjectType.cs" />
+    <Compile Include="Types\StructType.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -121,6 +124,7 @@
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
