@@ -14,6 +14,7 @@ namespace CSharpTranspiler
 {
 	public class Solution
 	{
+		public Microsoft.CodeAnalysis.Solution solution;
 		public string filename;
 		private bool isProjFilename;
 
@@ -32,8 +33,8 @@ namespace CSharpTranspiler
 				projects = new List<Project>();
 				if (!isProjFilename)
 				{
-					var sln = await workspace.OpenSolutionAsync(filename);
-					foreach (var csProj in sln.Projects)
+					solution = await workspace.OpenSolutionAsync(filename);
+					foreach (var csProj in solution.Projects)
 					{
 						var proj = new Project(csProj.FilePath);
 						await proj.Parse(csProj);
@@ -43,6 +44,7 @@ namespace CSharpTranspiler
 				else
 				{
 					var csProj = await workspace.OpenProjectAsync(filename);
+					solution = csProj.Solution;
 					var proj = new Project(csProj.FilePath);
 					await proj.Parse(csProj);
 					projects.Add(proj);

@@ -31,6 +31,12 @@ namespace CSharpTranspiler.Transpilers
 			using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None))
 			using (var writer = new StreamWriter(stream))
 			{
+				// make sure libs only get included once
+				if (project.type == ProjectTypes.Dll)
+				{
+					writer.WriteLine("#pragma once" + Environment.NewLine);
+				}
+
 				// write reference libs as included headers
 				foreach (var reference in project.references)
 				{
@@ -44,19 +50,23 @@ namespace CSharpTranspiler.Transpilers
 					WriteObjectDeclares(obj, writer);
 				}
 
-				// write user body definitions
+				// write objects
 				writer.WriteLine();
 				foreach (var obj in project.enumObjects) WriteObject(obj, writer);
 				foreach (var obj in project.interfaceObjects) WriteObject(obj, writer);
 				foreach (var obj in project.structObjects) WriteObject(obj, writer);
 				foreach (var obj in project.classObjects) WriteObject(obj, writer);
+
+				// write object methods
+				foreach (var obj in project.structObjects) WriteObjectMethods(obj, writer);
+				foreach (var obj in project.classObjects) WriteObjectMethods(obj, writer);
 			}
 		}
 
 		private static void WriteObjectDeclares(ObjectBase obj, StreamWriter writer)
 		{
 			var type = obj.GetType();
-			if (type == typeof(ClassObject) || type == typeof(StructObject) || type == typeof(InterfaceObject)) writer.WriteLine(string.Format("struct {0};", obj.fullNameFlat));
+			if (type.IsSubclassOf(typeof(LogicalObject))) writer.WriteLine(string.Format("struct {0};", obj.fullNameFlat));
 			else if (type == typeof(EnumObject)) writer.WriteLine(string.Format("enum {0};", obj.fullNameFlat));
 		}
 
@@ -66,7 +76,7 @@ namespace CSharpTranspiler.Transpilers
 
 			// get type name
 			string typeName = null;
-			if (type == typeof(ClassObject) || type == typeof(StructObject) || type == typeof(InterfaceObject)) typeName = "struct";
+			if (type.IsSubclassOf(typeof(LogicalObject))) typeName = "struct";
 			else if (type == typeof(EnumObject)) typeName = "enum";
 			else throw new Exception("CompileObjectDefinition: Unsuported type: " + type);
 
@@ -81,7 +91,23 @@ namespace CSharpTranspiler.Transpilers
 
 		private static void WriteObjectBody(ObjectBase obj, Type type, StreamWriter writer)
 		{
-			
+			if (type.IsSubclassOf(typeof(LogicalObject)))
+			{
+				var logicalObj = (LogicalObject)obj;
+				foreach (var field in logicalObj.fields)
+				{
+					// TODO
+				}
+			}
+			else if (type == typeof(EnumObject))
+			{
+				// TODO
+			}
+		}
+
+		private static void WriteObjectMethods(ObjectBase obj, StreamWriter writer)
+		{
+			// TODO
 		}
 	}
 }

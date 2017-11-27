@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis;
 
 namespace CSharpTranspiler.Types
 {
-	public class InterfaceObject : ObjectBase
+	public class InterfaceObject : LogicalObject
 	{
-		public InterfaceObject(string name, string fullName, InterfaceDeclarationSyntax declarationSyntax)
-		: base(name, fullName, declarationSyntax)
+		public InterfaceObject(string name, string fullName, InterfaceDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
+		: base(name, fullName, declarationSyntax, semanticModel)
 		{
 		}
 	}

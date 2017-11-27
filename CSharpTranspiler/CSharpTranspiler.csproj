@@ -103,11 +103,13 @@
     <Compile Include="Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Solution.cs" />
+    <Compile Include="Syntax\Modifiers.cs" />
     <Compile Include="Tools.cs" />
     <Compile Include="Transpilers\TranspilerC.cs" />
     <Compile Include="Types\ClassObject.cs" />
     <Compile Include="Types\EnumObject.cs" />
     <Compile Include="Types\InterfaceObject.cs" />
+    <Compile Include="Types\LogicalObject.cs" />
     <Compile Include="Types\ObjectBase.cs" />
     <Compile Include="Types\StructObject.cs" />
   </ItemGroup>

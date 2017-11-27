@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace CSharpTranspiler.Types
 {
-	public class ClassObject : ObjectBase
+	public class ClassObject : LogicalObject
 	{
-		public ClassObject(string name, string fullName, ClassDeclarationSyntax declarationSyntax)
-		: base(name, fullName, declarationSyntax)
+		public ClassObject(string name, string fullName, ClassDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
+		: base(name, fullName, declarationSyntax, semanticModel)
 		{
 			
 		}

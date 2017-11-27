@@ -1,4 +1,6 @@
-﻿namespace TestApp.C
+﻿using TestLib;
+
+namespace TestApp.C
 {
 	class B
 	{
@@ -10,7 +12,7 @@
 			}
 		}
 
-		partial class Program : Blaa.A2, Blaa.MyInterface
+		public partial class Program : MyTestLibClass, Blaa.MyInterface
 		{
 			static int i = 123;
 		}

@@ -9,68 +9,106 @@ using System.Threading.Tasks;
 using System.IO;
 
 using Microsoft.CodeAnalysis.CSharp.Extensions;
+using CSharpTranspiler.Syntax;
 
 namespace CSharpTranspiler.Types
 {
+	public class BaseObject
+	{
+		public BaseTypeSyntax baseType;
+		public TypeInfo typeInfo;
+		public string fullName;
+	}
+
 	public abstract class ObjectBase
 	{
-		public List<BaseTypeDeclarationSyntax> typeDeclarationSyntaxes;
-		public string name, fullName, fullNameFlat;
-		public List<SyntaxToken> modifiers;
-		public List<BaseTypeSyntax> baseTypes;
+		public List<BaseTypeDeclarationSyntax> declarationSyntaxes;
 
-		public ObjectBase(string name, string fullName, BaseTypeDeclarationSyntax typeDeclarationSyntax)
+		public string name, fullName, fullNameFlat;
+		public List<Modifiers> modifiers;
+		public List<BaseObject> baseObjects;
+		
+		public ObjectBase(string name, string fullName, BaseTypeDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
 		{
 			this.name = name;
 			this.fullName = fullName;
 			fullNameFlat = fullName.Replace('.', '_');
-			typeDeclarationSyntaxes = new List<BaseTypeDeclarationSyntax>();
-			typeDeclarationSyntaxes.Add(typeDeclarationSyntax);
+			declarationSyntaxes = new List<BaseTypeDeclarationSyntax>();
+			declarationSyntaxes.Add(declarationSyntax);
 
-			modifiers = new List<SyntaxToken>(typeDeclarationSyntax.Modifiers);
-			if (typeDeclarationSyntax.BaseList != null) baseTypes = new List<BaseTypeSyntax>(typeDeclarationSyntax.BaseList.Types);
-			else baseTypes = new List<BaseTypeSyntax>();
+			// parse modifiers
+			modifiers = new List<Modifiers>();
+			AddModifiers(declarationSyntax);
+
+			// parse base types
+			baseObjects = new List<BaseObject>();
+			AddBaseObjects(declarationSyntax, semanticModel);
 		}
 
-		public void MergePartial(TypeDeclarationSyntax typeDeclarationSyntax, SemanticModel semanticModel)
+		private void AddModifiers(BaseTypeDeclarationSyntax declarationSyntax)
 		{
-			typeDeclarationSyntaxes.Add(typeDeclarationSyntax);
-			
-			// merge modifiers
-			foreach (var modifier in typeDeclarationSyntax.Modifiers)
+			foreach (var modifier in declarationSyntax.Modifiers)
 			{
-				bool found = false;
-				foreach (var currentModifier in modifiers)
+				var kind = modifier.Kind();
+				Modifiers newModifier;
+				switch (kind)
 				{
-					if (modifier.Kind() == currentModifier.Kind())
-					{
-						found = true;
-						break;
-					}
-				}
-				
-				if (!found) modifiers.Add(modifier);
-			}
-			
-			// merge base types
-			foreach (var baseType in typeDeclarationSyntax.BaseList.Types)
-			{
-				var namedType = semanticModel.GetTypeInfo(baseType.Type).Type;
-				var fullName = namedType.ToDisplayString();
-				bool found = false;
-				foreach (var currentBaseType in baseTypes)
-				{
-					namedType = semanticModel.GetTypeInfo(currentBaseType.Type).Type;
-					var fullName2 = namedType.ToDisplayString();
-					if (fullName == fullName2)
-					{
-						found = true;
-						break;
-					}
+					// access
+					case SyntaxKind.PublicKeyword: newModifier = Modifiers.Public; break;
+					case SyntaxKind.PrivateKeyword: newModifier = Modifiers.Private; break;
+					case SyntaxKind.InternalKeyword: newModifier = Modifiers.Internal; break;
+					case SyntaxKind.ProtectedKeyword: newModifier = Modifiers.Protected; break;
+
+					// other
+					case SyntaxKind.AbstractKeyword: newModifier = Modifiers.Abstract; break;
+					case SyntaxKind.ConstKeyword: newModifier = Modifiers.Const; break;
+					case SyntaxKind.EventKeyword: newModifier = Modifiers.Event; break;
+					case SyntaxKind.ExternKeyword: newModifier = Modifiers.Extern; break;
+					case SyntaxKind.NewKeyword: newModifier = Modifiers.New; break;
+					case SyntaxKind.OverrideKeyword: newModifier = Modifiers.Override; break;
+					case SyntaxKind.PartialKeyword: newModifier = Modifiers.Partial; break;
+					case SyntaxKind.ReadOnlyKeyword: newModifier = Modifiers.ReadOnly; break;
+					case SyntaxKind.SealedKeyword: newModifier = Modifiers.Sealed; break;
+					case SyntaxKind.StaticKeyword: newModifier = Modifiers.Static; break;
+					case SyntaxKind.UnsafeKeyword: newModifier = Modifiers.Unsafe; break;
+					case SyntaxKind.VirtualKeyword: newModifier = Modifiers.Virtual; break;
+					case SyntaxKind.VolatileKeyword: newModifier = Modifiers.Volatile; break;
+
+					default: throw new Exception("Unsuported modifier: " + kind);
 				}
 
-				if (!found) baseTypes.Add(baseType);
+				if (!modifiers.Contains(newModifier)) modifiers.Add(newModifier);
 			}
+		}
+
+		private void AddBaseObjects(BaseTypeDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
+		{
+			if (declarationSyntax.BaseList == null) return;
+			foreach (var baseType in declarationSyntax.BaseList.Types)
+			{
+				var typeInfo = semanticModel.GetTypeInfo(baseType.Type);
+				var typeSymbol = typeInfo.Type;
+				if (!baseObjects.Exists(x => x.typeInfo.Type == typeSymbol))
+				{
+					var obj = new BaseObject()
+					{
+						baseType = baseType,
+						typeInfo = typeInfo,
+						fullName = typeSymbol.ToDisplayString()
+					};
+					
+					baseObjects.Add(obj);
+				}
+			}
+		}
+
+		public virtual void MergePartial(BaseTypeDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
+		{
+			if (declarationSyntaxes.Contains(declarationSyntax)) throw new Exception("Error: Partial already merged!");
+			declarationSyntaxes.Add(declarationSyntax);
+			
+			AddModifiers(declarationSyntax);
+			AddBaseObjects(declarationSyntax, semanticModel);
 		}
 	}
 }
