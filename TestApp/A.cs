@@ -7,7 +7,7 @@
 		C
 	}
 
-	interface A
+	interface MyInterface
 	{
 		
 	}

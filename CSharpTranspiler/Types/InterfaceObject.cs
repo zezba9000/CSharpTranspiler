@@ -9,7 +9,8 @@ namespace CSharpTranspiler.Types
 {
 	public class InterfaceObject : ObjectBase
 	{
-		public InterfaceObject(string name, string fullName, TypeDeclarationSyntax typeDeclarationSyntax) : base(name, fullName, typeDeclarationSyntax)
+		public InterfaceObject(string name, string fullName, InterfaceDeclarationSyntax declarationSyntax)
+		: base(name, fullName, declarationSyntax)
 		{
 		}
 	}

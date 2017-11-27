@@ -9,8 +9,8 @@ namespace CSharpTranspiler.Types
 {
 	public class EnumObject : ObjectBase
 	{
-		public EnumObject(string name, string fullName, TypeDeclarationSyntax typeDeclarationSyntax)
-		: base(name, fullName, typeDeclarationSyntax)
+		public EnumObject(string name, string fullName, EnumDeclarationSyntax declarationSyntax)
+		: base(name, fullName, declarationSyntax)
 		{
 		}
 	}

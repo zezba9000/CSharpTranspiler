@@ -31,43 +31,55 @@ namespace CSharpTranspiler.Transpilers
 			using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None))
 			using (var writer = new StreamWriter(stream))
 			{
-				// TODO: write dependancy libs as included headers
+				// write reference libs as included headers
+				foreach (var reference in project.references)
+				{
+					writer.WriteLine(string.Format("#include \"{0}.h\"", reference));
+				}
 
 				// write forward declares
+				writer.WriteLine();
 				foreach (var obj in project.allObjects)
 				{
-					var type = obj.GetType();
-					if (type == typeof(ClassObject) || type == typeof(StructObject) || type == typeof(InterfaceObject)) writer.WriteLine(string.Format("struct {0};", obj.fullNameFlat));
-					else if (type == typeof(EnumObject)) writer.WriteLine(string.Format("enum {0};", obj.fullNameFlat));
+					WriteObjectDeclares(obj, writer);
 				}
 
 				// write user body definitions
-				foreach (var obj in project.classObjects)
-				{
-					CompileObjectDefinition(obj, writer);
-				}
+				writer.WriteLine();
+				foreach (var obj in project.enumObjects) WriteObject(obj, writer);
+				foreach (var obj in project.interfaceObjects) WriteObject(obj, writer);
+				foreach (var obj in project.structObjects) WriteObject(obj, writer);
+				foreach (var obj in project.classObjects) WriteObject(obj, writer);
 			}
 		}
 
-		private static void CompileObjectDefinition(ObjectBase obj, StreamWriter writer)
+		private static void WriteObjectDeclares(ObjectBase obj, StreamWriter writer)
 		{
 			var type = obj.GetType();
-			if (type == typeof(ClassObject) || type == typeof(StructObject)) CompileObjectDefinition_Class_Struct(obj, writer);
+			if (type == typeof(ClassObject) || type == typeof(StructObject) || type == typeof(InterfaceObject)) writer.WriteLine(string.Format("struct {0};", obj.fullNameFlat));
+			else if (type == typeof(EnumObject)) writer.WriteLine(string.Format("enum {0};", obj.fullNameFlat));
 		}
 
-		private static void CompileObjectDefinition_Class_Struct(ObjectBase obj, StreamWriter writer)
+		private static void WriteObject(ObjectBase obj, StreamWriter writer)
 		{
 			var type = obj.GetType();
-			writer.WriteLine(string.Format("{0} {1}", "struct", obj.fullNameFlat));
+
+			// get type name
+			string typeName = null;
+			if (type == typeof(ClassObject) || type == typeof(StructObject) || type == typeof(InterfaceObject)) typeName = "struct";
+			else if (type == typeof(EnumObject)) typeName = "enum";
+			else throw new Exception("CompileObjectDefinition: Unsuported type: " + type);
+
+			// write type
+			writer.WriteLine(string.Format("{0} {1}", typeName, obj.fullNameFlat));
+
+			// write body
+			writer.WriteLine('{');
+			WriteObjectBody(obj, type, writer);
+			writer.WriteLine("};" + Environment.NewLine);
 		}
 
-		private static void CompileObject(ObjectBase obj, StreamWriter writer)
-		{
-			var type = obj.GetType();
-			if (type == typeof(ClassObject) || type == typeof(StructObject)) CompileObject_Class_Struct(obj, writer);
-		}
-
-		private static void CompileObject_Class_Struct(ObjectBase obj, StreamWriter writer)
+		private static void WriteObjectBody(ObjectBase obj, Type type, StreamWriter writer)
 		{
 			
 		}

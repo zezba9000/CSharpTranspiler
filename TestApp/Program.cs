@@ -2,7 +2,7 @@
 {
 	class B
 	{
-		partial class Program : Blaa.A
+		partial class Program : Blaa.MyInterface
 		{
 			static void Main(string[] args)
 			{
@@ -10,7 +10,7 @@
 			}
 		}
 
-		partial class Program : Blaa.A2, Blaa.A
+		partial class Program : Blaa.A2, Blaa.MyInterface
 		{
 			static int i = 123;
 		}

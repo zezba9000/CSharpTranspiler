@@ -9,8 +9,8 @@ namespace CSharpTranspiler.Types
 {
 	public class ClassObject : ObjectBase
 	{
-		public ClassObject(string name, string fullName, ClassDeclarationSyntax classDeclarationSyntax)
-		: base(name, fullName, classDeclarationSyntax)
+		public ClassObject(string name, string fullName, ClassDeclarationSyntax declarationSyntax)
+		: base(name, fullName, declarationSyntax)
 		{
 			
 		}

@@ -19,10 +19,13 @@ namespace CSharpTranspiler
 
 	public class Project
 	{
+		public Microsoft.CodeAnalysis.Project project;
+
 		public ProjectTypes type;
 		public bool isReleaseBuild;
-		public string filename;
-		public Microsoft.CodeAnalysis.Project project;
+		public string filename, assemblyName;
+		public List<string> references;
+
 		public List<ObjectBase> allObjects;
 		public List<ClassObject> classObjects;
 		public List<StructObject> structObjects;
@@ -38,6 +41,7 @@ namespace CSharpTranspiler
 		{
 			// init main objects
 			this.project = project;
+			assemblyName = project.AssemblyName;
 			allObjects = new List<ObjectBase>();
 			classObjects = new List<ClassObject>();
 			structObjects = new List<StructObject>();
@@ -50,7 +54,7 @@ namespace CSharpTranspiler
 
 			var compilationOptions = project.CompilationOptions;
 			if (compilationOptions.Platform != Platform.AnyCpu) throw new Exception("Project platform must be AnyCpu: " + project.FilePath);
-
+			
 			// get project type
 			var kind = compilationOptions.OutputKind;
 			if (kind == OutputKind.DynamicallyLinkedLibrary) type = ProjectTypes.Dll;
@@ -59,6 +63,15 @@ namespace CSharpTranspiler
 
 			// check optimization level
 			isReleaseBuild = compilationOptions.OptimizationLevel == OptimizationLevel.Release;
+
+			// gather references
+			references = new List<string>();
+			var sln = project.Solution;
+			foreach (var reference in project.AllProjectReferences)
+			{
+				var p = sln.GetProject(reference.ProjectId);
+				references.Add(p.AssemblyName);
+			}
 
 			// parse syntax tree
 			var compilation = await project.GetCompilationAsync();
@@ -69,6 +82,12 @@ namespace CSharpTranspiler
 				var semanticModel = await doc.GetSemanticModelAsync();
 				AddObjects(syntaxTree.GetRoot().ChildNodes(), syntaxTree, semanticModel);
 			}
+
+			// all objects to all list
+			allObjects.AddRange(enumObjects);
+			allObjects.AddRange(interfaceObjects);
+			allObjects.AddRange(structObjects);
+			allObjects.AddRange(classObjects);
 		}
 
 		private bool DoesObjectExist(string fullName, out ObjectBase objBase)
@@ -86,6 +105,32 @@ namespace CSharpTranspiler
 			return false;
 		}
 
+		private delegate void AddObjectCallbackMethod(string fullName);
+		private void AddObject(TypeDeclarationSyntax node, CSharpSyntaxTree syntaxTree, SemanticModel semanticModel, SyntaxTokenList modifiers, AddObjectCallbackMethod callback)
+		{
+			string fullName = semanticModel.GetDeclaredSymbol(node).ToString();
+			bool addNew = false;
+			if (Tools.HasKind(modifiers, SyntaxKind.PartialKeyword))
+			{
+				ObjectBase obj;
+				if (DoesObjectExist(fullName, out obj))
+				{
+					obj.MergePartial(node, semanticModel);
+				}
+				else
+				{
+					addNew = true;
+				}
+			}
+			else
+			{
+				addNew = true;
+			}
+					
+			if (addNew) callback?.Invoke(fullName);
+			AddObjects(node.ChildNodes(), syntaxTree, semanticModel);
+		}
+
 		private void AddObjects(IEnumerable<SyntaxNode> syntaxNodes, CSharpSyntaxTree syntaxTree, SemanticModel semanticModel)
 		{
 			foreach (var node in syntaxNodes)
@@ -99,34 +144,42 @@ namespace CSharpTranspiler
 				else if (type == typeof(ClassDeclarationSyntax))
 				{
 					var classNode = (ClassDeclarationSyntax)node;
-					string name = classNode.Identifier.ValueText;
-					var fullName = semanticModel.GetDeclaredSymbol(node).ToString();
-					bool addNew = false;
-					if (Tools.HasKind(classNode.Modifiers, SyntaxKind.PartialKeyword))
+					void AddObjectCallback(string fullName)
 					{
-						ObjectBase obj;
-						if (DoesObjectExist(fullName, out obj))
-						{
-							obj.MergePartial(classNode, semanticModel);
-						}
-						else
-						{
-							addNew = true;
-						}
-					}
-					else
-					{
-						addNew = true;
-					}
-					
-					if (addNew)
-					{
-						var classType = new ClassObject(name, fullName, classNode);
-						classObjects.Add(classType);
-						allObjects.Add(classType);
+						string name = classNode.Identifier.ValueText;
+						classObjects.Add(new ClassObject(name, fullName, classNode));
 					}
 
-					AddObjects(classNode.ChildNodes(), syntaxTree, semanticModel);
+					AddObject(classNode, syntaxTree, semanticModel, classNode.Modifiers, AddObjectCallback);
+				}
+				else if (type == typeof(StructDeclarationSyntax))
+				{
+					var structNode = (StructDeclarationSyntax)node;
+					void AddObjectCallback(string fullName)
+					{
+						string name = structNode.Identifier.ValueText;
+						structObjects.Add(new StructObject(name, fullName, structNode));
+					}
+
+					AddObject(structNode, syntaxTree, semanticModel, structNode.Modifiers, AddObjectCallback);
+				}
+				else if (type == typeof(InterfaceDeclarationSyntax))
+				{
+					var interfaceNode = (InterfaceDeclarationSyntax)node;
+					void AddObjectCallback(string fullName)
+					{
+						string name = interfaceNode.Identifier.ValueText;
+						interfaceObjects.Add(new InterfaceObject(name, fullName, interfaceNode));
+					}
+
+					AddObject(interfaceNode, syntaxTree, semanticModel, interfaceNode.Modifiers, AddObjectCallback);
+				}
+				else if (type == typeof(EnumDeclarationSyntax))
+				{
+					var enumNode = (EnumDeclarationSyntax)node;
+					string name = enumNode.Identifier.ValueText;
+					string fullName = semanticModel.GetDeclaredSymbol(node).ToString();
+					enumObjects.Add(new EnumObject(name, fullName, enumNode));
 				}
 			}
 		}

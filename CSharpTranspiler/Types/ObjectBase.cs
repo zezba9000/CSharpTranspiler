@@ -14,17 +14,17 @@ namespace CSharpTranspiler.Types
 {
 	public abstract class ObjectBase
 	{
-		public List<TypeDeclarationSyntax> typeDeclarationSyntaxes;
+		public List<BaseTypeDeclarationSyntax> typeDeclarationSyntaxes;
 		public string name, fullName, fullNameFlat;
 		public List<SyntaxToken> modifiers;
 		public List<BaseTypeSyntax> baseTypes;
 
-		public ObjectBase(string name, string fullName, TypeDeclarationSyntax typeDeclarationSyntax)
+		public ObjectBase(string name, string fullName, BaseTypeDeclarationSyntax typeDeclarationSyntax)
 		{
 			this.name = name;
 			this.fullName = fullName;
 			fullNameFlat = fullName.Replace('.', '_');
-			typeDeclarationSyntaxes = new List<TypeDeclarationSyntax>();
+			typeDeclarationSyntaxes = new List<BaseTypeDeclarationSyntax>();
 			typeDeclarationSyntaxes.Add(typeDeclarationSyntax);
 
 			modifiers = new List<SyntaxToken>(typeDeclarationSyntax.Modifiers);
