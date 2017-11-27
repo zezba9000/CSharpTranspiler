@@ -1,1 +1,3 @@
 Roslyn compiler from NuGet: Microsoft.VisualStudio.LanguageServices
+
+Other CoreLib ref: https://github.com/ASDAlexander77/cs2cpp/tree/master/CoreLib
