@@ -4,7 +4,7 @@ This project is for doing preliminary experiments to compile a C# 3.0 subset usi
 
 Much of the work done here "at minimum" will be used in the ReignSDK for a C# to Shader-Lang transpiler.<br>
 
-#### If the C# to C compiler works out well, I may try to transpile C# to all langs listed below.
+#### If the C# to C compiler works out well, I may try to transpile C# to other langs listed below.
 - CS2SL [C# to ShaderLang]
 - CS2C [C# to C]
 - CS2JV [C# to Java]
