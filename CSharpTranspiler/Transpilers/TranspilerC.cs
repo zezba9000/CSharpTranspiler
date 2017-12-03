@@ -45,7 +45,7 @@ namespace CSharpTranspiler.Transpilers
 					writer.WriteLine(string.Format("#include \"{0}.h\"", reference));
 				}
 
-				// write forward declares
+				// write object forward declares
 				writer.WriteLine();
 				foreach (var obj in project.allObjects)
 				{
@@ -59,7 +59,12 @@ namespace CSharpTranspiler.Transpilers
 				foreach (var obj in project.structObjects) WriteObject(obj, writer);
 				foreach (var obj in project.classObjects) WriteObject(obj, writer);
 
+				// write object method forward declares
+				foreach (var obj in project.structObjects) WriteObjectMethodDeclares(obj, writer);
+				foreach (var obj in project.classObjects) WriteObjectMethodDeclares(obj, writer);
+
 				// write object methods
+				writer.WriteLine();
 				foreach (var obj in project.structObjects) WriteObjectMethods(obj, writer);
 				foreach (var obj in project.classObjects) WriteObjectMethods(obj, writer);
 			}
@@ -98,7 +103,8 @@ namespace CSharpTranspiler.Transpilers
 				var logicalObj = (LogicalType)obj;
 				foreach (var variable in logicalObj.variables)
 				{
-					writer.WriteLine(string.Format("\t{0} {1};", variable.typeFullNameFlat, variable.name));
+					if (variable.isValueType) writer.WriteLine(string.Format("\t{0} {1};", variable.typeFullNameFlat, variable.name));
+					else writer.WriteLine(string.Format("\t{0} *{1};", variable.typeFullNameFlat, variable.name));
 				}
 			}
 			else if (type == typeof(EnumType))
@@ -107,23 +113,45 @@ namespace CSharpTranspiler.Transpilers
 			}
 		}
 
+		private static void WriteObjectMethodDeclare(ObjectType obj, MethodDeclaration method, StreamWriter writer)
+		{
+			// write return type
+			if (method.returnType.isValueType) writer.Write(string.Format("{0} {1}(", method.returnType.typeFullNameFlat, method.fullNameFlat));
+			else writer.Write(string.Format("{0}* {1}(", method.returnType.typeFullNameFlat, method.fullNameFlat));
+
+			// if method and object are not static pass "this" ref
+			if (!obj.isStatic && !method.isStatic) writer.Write(string.Format("{0} *this, ", obj.fullNameFlat));
+
+			// write parameters
+			int count = method.parameters.Count;
+			for (int i = 0; i != count; ++i)
+			{
+				var parameter = method.parameters[i];
+				if (parameter.isValueType) writer.Write(string.Format("{0} {1}", parameter.typeFullNameFlat, parameter.name));
+				else writer.Write(string.Format("{0} *{1}", parameter.typeFullNameFlat, parameter.name));// TODO: this needs to use a System_Array type
+				if (i != count-1) writer.Write(", ");
+			}
+
+			writer.Write(')');
+		}
+
+		private static void WriteObjectMethodDeclares(ObjectType obj, StreamWriter writer)
+		{
+			var logicalObj = (LogicalType)obj;
+			foreach (var method in logicalObj.methods)
+			{
+				WriteObjectMethodDeclare(obj, method, writer);
+				writer.WriteLine(';');
+			}
+		}
+
 		private static void WriteObjectMethods(ObjectType obj, StreamWriter writer)
 		{
 			var logicalObj = (LogicalType)obj;
 			foreach (var method in logicalObj.methods)
 			{
-				writer.Write(string.Format("{0} {1}(", method.returnType.typeFullNameFlat, method.fullNameFlat));
-				if (!obj.isStatic) writer.Write(string.Format("{0} *this, ", obj.fullNameFlat));
-				int count = method.parameters.Count;
-				for (int i = 0; i != count; ++i)
-				{
-					var parameter = method.parameters[i];
-					if (!parameter.isArray) writer.Write(string.Format("{0} {1}", parameter.typeFullNameFlat, parameter.name));
-					else writer.Write(string.Format("{0} *{1}", parameter.typeFullNameFlat, parameter.name));// TODO: this needs to use a System_Array type
-					if (i != count-1) writer.Write(", ");
-				}
-				writer.WriteLine(')');
-				writer.WriteLine('{');
+				WriteObjectMethodDeclare(obj, method, writer);
+				writer.WriteLine(Environment.NewLine + '{');
 				WriteObjectMethodBody(method, writer);
 				writer.WriteLine('}' + Environment.NewLine);
 			}

@@ -25,16 +25,19 @@ struct TestApp_C_B
 
 struct TestApp_C_B_Program
 {
-	TestApp_Blaa_A2 a;
+	TestApp_Blaa_A2 *a;
 	System_Int32 i;
 	System_Int32 i2;
 };
 
-System_Void TestApp_C_B_Program_Main(TestApp_C_B_Program *this, System_String *args)
+System_Void TestApp_C_B_Program_Main(System_String *args);
+TestApp_Blaa_A2* TestApp_C_B_Program_Foo(TestApp_C_B_Program *this, System_Int32 hi, System_String *by);
+
+System_Void TestApp_C_B_Program_Main(System_String *args)
 {
 }
 
-TestApp_Blaa_A2 TestApp_C_B_Program_Foo(TestApp_C_B_Program *this, System_Int32 hi, System_String by)
+TestApp_Blaa_A2* TestApp_C_B_Program_Foo(TestApp_C_B_Program *this, System_Int32 hi, System_String *by)
 {
 }
 

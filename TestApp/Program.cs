@@ -14,7 +14,7 @@ namespace TestApp.C
 				i = 888;
 			}
 
-			static A2 Foo(int hi, string by)
+			A2 Foo(int hi, string by)
 			{
 				return a;
 			}

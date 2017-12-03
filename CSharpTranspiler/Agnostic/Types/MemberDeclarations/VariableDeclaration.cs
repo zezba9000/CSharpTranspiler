@@ -10,13 +10,14 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 {
 	public abstract class VariableDeclarationBase : Member
 	{
-		public bool isArray, isGeneric;
+		public bool isArray, isGeneric, isValueType;
 		public string typeName, typeFullName, typeFullNameFlat;
 
 		public VariableDeclarationBase(ITypeSymbol symbolType, SyntaxTokenList? modifiers, SyntaxList<AttributeListSyntax>? attributeList)
 		: base(modifiers, attributeList)
 		{
 			isArray = symbolType.Kind == SymbolKind.ArrayType;
+			isValueType = symbolType.IsValueType;
 			typeName = Tools.GetFullTypeName(symbolType);
 			typeFullName = Tools.GetFullTypeName(symbolType);
 			typeFullNameFlat = Tools.GetFullTypeNameFlat(symbolType);
