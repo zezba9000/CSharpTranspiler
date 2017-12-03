@@ -10,8 +10,8 @@ namespace CSharpTranspiler.Types
 {
 	public class StructType : LogicalType
 	{
-		public StructType(string name, string fullName, StructDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
-		: base(name, fullName, declarationSyntax, semanticModel)
+		public StructType(StructDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
+		: base(declarationSyntax, semanticModel)
 		{
 
 		}

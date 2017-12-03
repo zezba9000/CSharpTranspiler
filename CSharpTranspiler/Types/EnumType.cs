@@ -10,8 +10,8 @@ namespace CSharpTranspiler.Types
 {
 	public class EnumType : ObjectType
 	{
-		public EnumType(string name, string fullName, EnumDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
-		: base(name, fullName, declarationSyntax, semanticModel)
+		public EnumType(EnumDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
+		: base(declarationSyntax, semanticModel)
 		{
 		}
 	}

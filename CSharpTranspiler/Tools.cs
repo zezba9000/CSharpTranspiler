@@ -13,12 +13,25 @@ namespace CSharpTranspiler
 	{
 		public static bool HasKind(SyntaxTokenList syntaxTokenList, SyntaxKind kind)
 		{
-			foreach (var token in syntaxTokenList)
-			{
-				if (token.IsKind(kind)) return true;
-			}
+			return syntaxTokenList.Any(x => x.IsKind(kind));
+		}
 
-			return false;
+		public static string GetTypeName(ITypeSymbol symbol)
+		{
+			if (symbol.SpecialType != SpecialType.None) return symbol.SpecialType.ToString().Split('_').Last();
+			return symbol.ToString().Split('.').Last();
+		}
+		
+		public static string GetFullTypeName(ITypeSymbol symbol)
+		{
+			if (symbol.SpecialType != SpecialType.None) return symbol.SpecialType.ToString().Replace('_', '.');
+			return symbol.ToString();
+		}
+
+		public static string GetFullTypeNameFlat(ITypeSymbol symbol)
+		{
+			if (symbol.SpecialType != SpecialType.None) return symbol.SpecialType.ToString();
+			return symbol.ToString().Replace('.', '_');
 		}
 	}
 }

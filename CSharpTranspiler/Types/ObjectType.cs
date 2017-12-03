@@ -29,11 +29,15 @@ namespace CSharpTranspiler.Types
 		public List<Modifiers> modifiers;
 		public List<BaseObject> baseObjects;
 		
-		public ObjectType(string name, string fullName, BaseTypeDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
+		public ObjectType(BaseTypeDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
 		{
-			this.name = name;
-			this.fullName = fullName;
-			fullNameFlat = fullName.Replace('.', '_');
+			// get name
+			var symbol = semanticModel.GetDeclaredSymbol(declarationSyntax);
+			name = Tools.GetTypeName(symbol);
+			fullName = Tools.GetFullTypeName(symbol);
+			fullNameFlat = Tools.GetFullTypeNameFlat(symbol);
+
+			// add current declaration
 			declarationSyntaxes = new List<BaseTypeDeclarationSyntax>();
 			declarationSyntaxes.Add(declarationSyntax);
 
@@ -95,7 +99,7 @@ namespace CSharpTranspiler.Types
 					{
 						baseType = baseType,
 						typeInfo = typeInfo,
-						fullName = typeSymbol.ToDisplayString(),
+						fullName = Tools.GetFullTypeName(typeSymbol),
 						isInterface = typeSymbol.TypeKind == TypeKind.Interface
 					};
 					

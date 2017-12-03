@@ -10,8 +10,8 @@ namespace CSharpTranspiler.Types
 {
 	public class ClassType : LogicalType
 	{
-		public ClassType(string name, string fullName, ClassDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
-		: base(name, fullName, declarationSyntax, semanticModel)
+		public ClassType(ClassDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
+		: base(declarationSyntax, semanticModel)
 		{
 			
 		}

@@ -1,4 +1,5 @@
-﻿using TestLib;
+﻿using TestApp.Blaa;
+using TestLib;
 
 namespace TestApp.C
 {
@@ -6,6 +7,8 @@ namespace TestApp.C
 	{
 		partial class Program : Blaa.MyInterface
 		{
+			static A2 a = null;
+
 			static void Main(string[] args)
 			{
 				i = 888;
@@ -14,7 +17,7 @@ namespace TestApp.C
 
 		public partial class Program : MyTestLibClass, Blaa.MyInterface
 		{
-			static int i = 123;
+			static int i = 123, i2 = 22;
 		}
 	}
 }

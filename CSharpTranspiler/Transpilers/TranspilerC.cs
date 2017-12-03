@@ -94,9 +94,9 @@ namespace CSharpTranspiler.Transpilers
 			if (type.IsSubclassOf(typeof(LogicalType)))
 			{
 				var logicalObj = (LogicalType)obj;
-				foreach (var field in logicalObj.fields)
+				foreach (var variable in logicalObj.variables)
 				{
-					// TODO
+					writer.WriteLine(string.Format("\t{0} {1};", variable.typeFullNameFlat, variable.name));
 				}
 			}
 			else if (type == typeof(EnumType))

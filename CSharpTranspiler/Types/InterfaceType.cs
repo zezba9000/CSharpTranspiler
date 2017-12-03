@@ -10,8 +10,8 @@ namespace CSharpTranspiler.Types
 {
 	public class InterfaceType : LogicalType
 	{
-		public InterfaceType(string name, string fullName, InterfaceDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
-		: base(name, fullName, declarationSyntax, semanticModel)
+		public InterfaceType(InterfaceDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
+		: base(declarationSyntax, semanticModel)
 		{
 		}
 	}
