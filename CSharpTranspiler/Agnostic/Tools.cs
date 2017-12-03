@@ -19,18 +19,21 @@ namespace CSharpTranspiler.Agnostic
 		public static string GetTypeName(ITypeSymbol symbol)
 		{
 			if (symbol.SpecialType != SpecialType.None) return symbol.SpecialType.ToString().Split('_').Last();
+			else if (symbol.Kind == SymbolKind.ArrayType) return GetTypeName(((IArrayTypeSymbol)symbol).ElementType);
 			return symbol.ToString().Split('.').Last();
 		}
 		
 		public static string GetFullTypeName(ITypeSymbol symbol)
 		{
 			if (symbol.SpecialType != SpecialType.None) return symbol.SpecialType.ToString().Replace('_', '.');
+			else if (symbol.Kind == SymbolKind.ArrayType) return GetFullTypeName(((IArrayTypeSymbol)symbol).ElementType);
 			return symbol.ToString();
 		}
 
 		public static string GetFullTypeNameFlat(ITypeSymbol symbol)
 		{
 			if (symbol.SpecialType != SpecialType.None) return symbol.SpecialType.ToString();
+			else if (symbol.Kind == SymbolKind.ArrayType) return GetFullTypeNameFlat(((IArrayTypeSymbol)symbol).ElementType);
 			return symbol.ToString().Replace('.', '_');
 		}
 	}

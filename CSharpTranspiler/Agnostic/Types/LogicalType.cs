@@ -12,16 +12,16 @@ namespace CSharpTranspiler.Agnostic.Types
 	public abstract class LogicalType : ObjectType
 	{
 		public List<VariableDeclaration> variables;
-		public List<PropertyDeclarationSyntax> properties;
-		public List<MethodDeclarationSyntax> methods;
+		public List<PropertyDeclaration> properties;
+		public List<MethodDeclaration> methods;
 		
-		public LogicalType(TypeDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
-		: base(declarationSyntax, semanticModel)
+		public LogicalType(TypeDeclarationSyntax declaration, SemanticModel semanticModel)
+		: base(declaration, semanticModel)
 		{
 			variables = new List<VariableDeclaration>();
-			properties = new List<PropertyDeclarationSyntax>();
-			methods = new List<MethodDeclarationSyntax>();
-			AddMembers(declarationSyntax, semanticModel);
+			properties = new List<PropertyDeclaration>();
+			methods = new List<MethodDeclaration>();
+			AddMembers(declaration, semanticModel);
 		}
 
 		public override void MergePartial(BaseTypeDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
@@ -38,19 +38,20 @@ namespace CSharpTranspiler.Agnostic.Types
 				if (type == typeof(FieldDeclarationSyntax))
 				{
 					var field = (FieldDeclarationSyntax)member;
-					var fieldType = field.Declaration.Type;
 					foreach (var variable in field.Declaration.Variables)
 					{
-						variables.Add(new VariableDeclaration(fieldType, variable, semanticModel));
+						variables.Add(new VariableDeclaration(variable, field, semanticModel));
 					}
 				}
 				else if (type == typeof(PropertyDeclarationSyntax))
 				{
-					properties.Add((PropertyDeclarationSyntax)member);
+					var property = (PropertyDeclarationSyntax)member;
+					properties.Add(new PropertyDeclaration(property, semanticModel));
 				}
 				else if (type == typeof(MethodDeclarationSyntax))
 				{
-					methods.Add((MethodDeclarationSyntax)member);
+					var method = (MethodDeclarationSyntax)member;
+					methods.Add(new MethodDeclaration(method, semanticModel));
 				}
 			}
 		}

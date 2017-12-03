@@ -10,8 +10,8 @@ namespace CSharpTranspiler.Agnostic.Types
 {
 	public class ClassType : LogicalType
 	{
-		public ClassType(ClassDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
-		: base(declarationSyntax, semanticModel)
+		public ClassType(ClassDeclarationSyntax declaration, SemanticModel semanticModel)
+		: base(declaration, semanticModel)
 		{
 			
 		}

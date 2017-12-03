@@ -1,5 +1,6 @@
 ﻿using CSharpTranspiler.Agnostic;
 using CSharpTranspiler.Agnostic.Types;
+using CSharpTranspiler.Agnostic.Types.MemberDeclarations;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -107,6 +108,28 @@ namespace CSharpTranspiler.Transpilers
 		}
 
 		private static void WriteObjectMethods(ObjectType obj, StreamWriter writer)
+		{
+			var logicalObj = (LogicalType)obj;
+			foreach (var method in logicalObj.methods)
+			{
+				writer.Write(string.Format("{0} {1}(", method.returnType.typeFullNameFlat, method.fullNameFlat));
+				if (!obj.isStatic) writer.Write(string.Format("{0} *this, ", obj.fullNameFlat));
+				int count = method.parameters.Count;
+				for (int i = 0; i != count; ++i)
+				{
+					var parameter = method.parameters[i];
+					if (!parameter.isArray) writer.Write(string.Format("{0} {1}", parameter.typeFullNameFlat, parameter.name));
+					else writer.Write(string.Format("{0} *{1}", parameter.typeFullNameFlat, parameter.name));// TODO: this needs to use a System_Array type
+					if (i != count-1) writer.Write(", ");
+				}
+				writer.WriteLine(')');
+				writer.WriteLine('{');
+				WriteObjectMethodBody(method, writer);
+				writer.WriteLine('}' + Environment.NewLine);
+			}
+		}
+
+		private static void WriteObjectMethodBody(MethodDeclaration method, StreamWriter writer)
 		{
 			// TODO
 		}

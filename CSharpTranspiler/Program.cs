@@ -8,7 +8,7 @@ namespace CSharpTranspiler
 {
 	class Program
 	{
-		static void Main(string[] args)
+		static void Main(string[] args = null)
 		{
 			var task = Compile();
 			task.Wait();
@@ -16,18 +16,18 @@ namespace CSharpTranspiler
 
 		static async Task Compile()
 		{
-			//try
+			try
 			{
 				string path = Path.Combine(Environment.CurrentDirectory, @"..\..\..\");
 				var solution = new Solution(Path.Combine(path, @"TestApp\TestApp.csproj"));
 				await solution.Parse();
 				TranspilerC.CompileSolution(solution, TranspilerC.TargetTypes.VCPP, Path.Combine(path, @"TestOutput\"));
 			}
-			//catch (Exception e)
-			//{
-			//	Console.WriteLine(e.Message);
-			//	Console.WriteLine(e.StackTrace);
-			//}
+			catch (Exception e)
+			{
+				Console.WriteLine(e.Message);
+				Console.WriteLine(e.StackTrace);
+			}
 		}
 	}
 }

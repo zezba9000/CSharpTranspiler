@@ -99,6 +99,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Agnostic\Member.cs" />
     <Compile Include="Agnostic\Types\MemberDeclarations\VariableDeclaration.cs" />
     <Compile Include="Agnostic\Types\MemberDeclarations\MethodDeclaration.cs" />
     <Compile Include="Agnostic\Types\MemberDeclarations\PropertyDeclaration.cs" />

@@ -10,8 +10,8 @@ namespace CSharpTranspiler.Agnostic.Types
 {
 	public class EnumType : ObjectType
 	{
-		public EnumType(EnumDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
-		: base(declarationSyntax, semanticModel)
+		public EnumType(EnumDeclarationSyntax declaration, SemanticModel semanticModel)
+		: base(declaration, semanticModel)
 		{
 		}
 	}

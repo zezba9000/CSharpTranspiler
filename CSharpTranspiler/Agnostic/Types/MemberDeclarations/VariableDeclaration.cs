@@ -8,26 +8,36 @@ using System.Threading.Tasks;
 
 namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 {
-	public class VariableDeclaration
+	public abstract class VariableDeclarationBase : Member
 	{
-		public string name, typeName, typeFullName, typeFullNameFlat;
-		public object constValue;
-		public TypeSyntax type;
-		public VariableDeclaratorSyntax declaration;
+		public bool isArray, isGeneric;
+		public string typeName, typeFullName, typeFullNameFlat;
 
-		public VariableDeclaration(TypeSyntax type, VariableDeclaratorSyntax declaration, SemanticModel semanticModel)
+		public VariableDeclarationBase(ITypeSymbol symbolType, SyntaxTokenList? modifiers, SyntaxList<AttributeListSyntax>? attributeList)
+		: base(modifiers, attributeList)
 		{
-			this.type = type;
-			this.declaration = declaration;
-			name = declaration.Identifier.ValueText;
-
-			// get type name
-			var symbol = (IFieldSymbol)semanticModel.GetDeclaredSymbol(declaration);
-			var symbolType = symbol.Type;
+			isArray = symbolType.Kind == SymbolKind.ArrayType;
 			typeName = Tools.GetFullTypeName(symbolType);
 			typeFullName = Tools.GetFullTypeName(symbolType);
 			typeFullNameFlat = Tools.GetFullTypeNameFlat(symbolType);
+		}
+	}
 
+	public class VariableDeclaration : VariableDeclarationBase
+	{
+		public VariableDeclaratorSyntax declaration;
+		public FieldDeclarationSyntax fieldDeclaration;
+
+		public string name;
+		public object constValue;
+
+		public VariableDeclaration(VariableDeclaratorSyntax declaration, FieldDeclarationSyntax fieldDeclaration, SemanticModel semanticModel)
+		: base(((IFieldSymbol)semanticModel.GetDeclaredSymbol(declaration)).Type, fieldDeclaration.Modifiers, fieldDeclaration.AttributeLists)
+		{
+			this.declaration = declaration;
+			this.fieldDeclaration = fieldDeclaration;
+			name = declaration.Identifier.ValueText;
+			
 			// get const value
 			if (declaration.Initializer != null && declaration.Initializer.Value != null)
 			{

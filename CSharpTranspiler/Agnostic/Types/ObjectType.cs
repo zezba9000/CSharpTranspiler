@@ -21,69 +21,29 @@ namespace CSharpTranspiler.Agnostic.Types
 		public bool isInterface;
 	}
 
-	public abstract class ObjectType
+	public abstract class ObjectType : Member
 	{
 		public List<BaseTypeDeclarationSyntax> declarationSyntaxes;
 
 		public string name, fullName, fullNameFlat;
-		public List<Modifiers> modifiers;
 		public List<BaseObject> baseObjects;
 		
-		public ObjectType(BaseTypeDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
+		public ObjectType(BaseTypeDeclarationSyntax declaration, SemanticModel semanticModel)
+		: base(declaration.Modifiers, declaration.AttributeLists)
 		{
 			// get name
-			var symbol = semanticModel.GetDeclaredSymbol(declarationSyntax);
+			var symbol = semanticModel.GetDeclaredSymbol(declaration);
 			name = Tools.GetTypeName(symbol);
 			fullName = Tools.GetFullTypeName(symbol);
 			fullNameFlat = Tools.GetFullTypeNameFlat(symbol);
 
 			// add current declaration
 			declarationSyntaxes = new List<BaseTypeDeclarationSyntax>();
-			declarationSyntaxes.Add(declarationSyntax);
-
-			// parse modifiers
-			modifiers = new List<Modifiers>();
-			AddModifiers(declarationSyntax);
+			declarationSyntaxes.Add(declaration);
 
 			// parse base types
 			baseObjects = new List<BaseObject>();
-			AddBaseObjects(declarationSyntax, semanticModel);
-		}
-
-		private void AddModifiers(BaseTypeDeclarationSyntax declarationSyntax)
-		{
-			foreach (var modifier in declarationSyntax.Modifiers)
-			{
-				var kind = modifier.Kind();
-				Modifiers newModifier;
-				switch (kind)
-				{
-					// access
-					case SyntaxKind.PublicKeyword: newModifier = Modifiers.Public; break;
-					case SyntaxKind.PrivateKeyword: newModifier = Modifiers.Private; break;
-					case SyntaxKind.InternalKeyword: newModifier = Modifiers.Internal; break;
-					case SyntaxKind.ProtectedKeyword: newModifier = Modifiers.Protected; break;
-
-					// other
-					case SyntaxKind.AbstractKeyword: newModifier = Modifiers.Abstract; break;
-					case SyntaxKind.ConstKeyword: newModifier = Modifiers.Const; break;
-					case SyntaxKind.EventKeyword: newModifier = Modifiers.Event; break;
-					case SyntaxKind.ExternKeyword: newModifier = Modifiers.Extern; break;
-					case SyntaxKind.NewKeyword: newModifier = Modifiers.New; break;
-					case SyntaxKind.OverrideKeyword: newModifier = Modifiers.Override; break;
-					case SyntaxKind.PartialKeyword: newModifier = Modifiers.Partial; break;
-					case SyntaxKind.ReadOnlyKeyword: newModifier = Modifiers.ReadOnly; break;
-					case SyntaxKind.SealedKeyword: newModifier = Modifiers.Sealed; break;
-					case SyntaxKind.StaticKeyword: newModifier = Modifiers.Static; break;
-					case SyntaxKind.UnsafeKeyword: newModifier = Modifiers.Unsafe; break;
-					case SyntaxKind.VirtualKeyword: newModifier = Modifiers.Virtual; break;
-					case SyntaxKind.VolatileKeyword: newModifier = Modifiers.Volatile; break;
-
-					default: throw new Exception("Unsuported modifier: " + kind);
-				}
-
-				if (!modifiers.Contains(newModifier)) modifiers.Add(newModifier);
-			}
+			AddBaseObjects(declaration, semanticModel);
 		}
 
 		private void AddBaseObjects(BaseTypeDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
@@ -113,7 +73,7 @@ namespace CSharpTranspiler.Agnostic.Types
 			if (declarationSyntaxes.Contains(declarationSyntax)) throw new Exception("Error: Partial already merged!");
 			declarationSyntaxes.Add(declarationSyntax);
 			
-			AddModifiers(declarationSyntax);
+			AddModifiers(declarationSyntax.Modifiers);
 			AddBaseObjects(declarationSyntax, semanticModel);
 		}
 	}
