@@ -116,8 +116,15 @@ namespace CSharpTranspiler.Transpilers
 		private static void WriteObjectMethodDeclare(ObjectType obj, MethodDeclaration method, StreamWriter writer)
 		{
 			// write return type
-			if (method.returnType.isValueType) writer.Write(string.Format("{0} {1}(", method.returnType.typeFullNameFlat, method.fullNameFlat));
-			else writer.Write(string.Format("{0}* {1}(", method.returnType.typeFullNameFlat, method.fullNameFlat));
+			if (method.returnType.isArray)
+			{
+				writer.Write(string.Format("System_Array* {0}(", method.fullNameFlat));
+			}
+			else
+			{
+				if (method.returnType.isValueType) writer.Write(string.Format("{0} {1}(", method.returnType.typeFullNameFlat, method.fullNameFlat));
+				else writer.Write(string.Format("{0}* {1}(", method.returnType.typeFullNameFlat, method.fullNameFlat));
+			}
 
 			// if method and object are not static pass "this" ref
 			if (!obj.isStatic && !method.isStatic) writer.Write(string.Format("{0} *this, ", obj.fullNameFlat));
@@ -127,8 +134,16 @@ namespace CSharpTranspiler.Transpilers
 			for (int i = 0; i != count; ++i)
 			{
 				var parameter = method.parameters[i];
-				if (parameter.isValueType) writer.Write(string.Format("{0} {1}", parameter.typeFullNameFlat, parameter.name));
-				else writer.Write(string.Format("{0} *{1}", parameter.typeFullNameFlat, parameter.name));// TODO: this needs to use a System_Array type
+				if (parameter.isArray)
+				{
+					writer.Write(string.Format("System_Array* {0}", parameter.name));
+				}
+				else
+				{
+					if (parameter.isValueType) writer.Write(string.Format("{0} {1}", parameter.typeFullNameFlat, parameter.name));
+					else writer.Write(string.Format("{0}* {1}", parameter.typeFullNameFlat, parameter.name));
+				}
+
 				if (i != count-1) writer.Write(", ");
 			}
 

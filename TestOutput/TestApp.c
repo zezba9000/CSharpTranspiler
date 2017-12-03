@@ -30,14 +30,14 @@ struct TestApp_C_B_Program
 	System_Int32 i2;
 };
 
-System_Void TestApp_C_B_Program_Main(System_String *args);
-TestApp_Blaa_A2* TestApp_C_B_Program_Foo(TestApp_C_B_Program *this, System_Int32 hi, System_String *by);
+System_Void TestApp_C_B_Program_Main(System_Array* args);
+TestApp_Blaa_A2* TestApp_C_B_Program_Foo(TestApp_C_B_Program *this, System_Int32 hi, System_String* by);
 
-System_Void TestApp_C_B_Program_Main(System_String *args)
+System_Void TestApp_C_B_Program_Main(System_Array* args)
 {
 }
 
-TestApp_Blaa_A2* TestApp_C_B_Program_Foo(TestApp_C_B_Program *this, System_Int32 hi, System_String *by)
+TestApp_Blaa_A2* TestApp_C_B_Program_Foo(TestApp_C_B_Program *this, System_Int32 hi, System_String* by)
 {
 }
 
