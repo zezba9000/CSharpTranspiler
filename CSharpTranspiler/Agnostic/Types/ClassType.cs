@@ -6,14 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSharpTranspiler.Types
+namespace CSharpTranspiler.Agnostic.Types
 {
-	public class StructType : LogicalType
+	public class ClassType : LogicalType
 	{
-		public StructType(StructDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
+		public ClassType(ClassDeclarationSyntax declarationSyntax, SemanticModel semanticModel)
 		: base(declarationSyntax, semanticModel)
 		{
-
+			
 		}
 	}
 }

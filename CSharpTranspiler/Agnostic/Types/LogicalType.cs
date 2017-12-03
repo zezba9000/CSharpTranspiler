@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using CSharpTranspiler.Types.MemberDeclarations;
+using CSharpTranspiler.Agnostic.Types.MemberDeclarations;
 
-namespace CSharpTranspiler.Types
+namespace CSharpTranspiler.Agnostic.Types
 {
 	public abstract class LogicalType : ObjectType
 	{

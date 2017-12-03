@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace CSharpTranspiler
+namespace CSharpTranspiler.Agnostic
 {
 	public static class Tools
 	{

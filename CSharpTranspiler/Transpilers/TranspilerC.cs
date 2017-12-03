@@ -1,4 +1,5 @@
-﻿using CSharpTranspiler.Types;
+﻿using CSharpTranspiler.Agnostic;
+using CSharpTranspiler.Agnostic.Types;
 using System;
 using System.Collections.Generic;
 using System.IO;

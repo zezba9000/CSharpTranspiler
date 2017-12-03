@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis;
 
-namespace CSharpTranspiler.Types
+namespace CSharpTranspiler.Agnostic.Types
 {
 	public class EnumType : ObjectType
 	{

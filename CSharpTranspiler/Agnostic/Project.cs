@@ -1,4 +1,4 @@
-﻿using CSharpTranspiler.Types;
+﻿using CSharpTranspiler.Agnostic.Types;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace CSharpTranspiler
+namespace CSharpTranspiler.Agnostic
 {
 	public enum ProjectTypes
 	{

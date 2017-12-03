@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSharpTranspiler.Types.MemberDeclarations
+namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 {
 	public class VariableDeclaration
 	{

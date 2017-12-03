@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 using System.IO;
 
 using Microsoft.CodeAnalysis.CSharp.Extensions;
-using CSharpTranspiler.Syntax;
+using CSharpTranspiler.Agnostic.Syntax;
 
-namespace CSharpTranspiler.Types
+namespace CSharpTranspiler.Agnostic.Types
 {
 	public class BaseObject
 	{

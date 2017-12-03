@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSharpTranspiler.Types.MemberDeclarations
+namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 {
-	public class PropertyDeclaration
+	public class MethodDeclaration
 	{
-		public PropertyDeclarationSyntax declaration;
+		public MethodDeclarationSyntax declaration;
 	}
 }
