@@ -27,7 +27,7 @@ struct TestApp_C_B_Program
 {
 	TestApp_Blaa_A2 *a;
 	System_Int32 i;
-	System_Int32 i2;
+	System_Int32 _i2;
 };
 
 System_Void TestApp_C_B_Program_Main(System_Array* args);

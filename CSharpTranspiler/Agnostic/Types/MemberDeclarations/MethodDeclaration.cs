@@ -14,7 +14,7 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 		public ParameterSyntax syntax;
 
 		public string name;
-		//public object constValue;// Not supported in C# 3
+		//public object defaultValue;// Not supported in C# 3
 
 		public MethodParameter(ParameterSyntax syntax, SemanticModel semanticModel)
 		: base(semanticModel.GetDeclaredSymbol(syntax).Type, syntax.Modifiers, syntax.AttributeLists)
@@ -22,11 +22,11 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 			this.syntax = syntax;
 			name = syntax.Identifier.ValueText;
 			
-			// get const value (Not supported in C# 3)
+			// get default value (Not supported in C# 3)
 			/*if (declaration.Default != null && declaration.Default.Value != null)
 			{
 				var value = semanticModel.GetConstantValue(declaration.Default.Value);
-				constValue = value.HasValue ? value.Value : null;
+				defaultValue = value.HasValue ? value.Value : null;
 			}*/
 		}
 	}

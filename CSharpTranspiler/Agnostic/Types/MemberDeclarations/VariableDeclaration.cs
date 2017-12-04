@@ -30,7 +30,7 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 		public FieldDeclarationSyntax fieldDeclaration;
 
 		public string name;
-		public object constValue;
+		public object initializedValue;
 
 		public VariableDeclaration(VariableDeclaratorSyntax declaration, FieldDeclarationSyntax fieldDeclaration, SemanticModel semanticModel)
 		: base(((IFieldSymbol)semanticModel.GetDeclaredSymbol(declaration)).Type, fieldDeclaration.Modifiers, fieldDeclaration.AttributeLists)
@@ -39,11 +39,11 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 			this.fieldDeclaration = fieldDeclaration;
 			name = declaration.Identifier.ValueText;
 			
-			// get const value
+			// get initialized value
 			if (declaration.Initializer != null && declaration.Initializer.Value != null)
 			{
 				var value = semanticModel.GetConstantValue(declaration.Initializer.Value);
-				constValue = value.HasValue ? value.Value : null;
+				initializedValue = value.HasValue ? value.Value : null;
 			}
 		}
 	}

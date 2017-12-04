@@ -22,7 +22,16 @@ namespace TestApp.C
 
 		public partial class Program : MyTestLibClass, Blaa.MyInterface
 		{
-			static int i = 123, i2 = 22;
+			static int i = 123;
+
+			static int _i2 = 22;
+			static int i2
+			{
+				get {return _i2;}
+				set {_i2 = value;}
+			}
+
+			static int i3 {get; set;}
 		}
 	}
 }

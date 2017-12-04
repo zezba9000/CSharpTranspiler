@@ -41,7 +41,7 @@ namespace CSharpTranspiler.Agnostic.Types
 			declarationSyntaxes = new List<BaseTypeDeclarationSyntax>();
 			declarationSyntaxes.Add(declaration);
 
-			// parse base types
+			// parse base types (TODO: link to actual ObjectTypes even if contained in reference project)
 			baseObjects = new List<BaseObject>();
 			AddBaseObjects(declaration, semanticModel);
 		}

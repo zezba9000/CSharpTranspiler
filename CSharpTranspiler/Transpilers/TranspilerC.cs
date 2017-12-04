@@ -59,9 +59,20 @@ namespace CSharpTranspiler.Transpilers
 				foreach (var obj in project.structObjects) WriteObject(obj, writer);
 				foreach (var obj in project.classObjects) WriteObject(obj, writer);
 
+				// write object property forward declares
+				writer.WriteLine();
+				foreach (var obj in project.structObjects) WriteObjectPropertyDeclares(obj, writer);
+				foreach (var obj in project.classObjects) WriteObjectPropertyDeclares(obj, writer);
+
 				// write object method forward declares
+				writer.WriteLine();
 				foreach (var obj in project.structObjects) WriteObjectMethodDeclares(obj, writer);
 				foreach (var obj in project.classObjects) WriteObjectMethodDeclares(obj, writer);
+
+				// write object properties
+				writer.WriteLine();
+				foreach (var obj in project.structObjects) WriteObjectProperties(obj, writer);
+				foreach (var obj in project.classObjects) WriteObjectProperties(obj, writer);
 
 				// write object methods
 				writer.WriteLine();
@@ -108,6 +119,24 @@ namespace CSharpTranspiler.Transpilers
 				}
 			}
 			else if (type == typeof(EnumType))
+			{
+				// TODO
+			}
+		}
+
+		private static void WriteObjectPropertyDeclares(ObjectType obj, StreamWriter writer)
+		{
+			var logicalObj = (LogicalType)obj;
+			foreach (var property in logicalObj.properties)
+			{
+				// TODO
+			}
+		}
+
+		private static void WriteObjectProperties(ObjectType obj, StreamWriter writer)
+		{
+			var logicalObj = (LogicalType)obj;
+			foreach (var property in logicalObj.properties)
 			{
 				// TODO
 			}
