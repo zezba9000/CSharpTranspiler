@@ -1,10 +1,10 @@
 ﻿namespace TestApp.Blaa
 {
-	enum MyEnum
+	enum MyEnum : long
 	{
-		A,
+		A = 33 - 32,
 		B,
-		C
+		C = 4
 	}
 
 	interface MyInterface

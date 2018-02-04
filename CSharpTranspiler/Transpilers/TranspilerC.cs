@@ -121,7 +121,14 @@ namespace CSharpTranspiler.Transpilers
 			}
 			else if (type == typeof(EnumType))
 			{
-				// TODO
+				var enumObj = (EnumType)obj;
+				foreach (var member in enumObj.members)
+				{
+					if (!member.valueIsExplicitlySet) writer.Write('\t' + member.name);
+					else writer.Write(string.Format("\t{0} = {1}", member.name, member.value));
+					if (member.name != enumObj.members[enumObj.members.Count-1].name) writer.WriteLine(',');
+					else writer.WriteLine();
+				}
 			}
 		}
 
@@ -144,7 +151,7 @@ namespace CSharpTranspiler.Transpilers
 			}
 
 			// if method and object are not static pass "this" ref
-			if (!obj.isStatic && !member.isStatic) writer.Write(string.Format("{0} *this, ", obj.fullNameFlat));
+			if (!obj.isStatic && !member.isStatic) writer.Write(string.Format("{0}* this, ", obj.fullNameFlat));
 
 			// write parameters
 			int count = paramerters.Length;
