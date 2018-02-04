@@ -76,7 +76,7 @@ namespace CSharpTranspiler.Transpilers
 				foreach (var obj in project.classObjects) WriteObjectProperties(obj, writer);
 
 				// write object methods
-				writer.WriteLine(string.Format("{0}// ============={0}// Methods{0}// =============", Environment.NewLine));
+				writer.WriteLine(string.Format("// ============={0}// Methods{0}// =============", Environment.NewLine));
 				foreach (var obj in project.structObjects) WriteObjectMethods(obj, writer);
 				foreach (var obj in project.classObjects) WriteObjectMethods(obj, writer);
 			}
@@ -196,8 +196,16 @@ namespace CSharpTranspiler.Transpilers
 			var logicalObj = (LogicalType)obj;
 			foreach (var property in logicalObj.properties)
 			{
-				// TODO
+				WriteObjectPropertyDeclare(obj, property, writer);
+				writer.WriteLine(Environment.NewLine + '{');
+				WriteObjectPropertyBody(property, writer);
+				writer.WriteLine('}' + Environment.NewLine);
 			}
+		}
+
+		private static void WriteObjectPropertyBody(PropertyDeclaration method, StreamWriter writer)
+		{
+			// TODO
 		}
 
 		private static void WriteObjectMethodDeclare(ObjectType obj, MethodDeclaration method, StreamWriter writer)
