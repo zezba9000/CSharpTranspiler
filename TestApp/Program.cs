@@ -31,7 +31,7 @@ namespace TestApp.C
 				set {_i2 = value;}
 			}
 
-			static int i3 {get; set;}
+			float i3 {get; set;}
 		}
 	}
 }

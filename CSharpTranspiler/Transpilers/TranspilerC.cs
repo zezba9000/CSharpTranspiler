@@ -125,12 +125,69 @@ namespace CSharpTranspiler.Transpilers
 			}
 		}
 
+		struct Parameter
+		{
+			public string name, typeFullNameFlat;
+			public bool isArray, isValueType;
+		}
+		private static void WriteParameterBasedDeclare(ObjectType obj, Member member, bool returnIsArray, bool returnIsValueType, string returnFullNameFlat, string fullNameFlat, Parameter[] paramerters, StreamWriter writer)
+		{
+			// write return type
+			if (returnIsArray)
+			{
+				writer.Write(string.Format("System_Array* {0}(", fullNameFlat));
+			}
+			else
+			{
+				if (returnIsValueType) writer.Write(string.Format("{0} {1}(", returnFullNameFlat, fullNameFlat));
+				else writer.Write(string.Format("{0}* {1}(", returnFullNameFlat, fullNameFlat));
+			}
+
+			// if method and object are not static pass "this" ref
+			if (!obj.isStatic && !member.isStatic) writer.Write(string.Format("{0} *this, ", obj.fullNameFlat));
+
+			// write parameters
+			int count = paramerters.Length;
+			for (int i = 0; i != count; ++i)
+			{
+				var parameter = paramerters[i];
+				if (parameter.isArray)
+				{
+					writer.Write(string.Format("System_Array* {0}", parameter.name));
+				}
+				else
+				{
+					if (parameter.isValueType) writer.Write(string.Format("{0} {1}", parameter.typeFullNameFlat, parameter.name));
+					else writer.Write(string.Format("{0}* {1}", parameter.typeFullNameFlat, parameter.name));
+				}
+
+				if (i != count-1) writer.Write(", ");
+			}
+
+			// finish
+			writer.Write(')');
+		}
+
+		private static void WriteObjectPropertyDeclare(ObjectType obj, PropertyDeclaration property, StreamWriter writer)
+		{
+			var parameters = new Parameter[1];
+			parameters[0] = new Parameter()
+			{
+				name = property.name,
+				typeFullNameFlat = property.typeFullNameFlat,
+				isArray = property.isArray,
+				isValueType = property.isValueType
+			};
+			WriteParameterBasedDeclare(obj, property, property.isArray, property.isValueType, property.typeFullNameFlat, property.fullNameFlat, parameters, writer);
+		}
+
 		private static void WriteObjectPropertyDeclares(ObjectType obj, StreamWriter writer)
 		{
 			var logicalObj = (LogicalType)obj;
 			foreach (var property in logicalObj.properties)
 			{
-				// TODO
+				WriteObjectPropertyDeclare(obj, property, writer);
+				writer.WriteLine(';');
 			}
 		}
 
@@ -145,39 +202,19 @@ namespace CSharpTranspiler.Transpilers
 
 		private static void WriteObjectMethodDeclare(ObjectType obj, MethodDeclaration method, StreamWriter writer)
 		{
-			// write return type
-			if (method.returnType.isArray)
-			{
-				writer.Write(string.Format("System_Array* {0}(", method.fullNameFlat));
-			}
-			else
-			{
-				if (method.returnType.isValueType) writer.Write(string.Format("{0} {1}(", method.returnType.typeFullNameFlat, method.fullNameFlat));
-				else writer.Write(string.Format("{0}* {1}(", method.returnType.typeFullNameFlat, method.fullNameFlat));
-			}
-
-			// if method and object are not static pass "this" ref
-			if (!obj.isStatic && !method.isStatic) writer.Write(string.Format("{0} *this, ", obj.fullNameFlat));
-
-			// write parameters
-			int count = method.parameters.Count;
-			for (int i = 0; i != count; ++i)
+			var parameters = new Parameter[method.parameters.Count];
+			for (int i = 0; i != method.parameters.Count; ++i)
 			{
 				var parameter = method.parameters[i];
-				if (parameter.isArray)
+				parameters[i] = new Parameter()
 				{
-					writer.Write(string.Format("System_Array* {0}", parameter.name));
-				}
-				else
-				{
-					if (parameter.isValueType) writer.Write(string.Format("{0} {1}", parameter.typeFullNameFlat, parameter.name));
-					else writer.Write(string.Format("{0}* {1}", parameter.typeFullNameFlat, parameter.name));
-				}
-
-				if (i != count-1) writer.Write(", ");
+					name = parameter.name,
+					typeFullNameFlat = parameter.typeFullNameFlat,
+					isArray = parameter.isArray,
+					isValueType = parameter.isValueType
+				};
 			}
-
-			writer.Write(')');
+			WriteParameterBasedDeclare(obj, method, method.returnType.isArray, method.returnType.isValueType, method.returnType.typeFullNameFlat, method.fullNameFlat, parameters, writer);
 		}
 
 		private static void WriteObjectMethodDeclares(ObjectType obj, StreamWriter writer)

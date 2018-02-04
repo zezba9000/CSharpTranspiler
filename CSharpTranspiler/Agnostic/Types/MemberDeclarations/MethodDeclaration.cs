@@ -56,8 +56,9 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 			this.declaration = declaration;
 
 			// get name
-			var symbol = semanticModel.GetDeclaredSymbol((BaseTypeDeclarationSyntax)declaration.Parent);
 			name = declaration.Identifier.ValueText;
+
+			var symbol = semanticModel.GetDeclaredSymbol((BaseTypeDeclarationSyntax)declaration.Parent);
 			fullName = Tools.GetFullTypeName(symbol) + '.' + name;
 			fullNameFlat = Tools.GetFullTypeNameFlat(symbol) + '_' + name;
 			

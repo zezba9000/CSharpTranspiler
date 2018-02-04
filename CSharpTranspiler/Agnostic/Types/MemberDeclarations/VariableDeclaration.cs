@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,7 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 		public VariableDeclaratorSyntax declaration;
 		public FieldDeclarationSyntax fieldDeclaration;
 
-		public string name;
+		public string name, fullName, fullNameFlat;
 		public object initializedValue;
 
 		public VariableDeclaration(VariableDeclaratorSyntax declaration, FieldDeclarationSyntax fieldDeclaration, SemanticModel semanticModel)
@@ -38,6 +39,10 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 			this.declaration = declaration;
 			this.fieldDeclaration = fieldDeclaration;
 			name = declaration.Identifier.ValueText;
+
+			var symbol = semanticModel.GetDeclaredSymbol((BaseTypeDeclarationSyntax)declaration.Parent.Parent.Parent);
+			fullName = Tools.GetFullTypeName(symbol) + '.' + name;
+			fullNameFlat = Tools.GetFullTypeNameFlat(symbol) + '_' + name;
 			
 			// get initialized value
 			if (declaration.Initializer != null && declaration.Initializer.Value != null)

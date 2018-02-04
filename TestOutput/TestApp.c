@@ -42,6 +42,8 @@ struct TestApp_C_B_Program
 // =============
 // Property forward declares
 // =============
+System_Int32 TestApp_C_B_Program_i2(System_Int32 i2);
+System_Single TestApp_C_B_Program_i3(TestApp_C_B_Program *this, System_Single i3);
 
 // =============
 // Method forward declares

@@ -13,7 +13,7 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 	{
 		public PropertyDeclarationSyntax declaration;
 
-		public string name;
+		public string name, fullName, fullNameFlat;
 		//public object initializedValue;// Not supported in C# 3
 
 		public PropertyDeclaration(PropertyDeclarationSyntax declaration, SemanticModel semanticModel)
@@ -21,6 +21,10 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 		{
 			this.declaration = declaration;
 			name = declaration.Identifier.ValueText;
+			
+			var symbol = semanticModel.GetDeclaredSymbol((BaseTypeDeclarationSyntax)declaration.Parent);
+			fullName = Tools.GetFullTypeName(symbol) + '.' + name;
+			fullNameFlat = Tools.GetFullTypeNameFlat(symbol) + '_' + name;
 			
 			// get initialized value (Not supported in C# 3)
 			/*if (declaration.Initializer != null && declaration.Initializer.Value != null)
