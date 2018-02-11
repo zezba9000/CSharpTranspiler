@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using CSharpTranspiler.Agnostic.Syntax;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
@@ -49,6 +50,7 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 		public string name, fullName, fullNameFlat;
 		public List<MethodParameter> parameters;
 		public MethodReturn returnType;
+		public LogicalBody body;
 
 		public MethodDeclaration(MethodDeclarationSyntax declaration, SemanticModel semanticModel)
 		: base(declaration.Modifiers, declaration.AttributeLists)
@@ -72,8 +74,8 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 			// parse return type
 			returnType = new MethodReturn(declaration.ReturnType, semanticModel);
 
-			// TODO: parse method body
-			//declaration.Body
+			// parse method body
+			body = new LogicalBody(declaration.Body);
 		}
 	}
 }

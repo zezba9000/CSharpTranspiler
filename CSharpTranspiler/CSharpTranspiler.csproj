@@ -102,6 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Agnostic\Member.cs" />
+    <Compile Include="Agnostic\Syntax\LogicalBody.cs" />
     <Compile Include="Agnostic\Types\MemberDeclarations\VariableDeclaration.cs" />
     <Compile Include="Agnostic\Types\MemberDeclarations\MethodDeclaration.cs" />
     <Compile Include="Agnostic\Types\MemberDeclarations\PropertyDeclaration.cs" />

@@ -5,7 +5,7 @@ namespace TestApp.C
 {
 	class B
 	{
-		partial class Program : Blaa.MyInterface
+		partial class Program : MyInterface
 		{
 			static A2 a = null;
 
@@ -32,6 +32,24 @@ namespace TestApp.C
 			}
 
 			float i3 {get; set;}
+			public float i4 {private get; set;}
+			public float i5 {get; private set;}
+			
+			public float i6
+			{
+				get
+				{
+					return 1.1f;
+				}
+			}
+
+			public float i7
+			{
+				set
+				{
+					i2 = (int)value;
+				}
+			}
 		}
 	}
 }

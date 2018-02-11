@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using CSharpTranspiler.Agnostic.Syntax;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
@@ -15,6 +16,7 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 
 		public string name, fullName, fullNameFlat;
 		//public object initializedValue;// Not supported in C# 3
+		public LogicalBody getBody, setBody;
 
 		public PropertyDeclaration(PropertyDeclarationSyntax declaration, SemanticModel semanticModel)
 		: base((semanticModel.GetDeclaredSymbol(declaration)).Type, declaration.Modifiers, declaration.AttributeLists)
@@ -38,11 +40,11 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 			{
 				if (accessor.Keyword.IsKind(SyntaxKind.GetKeyword))
 				{
-					// TODO: parse body
+					getBody = new LogicalBody(accessor.Body);
 				}
 				else if (accessor.Keyword.IsKind(SyntaxKind.SetKeyword))
 				{
-					// TODO: parse body
+					setBody = new LogicalBody(accessor.Body);
 				}
 				else
 				{

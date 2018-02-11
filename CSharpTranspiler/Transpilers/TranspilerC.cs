@@ -1,4 +1,5 @@
 ﻿using CSharpTranspiler.Agnostic;
+using CSharpTranspiler.Agnostic.Syntax;
 using CSharpTranspiler.Agnostic.Types;
 using CSharpTranspiler.Agnostic.Types.MemberDeclarations;
 using System;
@@ -151,41 +152,51 @@ namespace CSharpTranspiler.Transpilers
 			}
 
 			// if method and object are not static pass "this" ref
-			if (!obj.isStatic && !member.isStatic) writer.Write(string.Format("{0}* this, ", obj.fullNameFlat));
+			if (!obj.isStatic && !member.isStatic) writer.Write(string.Format("{0}* this{1}", obj.fullNameFlat, (paramerters != null && paramerters.Length != 0) ? ", " : ""));
 
 			// write parameters
-			int count = paramerters.Length;
-			for (int i = 0; i != count; ++i)
+			if (paramerters != null)
 			{
-				var parameter = paramerters[i];
-				if (parameter.isArray)
+				int count = paramerters.Length;
+				for (int i = 0; i != count; ++i)
 				{
-					writer.Write(string.Format("System_Array* {0}", parameter.name));
-				}
-				else
-				{
-					if (parameter.isValueType) writer.Write(string.Format("{0} {1}", parameter.typeFullNameFlat, parameter.name));
-					else writer.Write(string.Format("{0}* {1}", parameter.typeFullNameFlat, parameter.name));
-				}
+					var parameter = paramerters[i];
+					if (parameter.isArray)
+					{
+						writer.Write(string.Format("System_Array* {0}", parameter.name));
+					}
+					else
+					{
+						if (parameter.isValueType) writer.Write(string.Format("{0} {1}", parameter.typeFullNameFlat, parameter.name));
+						else writer.Write(string.Format("{0}* {1}", parameter.typeFullNameFlat, parameter.name));
+					}
 
-				if (i != count-1) writer.Write(", ");
+					if (i != count-1) writer.Write(", ");
+				}
 			}
 
 			// finish
 			writer.Write(')');
 		}
 
-		private static void WriteObjectPropertyDeclare(ObjectType obj, PropertyDeclaration property, StreamWriter writer)
+		private static void WriteObjectPropertyDeclare(ObjectType obj, PropertyDeclaration property, StreamWriter writer, bool isGet)
 		{
-			var parameters = new Parameter[1];
-			parameters[0] = new Parameter()
+			if (isGet)
 			{
-				name = property.name,
-				typeFullNameFlat = property.typeFullNameFlat,
-				isArray = property.isArray,
-				isValueType = property.isValueType
-			};
-			WriteParameterBasedDeclare(obj, property, property.isArray, property.isValueType, property.typeFullNameFlat, property.fullNameFlat, parameters, writer);
+				WriteParameterBasedDeclare(obj, property, property.isArray, property.isValueType, property.typeFullNameFlat, property.fullNameFlat + "_get", null, writer);
+			}
+			else
+			{
+				var parameters = new Parameter[1];
+				parameters[0] = new Parameter()
+				{
+					name = property.name,
+					typeFullNameFlat = property.typeFullNameFlat,
+					isArray = property.isArray,
+					isValueType = property.isValueType
+				};
+				WriteParameterBasedDeclare(obj, property, property.isArray, property.isValueType, "void", property.fullNameFlat + "_set", parameters, writer);
+			}
 		}
 
 		private static void WriteObjectPropertyDeclares(ObjectType obj, StreamWriter writer)
@@ -193,8 +204,17 @@ namespace CSharpTranspiler.Transpilers
 			var logicalObj = (LogicalType)obj;
 			foreach (var property in logicalObj.properties)
 			{
-				WriteObjectPropertyDeclare(obj, property, writer);
-				writer.WriteLine(';');
+				if (property.getBody != null)
+				{
+					WriteObjectPropertyDeclare(obj, property, writer, true);
+					writer.WriteLine(';');
+				}
+
+				if (property.setBody != null)
+				{
+					WriteObjectPropertyDeclare(obj, property, writer, false);
+					writer.WriteLine(';');
+				}
 			}
 		}
 
@@ -203,14 +223,25 @@ namespace CSharpTranspiler.Transpilers
 			var logicalObj = (LogicalType)obj;
 			foreach (var property in logicalObj.properties)
 			{
-				WriteObjectPropertyDeclare(obj, property, writer);
-				writer.WriteLine(Environment.NewLine + '{');
-				WriteObjectPropertyBody(property, writer);
-				writer.WriteLine('}' + Environment.NewLine);
+				if (property.getBody != null)
+				{
+					WriteObjectPropertyDeclare(obj, property, writer, true);
+					writer.WriteLine(Environment.NewLine + '{');
+					WriteObjectPropertyBody(property, writer, property.getBody);
+					writer.WriteLine('}' + Environment.NewLine);
+				}
+
+				if (property.setBody != null)
+				{
+					WriteObjectPropertyDeclare(obj, property, writer, false);
+					writer.WriteLine(Environment.NewLine + '{');
+					WriteObjectPropertyBody(property, writer, property.setBody);
+					writer.WriteLine('}' + Environment.NewLine);
+				}
 			}
 		}
 
-		private static void WriteObjectPropertyBody(PropertyDeclaration method, StreamWriter writer)
+		private static void WriteObjectPropertyBody(PropertyDeclaration method, StreamWriter writer, LogicalBody body)
 		{
 			// TODO
 		}
