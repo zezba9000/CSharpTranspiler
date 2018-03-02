@@ -15,8 +15,8 @@ namespace CSharpTranspiler.Agnostic.Types
 		public List<PropertyDeclaration> properties;
 		public List<MethodDeclaration> methods;
 		
-		public LogicalType(TypeDeclarationSyntax declaration, SemanticModel semanticModel)
-		: base(declaration, semanticModel)
+		public LogicalType(Project project, TypeDeclarationSyntax declaration, SemanticModel semanticModel)
+		: base(project, declaration, semanticModel)
 		{
 			variables = new List<VariableDeclaration>();
 			properties = new List<PropertyDeclaration>();
@@ -40,18 +40,18 @@ namespace CSharpTranspiler.Agnostic.Types
 					var field = (FieldDeclarationSyntax)member;
 					foreach (var variable in field.Declaration.Variables)
 					{
-						variables.Add(new VariableDeclaration(variable, field, semanticModel));
+						variables.Add(new VariableDeclaration(this, variable, field, semanticModel));
 					}
 				}
 				else if (type == typeof(PropertyDeclarationSyntax))
 				{
 					var property = (PropertyDeclarationSyntax)member;
-					properties.Add(new PropertyDeclaration(property, semanticModel));
+					properties.Add(new PropertyDeclaration(this, property, semanticModel));
 				}
 				else if (type == typeof(MethodDeclarationSyntax))
 				{
 					var method = (MethodDeclarationSyntax)member;
-					methods.Add(new MethodDeclaration(method, semanticModel));
+					methods.Add(new MethodDeclaration(this, method, semanticModel));
 				}
 			}
 		}

@@ -11,9 +11,11 @@ namespace CSharpTranspiler.Agnostic.Syntax
 	public class LogicalBody
 	{
 		public BlockSyntax block;
+		public Member member;
 
-		public LogicalBody(BlockSyntax block)
+		public LogicalBody(Member member, BlockSyntax block)
 		{
+			this.member = member;
 			this.block = block;
 		}
 	}

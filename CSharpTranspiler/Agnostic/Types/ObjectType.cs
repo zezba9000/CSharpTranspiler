@@ -16,21 +16,59 @@ namespace CSharpTranspiler.Agnostic.Types
 	public class BaseObject
 	{
 		public BaseTypeSyntax baseType;
+
+		public ObjectType childObjectType;
 		public TypeInfo typeInfo;
-		public string fullName;
-		public bool isInterface;
+		public string name, fullName, fullNameFlat;
+
+		public bool isPrimitive;
+		public ObjectType objectType;
+
+		public BaseObject(ObjectType childObjectType, BaseTypeSyntax baseType, SemanticModel semanticModel)
+		{
+			this.childObjectType = childObjectType;
+			this.baseType = baseType;
+
+			typeInfo = semanticModel.GetTypeInfo(baseType.Type);
+			var symbol = typeInfo.Type;
+			name = Tools.GetTypeName(symbol);
+			fullName = Tools.GetFullTypeName(symbol);
+			fullNameFlat = Tools.GetFullTypeNameFlat(symbol);
+
+			isPrimitive = symbol.SpecialType != SpecialType.None;
+		}
+
+		public void Resolve()
+		{
+			if (isPrimitive) return;
+
+			foreach (var project in childObjectType.project.solution.projects)
+			foreach (var obj in project.allObjects)
+			{
+				if (obj.fullName == fullName)
+				{
+					objectType = obj;
+					return;
+				}
+			}
+
+			throw new Exception("Failed to resolve base type: " + fullName);
+		}
 	}
 
 	public abstract class ObjectType : Member
 	{
 		public List<BaseTypeDeclarationSyntax> declarationSyntaxes;
-
+		
+		public Project project;
 		public string name, fullName, fullNameFlat;
 		public List<BaseObject> baseObjects;
 		
-		public ObjectType(BaseTypeDeclarationSyntax declaration, SemanticModel semanticModel)
+		public ObjectType(Project project, BaseTypeDeclarationSyntax declaration, SemanticModel semanticModel)
 		: base(declaration.Modifiers, declaration.AttributeLists)
 		{
+			this.project = project;
+
 			// get name
 			var symbol = semanticModel.GetDeclaredSymbol(declaration);
 			name = Tools.GetTypeName(symbol);
@@ -41,7 +79,7 @@ namespace CSharpTranspiler.Agnostic.Types
 			declarationSyntaxes = new List<BaseTypeDeclarationSyntax>();
 			declarationSyntaxes.Add(declaration);
 
-			// parse base types (TODO: link to actual ObjectTypes even if contained in reference project)
+			// add base types
 			baseObjects = new List<BaseObject>();
 			AddBaseObjects(declaration, semanticModel);
 		}
@@ -55,14 +93,7 @@ namespace CSharpTranspiler.Agnostic.Types
 				var typeSymbol = typeInfo.Type;
 				if (!baseObjects.Exists(x => x.typeInfo.Type == typeSymbol))
 				{
-					var obj = new BaseObject()
-					{
-						baseType = baseType,
-						typeInfo = typeInfo,
-						fullName = Tools.GetFullTypeName(typeSymbol),
-						isInterface = typeSymbol.TypeKind == TypeKind.Interface
-					};
-					
+					var obj = new BaseObject(this, baseType, semanticModel);
 					baseObjects.Add(obj);
 				}
 			}
@@ -75,6 +106,15 @@ namespace CSharpTranspiler.Agnostic.Types
 			
 			AddModifiers(declarationSyntax.Modifiers);
 			AddBaseObjects(declarationSyntax, semanticModel);
+		}
+
+		public void Resolve()
+		{
+			// parse base types
+			foreach (var baseObject in baseObjects)
+			{
+				baseObject.Resolve();
+			}
 		}
 	}
 }

@@ -8,15 +8,24 @@
 // Type forward declares
 // =============
 enum TestApp_Blaa_MyEnum;
+enum TestApp_Blaa_MyEnumDefault;
 struct TestApp_Blaa_MyInterface;
 struct TestApp_Blaa_A2;
+struct TestApp_C_MyBase;
 struct TestApp_C_B;
 struct TestApp_C_B_Program;
 
 // =============
 // Types Definitions
 // =============
-enum TestApp_Blaa_MyEnum
+enum TestApp_Blaa_MyEnum : System_Int64
+{
+	A = 1,
+	B,
+	C = 4
+};
+
+enum TestApp_Blaa_MyEnumDefault
 {
 	A = 1,
 	B,
@@ -31,12 +40,18 @@ struct TestApp_Blaa_A2
 {
 };
 
+struct TestApp_C_MyBase
+{
+	System_Int32 baseInt;
+};
+
 struct TestApp_C_B
 {
 };
 
 struct TestApp_C_B_Program
 {
+	System_Int32 baseInt;
 	TestApp_Blaa_A2* a;
 	System_Int32 i;
 	System_Int32 _i2;

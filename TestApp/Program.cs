@@ -3,6 +3,11 @@ using TestLib;
 
 namespace TestApp.C
 {
+	class MyBase// : MyTestLibClass
+	{
+		int baseInt;
+	}
+
 	class B
 	{
 		partial class Program : MyInterface
@@ -20,7 +25,7 @@ namespace TestApp.C
 			}
 		}
 
-		public partial class Program : MyTestLibClass, Blaa.MyInterface
+		public partial class Program : MyBase, Blaa.MyInterface
 		{
 			static int i = 123;
 

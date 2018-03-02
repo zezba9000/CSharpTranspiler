@@ -26,8 +26,8 @@ namespace CSharpTranspiler.Agnostic.Types
 	{
 		public List<EnumMember> members;
 
-		public EnumType(EnumDeclarationSyntax declaration, SemanticModel semanticModel)
-		: base(declaration, semanticModel)
+		public EnumType(Project project, EnumDeclarationSyntax declaration, SemanticModel semanticModel)
+		: base(project, declaration, semanticModel)
 		{
 			members = new List<EnumMember>();
 			object currentValue = 0;

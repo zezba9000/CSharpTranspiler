@@ -14,12 +14,14 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 	{
 		public ParameterSyntax syntax;
 
+		public MethodDeclaration method;
 		public string name;
 		//public object defaultValue;// Not supported in C# 3
 
-		public MethodParameter(ParameterSyntax syntax, SemanticModel semanticModel)
+		public MethodParameter(MethodDeclaration method, ParameterSyntax syntax, SemanticModel semanticModel)
 		: base(semanticModel.GetDeclaredSymbol(syntax).Type, syntax.Modifiers, syntax.AttributeLists)
 		{
+			this.method = method;
 			this.syntax = syntax;
 			name = syntax.Identifier.ValueText;
 			
@@ -47,19 +49,20 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 	{
 		public MethodDeclarationSyntax declaration;
 		
+		public ObjectType objectType;
 		public string name, fullName, fullNameFlat;
 		public List<MethodParameter> parameters;
 		public MethodReturn returnType;
 		public LogicalBody body;
 
-		public MethodDeclaration(MethodDeclarationSyntax declaration, SemanticModel semanticModel)
+		public MethodDeclaration(ObjectType objectType, MethodDeclarationSyntax declaration, SemanticModel semanticModel)
 		: base(declaration.Modifiers, declaration.AttributeLists)
 		{
+			this.objectType = objectType;
 			this.declaration = declaration;
 
 			// get name
 			name = declaration.Identifier.ValueText;
-
 			var symbol = semanticModel.GetDeclaredSymbol((BaseTypeDeclarationSyntax)declaration.Parent);
 			fullName = Tools.GetFullTypeName(symbol) + '.' + name;
 			fullNameFlat = Tools.GetFullTypeNameFlat(symbol) + '_' + name;
@@ -68,14 +71,14 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 			parameters = new List<MethodParameter>();
 			foreach (var parameter in declaration.ParameterList.Parameters)
 			{
-				parameters.Add(new MethodParameter(parameter, semanticModel));
+				parameters.Add(new MethodParameter(this, parameter, semanticModel));
 			}
 
 			// parse return type
 			returnType = new MethodReturn(declaration.ReturnType, semanticModel);
 
 			// parse method body
-			body = new LogicalBody(declaration.Body);
+			body = new LogicalBody(this, declaration.Body);
 		}
 	}
 }

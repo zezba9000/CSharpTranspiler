@@ -101,7 +101,16 @@ namespace CSharpTranspiler.Transpilers
 			else throw new Exception("CompileObjectDefinition: Unsuported type: " + type);
 
 			// write type
-			writer.WriteLine(string.Format("{0} {1}", typeName, obj.fullNameFlat));
+			writer.Write(string.Format("{0} {1}", typeName, obj.fullNameFlat));
+			if (type == typeof(EnumType))
+			{
+				if (obj.baseObjects.Count != 0) writer.WriteLine(" : " + obj.baseObjects[0].fullNameFlat);
+				else writer.WriteLine();
+			}
+			else
+			{
+				writer.WriteLine();
+			}
 
 			// write body
 			writer.WriteLine('{');
@@ -109,16 +118,27 @@ namespace CSharpTranspiler.Transpilers
 			writer.WriteLine("};" + Environment.NewLine);
 		}
 
+		private static void WriteObjectBodyVariables(LogicalType logicalObj, StreamWriter writer)
+		{
+			// write base fields first
+			foreach (var baseObj in logicalObj.baseObjects)
+			{
+				WriteObjectBodyVariables((LogicalType)baseObj.objectType, writer);
+			}
+
+			// write fields
+			foreach (var variable in logicalObj.variables)
+			{
+				if (variable.isValueType) writer.WriteLine(string.Format("\t{0} {1};", variable.typeFullNameFlat, variable.name));
+				else writer.WriteLine(string.Format("\t{0}* {1};", variable.typeFullNameFlat, variable.name));
+			}
+		}
+
 		private static void WriteObjectBody(ObjectType obj, Type type, StreamWriter writer)
 		{
 			if (type.IsSubclassOf(typeof(LogicalType)))
 			{
-				var logicalObj = (LogicalType)obj;
-				foreach (var variable in logicalObj.variables)
-				{
-					if (variable.isValueType) writer.WriteLine(string.Format("\t{0} {1};", variable.typeFullNameFlat, variable.name));
-					else writer.WriteLine(string.Format("\t{0}* {1};", variable.typeFullNameFlat, variable.name));
-				}
+				WriteObjectBodyVariables((LogicalType)obj, writer);
 			}
 			else if (type == typeof(EnumType))
 			{

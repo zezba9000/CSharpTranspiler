@@ -10,8 +10,8 @@ namespace CSharpTranspiler.Agnostic.Types
 {
 	public class StructType : LogicalType
 	{
-		public StructType(StructDeclarationSyntax declaration, SemanticModel semanticModel)
-		: base(declaration, semanticModel)
+		public StructType(Project project, StructDeclarationSyntax declaration, SemanticModel semanticModel)
+		: base(project, declaration, semanticModel)
 		{
 
 		}

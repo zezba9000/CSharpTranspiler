@@ -19,6 +19,7 @@ namespace CSharpTranspiler.Agnostic
 
 	public class Project
 	{
+		public Solution solution;
 		public Microsoft.CodeAnalysis.Project project;
 
 		public ProjectTypes type;
@@ -32,15 +33,16 @@ namespace CSharpTranspiler.Agnostic
 		public List<InterfaceType> interfaceObjects;
 		public List<EnumType> enumObjects;
 
-		public Project(string filename)
+		public Project(Solution solution, Microsoft.CodeAnalysis.Project project)
 		{
-			this.filename = filename;
+			this.solution = solution;
+			this.project = project;
+			this.filename = project.FilePath;
 		}
 
-		public async Task Parse(Microsoft.CodeAnalysis.Project project)
+		public async Task Parse()
 		{
 			// init main objects
-			this.project = project;
 			assemblyName = project.AssemblyName;
 			allObjects = new List<ObjectType>();
 			classObjects = new List<ClassType>();
@@ -83,11 +85,17 @@ namespace CSharpTranspiler.Agnostic
 				AddObjects(syntaxTree.GetRoot().ChildNodes(), syntaxTree, semanticModel);
 			}
 
-			// all objects to all list
+			// add all objects to all list
 			allObjects.AddRange(enumObjects);
 			allObjects.AddRange(interfaceObjects);
 			allObjects.AddRange(structObjects);
 			allObjects.AddRange(classObjects);
+
+			// resolve objects
+			foreach (var obj in allObjects)
+			{
+				obj.Resolve();
+			}
 		}
 
 		private bool DoesPartialObjectExist(string fullName, out ObjectType objBase)
@@ -143,7 +151,7 @@ namespace CSharpTranspiler.Agnostic
 					void AddObjectCallback()
 					{
 						string name = classNode.Identifier.ValueText;
-						classObjects.Add(new ClassType(classNode, semanticModel));
+						classObjects.Add(new ClassType(this, classNode, semanticModel));
 					}
 
 					AddObject(classNode, syntaxTree, semanticModel, classNode.Modifiers, AddObjectCallback);
@@ -154,7 +162,7 @@ namespace CSharpTranspiler.Agnostic
 					void AddObjectCallback()
 					{
 						string name = structNode.Identifier.ValueText;
-						structObjects.Add(new StructType(structNode, semanticModel));
+						structObjects.Add(new StructType(this, structNode, semanticModel));
 					}
 
 					AddObject(structNode, syntaxTree, semanticModel, structNode.Modifiers, AddObjectCallback);
@@ -165,7 +173,7 @@ namespace CSharpTranspiler.Agnostic
 					void AddObjectCallback()
 					{
 						string name = interfaceNode.Identifier.ValueText;
-						interfaceObjects.Add(new InterfaceType(interfaceNode, semanticModel));
+						interfaceObjects.Add(new InterfaceType(this, interfaceNode, semanticModel));
 					}
 
 					AddObject(interfaceNode, syntaxTree, semanticModel, interfaceNode.Modifiers, AddObjectCallback);
@@ -175,7 +183,7 @@ namespace CSharpTranspiler.Agnostic
 					var enumNode = (EnumDeclarationSyntax)node;
 					string name = enumNode.Identifier.ValueText;
 					string fullName = semanticModel.GetDeclaredSymbol(node).ToString();
-					enumObjects.Add(new EnumType(enumNode, semanticModel));
+					enumObjects.Add(new EnumType(this, enumNode, semanticModel));
 				}
 			}
 		}

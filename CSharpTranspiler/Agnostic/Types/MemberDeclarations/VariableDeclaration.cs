@@ -30,16 +30,19 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 		public VariableDeclaratorSyntax declaration;
 		public FieldDeclarationSyntax fieldDeclaration;
 
+		public ObjectType objectType;
 		public string name, fullName, fullNameFlat;
 		public object initializedValue;
 
-		public VariableDeclaration(VariableDeclaratorSyntax declaration, FieldDeclarationSyntax fieldDeclaration, SemanticModel semanticModel)
+		public VariableDeclaration(ObjectType objectType, VariableDeclaratorSyntax declaration, FieldDeclarationSyntax fieldDeclaration, SemanticModel semanticModel)
 		: base(((IFieldSymbol)semanticModel.GetDeclaredSymbol(declaration)).Type, fieldDeclaration.Modifiers, fieldDeclaration.AttributeLists)
 		{
+			this.objectType = objectType;
 			this.declaration = declaration;
 			this.fieldDeclaration = fieldDeclaration;
-			name = declaration.Identifier.ValueText;
 
+			// get name
+			name = declaration.Identifier.ValueText;
 			var symbol = semanticModel.GetDeclaredSymbol((BaseTypeDeclarationSyntax)declaration.Parent.Parent.Parent);
 			fullName = Tools.GetFullTypeName(symbol) + '.' + name;
 			fullNameFlat = Tools.GetFullTypeNameFlat(symbol) + '_' + name;

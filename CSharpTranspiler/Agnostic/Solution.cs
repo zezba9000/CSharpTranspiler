@@ -36,18 +36,18 @@ namespace CSharpTranspiler.Agnostic
 					solution = await workspace.OpenSolutionAsync(filename);
 					foreach (var csProj in solution.Projects)
 					{
-						var proj = new Project(csProj.FilePath);
-						await proj.Parse(csProj);
+						var proj = new Project(this, csProj);
 						projects.Add(proj);
+						await proj.Parse();
 					}
 				}
 				else
 				{
 					var csProj = await workspace.OpenProjectAsync(filename);
 					solution = csProj.Solution;
-					var proj = new Project(csProj.FilePath);
-					await proj.Parse(csProj);
+					var proj = new Project(this, csProj);
 					projects.Add(proj);
+					await proj.Parse();
 				}
 			}
 		}

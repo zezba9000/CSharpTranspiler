@@ -14,16 +14,19 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 	{
 		public PropertyDeclarationSyntax declaration;
 
+		public ObjectType objectType;
 		public string name, fullName, fullNameFlat;
 		//public object initializedValue;// Not supported in C# 3
 		public LogicalBody getBody, setBody;
 
-		public PropertyDeclaration(PropertyDeclarationSyntax declaration, SemanticModel semanticModel)
+		public PropertyDeclaration(ObjectType objectType, PropertyDeclarationSyntax declaration, SemanticModel semanticModel)
 		: base((semanticModel.GetDeclaredSymbol(declaration)).Type, declaration.Modifiers, declaration.AttributeLists)
 		{
+			this.objectType = objectType;
 			this.declaration = declaration;
+
+			// get name
 			name = declaration.Identifier.ValueText;
-			
 			var symbol = semanticModel.GetDeclaredSymbol((BaseTypeDeclarationSyntax)declaration.Parent);
 			fullName = Tools.GetFullTypeName(symbol) + '.' + name;
 			fullNameFlat = Tools.GetFullTypeNameFlat(symbol) + '_' + name;
@@ -40,11 +43,11 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 			{
 				if (accessor.Keyword.IsKind(SyntaxKind.GetKeyword))
 				{
-					getBody = new LogicalBody(accessor.Body);
+					getBody = new LogicalBody(this, accessor.Body);
 				}
 				else if (accessor.Keyword.IsKind(SyntaxKind.SetKeyword))
 				{
-					setBody = new LogicalBody(accessor.Body);
+					setBody = new LogicalBody(this, accessor.Body);
 				}
 				else
 				{

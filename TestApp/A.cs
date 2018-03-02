@@ -7,6 +7,13 @@
 		C = 4
 	}
 
+	enum MyEnumDefault
+	{
+		A = 33 - 32,
+		B,
+		C = 4
+	}
+
 	interface MyInterface
 	{
 		

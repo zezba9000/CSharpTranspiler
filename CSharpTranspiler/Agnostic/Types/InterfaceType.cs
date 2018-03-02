@@ -10,8 +10,8 @@ namespace CSharpTranspiler.Agnostic.Types
 {
 	public class InterfaceType : LogicalType
 	{
-		public InterfaceType(InterfaceDeclarationSyntax declaration, SemanticModel semanticModel)
-		: base(declaration, semanticModel)
+		public InterfaceType(Project project, InterfaceDeclarationSyntax declaration, SemanticModel semanticModel)
+		: base(project, declaration, semanticModel)
 		{
 		}
 	}
