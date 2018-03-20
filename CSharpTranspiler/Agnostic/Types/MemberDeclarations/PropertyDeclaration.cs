@@ -43,11 +43,11 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 			{
 				if (accessor.Keyword.IsKind(SyntaxKind.GetKeyword))
 				{
-					if (accessor.Body != null) getBody = new LogicalBody(this, accessor.Body);
+					if (accessor.Body != null) getBody = new LogicalBody(this, accessor.Body, semanticModel);
 				}
 				else if (accessor.Keyword.IsKind(SyntaxKind.SetKeyword))
 				{
-					if (accessor.Body != null) setBody = new LogicalBody(this, accessor.Body);
+					if (accessor.Body != null) setBody = new LogicalBody(this, accessor.Body, semanticModel);
 				}
 				else
 				{

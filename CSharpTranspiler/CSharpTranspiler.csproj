@@ -110,8 +110,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Agnostic\Member.cs" />
+    <Compile Include="Agnostic\Syntax\Expressions\AccessExpression.cs" />
     <Compile Include="Agnostic\Syntax\Expressions\AssignmentExpression.cs" />
+    <Compile Include="Agnostic\Syntax\Expressions\CastExpression.cs" />
     <Compile Include="Agnostic\Syntax\Expressions\Expression.cs" />
+    <Compile Include="Agnostic\Syntax\Expressions\IdentifierNameExpression.cs" />
+    <Compile Include="Agnostic\Syntax\Expressions\LiteralExpression.cs" />
     <Compile Include="Agnostic\Syntax\LogicalBody.cs" />
     <Compile Include="Agnostic\Syntax\Statements\ExpressionStatement.cs" />
     <Compile Include="Agnostic\Syntax\Statements\ReturnStatement.cs" />

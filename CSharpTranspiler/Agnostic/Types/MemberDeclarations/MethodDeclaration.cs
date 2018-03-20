@@ -78,7 +78,7 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 			returnType = new MethodReturn(declaration.ReturnType, semanticModel);
 
 			// parse method body
-			body = new LogicalBody(this, declaration.Body);
+			body = new LogicalBody(this, declaration.Body, semanticModel);
 		}
 	}
 }

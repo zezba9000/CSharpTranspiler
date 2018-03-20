@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.CSharp;
 using CSharpTranspiler.Agnostic.Syntax.Expressions;
+using Microsoft.CodeAnalysis;
 
 namespace CSharpTranspiler.Agnostic.Syntax.Statements
 {
@@ -13,15 +14,9 @@ namespace CSharpTranspiler.Agnostic.Syntax.Statements
 	{
 		public Expression expression;
 
-		public ExpressionStatement(ExpressionStatementSyntax statement)
+		public ExpressionStatement(ExpressionStatementSyntax statement, SemanticModel semanticModel)
 		{
-			var e = statement.Expression;
-			var kind = e.Kind();
-			switch (kind)
-			{
-				case SyntaxKind.SimpleAssignmentExpression: expression = new AssignmentExpression((AssignmentExpressionSyntax)e); break;
-				default: throw new NotImplementedException("Unsuported ExpressionStatement SyntaxKind: " + kind);
-			}
+			expression = Expression.CreateExpression(statement.Expression, semanticModel);
 		}
 	}
 }

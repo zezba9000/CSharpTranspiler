@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CSharpTranspiler.Agnostic.Syntax.Statements;
+using Microsoft.CodeAnalysis;
 
 namespace CSharpTranspiler.Agnostic.Syntax
 {
@@ -16,7 +17,7 @@ namespace CSharpTranspiler.Agnostic.Syntax
 
 		public List<Statement> statements;
 
-		public LogicalBody(Member member, BlockSyntax block)
+		public LogicalBody(Member member, BlockSyntax block, SemanticModel semanticModel)
 		{
 			this.member = member;
 			this.block = block;
@@ -29,8 +30,8 @@ namespace CSharpTranspiler.Agnostic.Syntax
 				Statement statement;
 				switch (kind)
 				{
-					case SyntaxKind.ExpressionStatement: statement = new ExpressionStatement((ExpressionStatementSyntax)s); break;
-					case SyntaxKind.ReturnStatement: statement = new ReturnStatement((ReturnStatementSyntax)s); break;
+					case SyntaxKind.ExpressionStatement: statement = new ExpressionStatement((ExpressionStatementSyntax)s, semanticModel); break;
+					case SyntaxKind.ReturnStatement: statement = new ReturnStatement((ReturnStatementSyntax)s, semanticModel); break;
 					default: throw new NotImplementedException("Unsuported Statement SyntaxKind: " + kind);
 				}
 

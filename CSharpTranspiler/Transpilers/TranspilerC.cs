@@ -82,7 +82,7 @@ namespace CSharpTranspiler.Transpilers
 				foreach (var obj in project.classObjects) WriteObjectMethods(obj, writer);
 			}
 		}
-
+		
 		private static void WriteObjectDeclares(ObjectType obj, StreamWriter writer)
 		{
 			var type = obj.GetType();

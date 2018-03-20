@@ -5,14 +5,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CSharpTranspiler.Agnostic.Syntax.Expressions;
+using Microsoft.CodeAnalysis;
 
 namespace CSharpTranspiler.Agnostic.Syntax.Statements
 {
 	public class ReturnStatement : Statement
 	{
-		public ReturnStatement(ReturnStatementSyntax statment)
+		public Expression expression;
+
+		public ReturnStatement(ReturnStatementSyntax statement, SemanticModel semanticModel)
 		{
-			
+			expression = Expression.CreateExpression(statement.Expression, semanticModel);
 		}
 	}
 }

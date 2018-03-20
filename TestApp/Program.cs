@@ -16,7 +16,9 @@ namespace TestApp.C
 
 			static void Main(string[] args)
 			{
-				i = 888;
+				C.B.Program.i = 888;
+				Program.i = 888;
+				i = 22;
 			}
 
 			A2 Foo(int hi, string by)

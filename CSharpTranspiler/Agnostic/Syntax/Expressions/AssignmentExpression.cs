@@ -5,21 +5,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 
 namespace CSharpTranspiler.Agnostic.Syntax.Expressions
 {
 	public class AssignmentExpression : Expression
 	{
-		
+		public Expression left, right;
+		public SyntaxToken op;
 
-		public AssignmentExpression(AssignmentExpressionSyntax expression)
+		public AssignmentExpression(AssignmentExpressionSyntax expression, SemanticModel semanticModel)
 		{
-			var left = expression.Left;//IdentifierNameSyntax
-			var right = expression.Right;//LiteralExpressionSyntax
-			var op = expression.OperatorToken;
-
-			
-
+			var left = CreateExpression(expression.Left, semanticModel);
+			var right = CreateExpression(expression.Right, semanticModel);
+			op = expression.OperatorToken;
 		}
 	}
 }
