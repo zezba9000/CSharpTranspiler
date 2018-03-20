@@ -30,6 +30,7 @@ namespace CSharpTranspiler.Agnostic.Syntax
 				switch (kind)
 				{
 					case SyntaxKind.ExpressionStatement: statement = new ExpressionStatement((ExpressionStatementSyntax)s); break;
+					case SyntaxKind.ReturnStatement: statement = new ReturnStatement((ReturnStatementSyntax)s); break;
 					default: throw new NotImplementedException("Unsuported Statement SyntaxKind: " + kind);
 				}
 

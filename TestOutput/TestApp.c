@@ -62,12 +62,6 @@ struct TestApp_C_B_Program
 // =============
 System_Int32 TestApp_C_B_Program_i2_get();
 void TestApp_C_B_Program_i2_set(System_Int32 i2);
-System_Single TestApp_C_B_Program_i3_get(TestApp_C_B_Program* this);
-void TestApp_C_B_Program_i3_set(TestApp_C_B_Program* this, System_Single i3);
-System_Single TestApp_C_B_Program_i4_get(TestApp_C_B_Program* this);
-void TestApp_C_B_Program_i4_set(TestApp_C_B_Program* this, System_Single i4);
-System_Single TestApp_C_B_Program_i5_get(TestApp_C_B_Program* this);
-void TestApp_C_B_Program_i5_set(TestApp_C_B_Program* this, System_Single i5);
 System_Single TestApp_C_B_Program_i6_get(TestApp_C_B_Program* this);
 void TestApp_C_B_Program_i7_set(TestApp_C_B_Program* this, System_Single i7);
 
@@ -85,30 +79,6 @@ System_Int32 TestApp_C_B_Program_i2_get()
 }
 
 void TestApp_C_B_Program_i2_set(System_Int32 i2)
-{
-}
-
-System_Single TestApp_C_B_Program_i3_get(TestApp_C_B_Program* this)
-{
-}
-
-void TestApp_C_B_Program_i3_set(TestApp_C_B_Program* this, System_Single i3)
-{
-}
-
-System_Single TestApp_C_B_Program_i4_get(TestApp_C_B_Program* this)
-{
-}
-
-void TestApp_C_B_Program_i4_set(TestApp_C_B_Program* this, System_Single i4)
-{
-}
-
-System_Single TestApp_C_B_Program_i5_get(TestApp_C_B_Program* this)
-{
-}
-
-void TestApp_C_B_Program_i5_set(TestApp_C_B_Program* this, System_Single i5)
 {
 }
 
