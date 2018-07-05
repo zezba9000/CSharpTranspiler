@@ -5,14 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis;
 
 namespace CSharpTranspiler.Agnostic.Syntax.Expressions
 {
 	public class LiteralExpression : Expression
 	{
-		public LiteralExpression(LiteralExpressionSyntax expression)
-		{
+		public object value;
 
+		public LiteralExpression(LiteralExpressionSyntax expression, SemanticModel semanticModel)
+		{
+			var value = semanticModel.GetConstantValue(expression);
+			this.value = value.HasValue ? value.Value : null;
 		}
 	}
 }

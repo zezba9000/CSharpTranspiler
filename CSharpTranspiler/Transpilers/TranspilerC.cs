@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace CSharpTranspiler.Transpilers
 {
-    public static class TranspilerC
+    public static partial class TranspilerC
 	{
 		public enum TargetTypes
 		{
@@ -113,9 +113,9 @@ namespace CSharpTranspiler.Transpilers
 			}
 
 			// write body
-			writer.WriteLine('{');
+			//writer.WriteLine('{');
 			WriteObjectBody(obj, type, writer);
-			writer.WriteLine("};" + Environment.NewLine);
+			//writer.WriteLine("};" + Environment.NewLine);
 		}
 
 		private static void WriteObjectBodyVariables(LogicalType logicalObj, StreamWriter writer)
@@ -126,9 +126,10 @@ namespace CSharpTranspiler.Transpilers
 				WriteObjectBodyVariables((LogicalType)baseObj.objectType, writer);
 			}
 
-			// write fields
+			// write non-static fields
 			foreach (var variable in logicalObj.variables)
 			{
+				if (variable.isStatic) continue;
 				if (variable.isValueType) writer.WriteLine(string.Format("\t{0} {1};", variable.typeFullNameFlat, variable.name));
 				else writer.WriteLine(string.Format("\t{0}* {1};", variable.typeFullNameFlat, variable.name));
 			}
@@ -138,10 +139,24 @@ namespace CSharpTranspiler.Transpilers
 		{
 			if (type.IsSubclassOf(typeof(LogicalType)))
 			{
-				WriteObjectBodyVariables((LogicalType)obj, writer);
+				var logicalObj = (LogicalType)obj;
+
+				// write non-static
+				writer.WriteLine('{');
+				WriteObjectBodyVariables(logicalObj, writer);
+				writer.WriteLine("};" + Environment.NewLine);
+
+				// write static fields
+				foreach (var variable in logicalObj.variables)
+				{
+					if (!variable.isStatic) continue;
+					if (variable.isValueType) writer.WriteLine(string.Format("{0} {1};", variable.typeFullNameFlat, variable.fullNameFlat));
+					else writer.WriteLine(string.Format("{0}* {1};", variable.typeFullNameFlat, variable.fullNameFlat));
+				}
 			}
 			else if (type == typeof(EnumType))
 			{
+				writer.WriteLine('{');
 				var enumObj = (EnumType)obj;
 				foreach (var member in enumObj.members)
 				{
@@ -150,6 +165,7 @@ namespace CSharpTranspiler.Transpilers
 					if (member.name != enumObj.members[enumObj.members.Count-1].name) writer.WriteLine(',');
 					else writer.WriteLine();
 				}
+				writer.WriteLine("};" + Environment.NewLine);
 			}
 		}
 
@@ -247,7 +263,7 @@ namespace CSharpTranspiler.Transpilers
 				{
 					WriteObjectPropertyDeclare(obj, property, writer, true);
 					writer.WriteLine(Environment.NewLine + '{');
-					WriteObjectPropertyBody(property, writer, property.getBody);
+					WriteLogicalBody(property.getBody, writer);
 					writer.WriteLine('}' + Environment.NewLine);
 				}
 
@@ -255,15 +271,10 @@ namespace CSharpTranspiler.Transpilers
 				{
 					WriteObjectPropertyDeclare(obj, property, writer, false);
 					writer.WriteLine(Environment.NewLine + '{');
-					WriteObjectPropertyBody(property, writer, property.setBody);
+					WriteLogicalBody(property.setBody, writer);
 					writer.WriteLine('}' + Environment.NewLine);
 				}
 			}
-		}
-
-		private static void WriteObjectPropertyBody(PropertyDeclaration method, StreamWriter writer, LogicalBody body)
-		{
-			// TODO
 		}
 
 		private static void WriteObjectMethodDeclare(ObjectType obj, MethodDeclaration method, StreamWriter writer)
@@ -300,14 +311,9 @@ namespace CSharpTranspiler.Transpilers
 			{
 				WriteObjectMethodDeclare(obj, method, writer);
 				writer.WriteLine(Environment.NewLine + '{');
-				WriteObjectMethodBody(method, writer);
+				WriteLogicalBody(method.body, writer);
 				writer.WriteLine('}' + Environment.NewLine);
 			}
-		}
-
-		private static void WriteObjectMethodBody(MethodDeclaration method, StreamWriter writer)
-		{
-			// TODO
 		}
 	}
 }

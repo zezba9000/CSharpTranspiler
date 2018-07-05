@@ -238,6 +238,7 @@
     <Compile Include="Agnostic\Solution.cs" />
     <Compile Include="Agnostic\Syntax\Modifiers.cs" />
     <Compile Include="Agnostic\Tools.cs" />
+    <Compile Include="StreamWriterEx.cs" />
     <Compile Include="Transpilers\TranspilerC.cs" />
     <Compile Include="Agnostic\Types\ClassType.cs" />
     <Compile Include="Agnostic\Types\EnumType.cs" />
@@ -245,6 +246,7 @@
     <Compile Include="Agnostic\Types\LogicalType.cs" />
     <Compile Include="Agnostic\Types\ObjectType.cs" />
     <Compile Include="Agnostic\Types\StructType.cs" />
+    <Compile Include="Transpilers\TranspilerC_LogicalBody.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

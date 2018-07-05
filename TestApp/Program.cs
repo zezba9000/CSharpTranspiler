@@ -17,7 +17,7 @@ namespace TestApp.C
 			static void Main(string[] args)
 			{
 				C.B.Program.i = 888;
-				Program.i = 888;
+				Program.i = 999;
 				i = 22;
 			}
 

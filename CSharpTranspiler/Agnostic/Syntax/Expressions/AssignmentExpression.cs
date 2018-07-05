@@ -16,8 +16,8 @@ namespace CSharpTranspiler.Agnostic.Syntax.Expressions
 
 		public AssignmentExpression(AssignmentExpressionSyntax expression, SemanticModel semanticModel)
 		{
-			var left = CreateExpression(expression.Left, semanticModel);
-			var right = CreateExpression(expression.Right, semanticModel);
+			left = CreateExpression(expression.Left, semanticModel);
+			right = CreateExpression(expression.Right, semanticModel);
 			op = expression.OperatorToken;
 		}
 	}

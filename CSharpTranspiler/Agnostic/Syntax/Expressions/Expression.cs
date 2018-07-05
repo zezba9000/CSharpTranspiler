@@ -19,8 +19,8 @@ namespace CSharpTranspiler.Agnostic.Syntax.Expressions
 			{
 				case SyntaxKind.SimpleAssignmentExpression: expression = new AssignmentExpression((AssignmentExpressionSyntax)e, semanticModel); break;
 				case SyntaxKind.IdentifierName: expression = new IdentifierNameExpression((IdentifierNameSyntax)e); break;
-				case SyntaxKind.NumericLiteralExpression: expression = new LiteralExpression((LiteralExpressionSyntax)e); break;
-				case SyntaxKind.CastExpression: expression = new CastExpression((CastExpressionSyntax)e); break;
+				case SyntaxKind.NumericLiteralExpression: expression = new LiteralExpression((LiteralExpressionSyntax)e, semanticModel); break;
+				case SyntaxKind.CastExpression: expression = new CastExpression((CastExpressionSyntax)e, semanticModel); break;
 				case SyntaxKind.SimpleMemberAccessExpression: expression = new AccessExpression((MemberAccessExpressionSyntax)e, semanticModel); break;
 				default: throw new NotImplementedException("Unsuported ExpressionStatement SyntaxKind: " + kind);
 			}

@@ -52,11 +52,11 @@ struct TestApp_C_B
 struct TestApp_C_B_Program
 {
 	System_Int32 baseInt;
-	TestApp_Blaa_A2* a;
-	System_Int32 i;
-	System_Int32 _i2;
 };
 
+TestApp_Blaa_A2* TestApp_C_B_Program_a;
+System_Int32 TestApp_C_B_Program_i;
+System_Int32 TestApp_C_B_Program__i2;
 // =============
 // Property forward declares
 // =============
@@ -76,18 +76,22 @@ TestApp_Blaa_A2* TestApp_C_B_Program_Foo(TestApp_C_B_Program* this, System_Int32
 // =============
 System_Int32 TestApp_C_B_Program_i2_get()
 {
+	return _i2;
 }
 
 void TestApp_C_B_Program_i2_set(System_Int32 i2)
 {
+	_i2 = value;
 }
 
 System_Single TestApp_C_B_Program_i6_get(TestApp_C_B_Program* this)
 {
+	return 1.1f;
 }
 
 void TestApp_C_B_Program_i7_set(TestApp_C_B_Program* this, System_Single i7)
 {
+	i2 = System_Int32;
 }
 
 // =============
@@ -95,9 +99,13 @@ void TestApp_C_B_Program_i7_set(TestApp_C_B_Program* this, System_Single i7)
 // =============
 System_Void TestApp_C_B_Program_Main(System_Array* args)
 {
+	TestApp_C_B_Program_i = 888;
+	TestApp_C_B_Program_i = 999;
+	i = 22;
 }
 
 TestApp_Blaa_A2* TestApp_C_B_Program_Foo(TestApp_C_B_Program* this, System_Int32 hi, System_String* by)
 {
+	return a;
 }
 

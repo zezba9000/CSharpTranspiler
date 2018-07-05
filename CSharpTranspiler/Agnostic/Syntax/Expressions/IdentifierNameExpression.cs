@@ -15,7 +15,7 @@ namespace CSharpTranspiler.Agnostic.Syntax.Expressions
 
 		public IdentifierNameExpression(IdentifierNameSyntax expression)
 		{
-			name = expression.Identifier.ValueText;
+			name = expression.Identifier.ValueText;// TODO: link identifier to Reign-Syntax object and determine scope ect.
 		}
 	}
 }
