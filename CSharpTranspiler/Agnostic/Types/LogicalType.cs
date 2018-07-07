@@ -38,9 +38,10 @@ namespace CSharpTranspiler.Agnostic.Types
 				if (type == typeof(FieldDeclarationSyntax))
 				{
 					var field = (FieldDeclarationSyntax)member;
+					var typeInfo = semanticModel.GetTypeInfo(field.Declaration.Type);
 					foreach (var variable in field.Declaration.Variables)
 					{
-						variables.Add(new VariableDeclaration(this, variable, field, semanticModel));
+						variables.Add(new VariableDeclaration(this, variable, field, semanticModel, typeInfo.Type));
 					}
 				}
 				else if (type == typeof(PropertyDeclarationSyntax))

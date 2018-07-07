@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using CSharpTranspiler.Agnostic.Syntax.Expressions;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
@@ -13,6 +14,10 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 	{
 		public bool isArray, isGeneric, isValueType;
 		public string typeName, typeFullName, typeFullNameFlat;
+
+		public VariableDeclarationBase(ITypeSymbol symbolType)
+		: this(symbolType, null, null)
+		{}
 
 		public VariableDeclarationBase(ITypeSymbol symbolType, SyntaxTokenList? modifiers, SyntaxList<AttributeListSyntax>? attributeList)
 		: base(modifiers, attributeList)
@@ -29,13 +34,26 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 	{
 		public VariableDeclaratorSyntax declaration;
 		public FieldDeclarationSyntax fieldDeclaration;
+		public Expression initializeExpression;
 
 		public ObjectType objectType;
 		public string name, fullName, fullNameFlat;
-		public object initializedValue;
+		public bool isLocalScope;
 
-		public VariableDeclaration(ObjectType objectType, VariableDeclaratorSyntax declaration, FieldDeclarationSyntax fieldDeclaration, SemanticModel semanticModel)
-		: base(((IFieldSymbol)semanticModel.GetDeclaredSymbol(declaration)).Type, fieldDeclaration.Modifiers, fieldDeclaration.AttributeLists)
+		public VariableDeclaration(VariableDeclaratorSyntax declaration, SemanticModel semanticModel, ITypeSymbol type)
+		: base(type, null, null)
+		{
+			isLocalScope = true;
+			Init(null, declaration, null, semanticModel, type);
+		}
+
+		public VariableDeclaration(ObjectType objectType, VariableDeclaratorSyntax declaration, FieldDeclarationSyntax fieldDeclaration, SemanticModel semanticModel, ITypeSymbol type)
+		: base(type, fieldDeclaration.Modifiers, fieldDeclaration.AttributeLists)
+		{
+			Init(objectType, declaration, fieldDeclaration, semanticModel, type);
+		}
+
+		private void Init(ObjectType objectType, VariableDeclaratorSyntax declaration, FieldDeclarationSyntax fieldDeclaration, SemanticModel semanticModel, ITypeSymbol type)
 		{
 			this.objectType = objectType;
 			this.declaration = declaration;
@@ -43,15 +61,22 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 
 			// get name
 			name = declaration.Identifier.ValueText;
-			var symbol = semanticModel.GetDeclaredSymbol((BaseTypeDeclarationSyntax)declaration.Parent.Parent.Parent);
-			fullName = Tools.GetFullTypeName(symbol) + '.' + name;
-			fullNameFlat = Tools.GetFullTypeNameFlat(symbol) + '_' + name;
-			
+			if (!isLocalScope)
+			{
+				var symbol = semanticModel.GetDeclaredSymbol((BaseTypeDeclarationSyntax)declaration.Parent.Parent.Parent);
+				fullName = Tools.GetFullTypeName(symbol) + '.' + name;
+				fullNameFlat = Tools.GetFullTypeNameFlat(symbol) + '_' + name;
+			}
+			else
+			{
+				fullName = name;
+				fullNameFlat = name;
+			}
+
 			// get initialized value
 			if (declaration.Initializer != null && declaration.Initializer.Value != null)
 			{
-				var value = semanticModel.GetConstantValue(declaration.Initializer.Value);
-				initializedValue = value.HasValue ? value.Value : null;
+				initializeExpression = Expression.CreateExpression(declaration.Initializer.Value, semanticModel);
 			}
 		}
 	}

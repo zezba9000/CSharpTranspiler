@@ -11,11 +11,15 @@ namespace CSharpTranspiler.Agnostic.Syntax.Expressions
 {
 	public class AccessExpression : Expression
 	{
+		public MemberAccessExpressionSyntax expression;
+
 		public string name, fullName, fullNameFlat;
 		public bool hasThisPrefix;
 
 		public AccessExpression(MemberAccessExpressionSyntax expression, SemanticModel semanticModel)
 		{
+			this.expression = expression;
+
 			name = expression.Name.Identifier.ValueText;
 			if (expression.Expression is ThisExpressionSyntax)
 			{

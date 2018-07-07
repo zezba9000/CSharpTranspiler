@@ -11,11 +11,15 @@ namespace CSharpTranspiler.Agnostic.Syntax.Expressions
 {
 	public class AssignmentExpression : Expression
 	{
+		public AssignmentExpressionSyntax expression;
+
 		public Expression left, right;
 		public SyntaxToken op;
 
 		public AssignmentExpression(AssignmentExpressionSyntax expression, SemanticModel semanticModel)
 		{
+			this.expression = expression;
+
 			left = CreateExpression(expression.Left, semanticModel);
 			right = CreateExpression(expression.Right, semanticModel);
 			op = expression.OperatorToken;

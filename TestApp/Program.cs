@@ -19,6 +19,9 @@ namespace TestApp.C
 				C.B.Program.i = 888;
 				Program.i = 999;
 				i = 22;
+
+				int abc = 44;
+				abc = 33;
 			}
 
 			A2 Foo(int hi, string by)

@@ -22,6 +22,7 @@ namespace CSharpTranspiler.Transpilers
 			{
 				if (statement is ExpressionStatement) WriteExpressionStatement((ExpressionStatement)statement, writer);
 				else if (statement is ReturnStatement) WriteReturnStatement((ReturnStatement)statement, writer);
+				else if (statement is LocalDeclarationStatement) WriteLocalDeclarationStatement((LocalDeclarationStatement)statement, writer);
 				else throw new NotImplementedException("Unsuported statement type: " + statement.GetType());
 			}
 		}
@@ -38,6 +39,20 @@ namespace CSharpTranspiler.Transpilers
 			writer.WritePrefix("return ");
 			WriteExperesion(statement.expression, writer);
 			writer.WriteLine(';');
+		}
+
+		private static void WriteLocalDeclarationStatement(LocalDeclarationStatement statement, StreamWriter writer)
+		{
+			foreach (var variable in statement.variables)
+			{
+				writer.WritePrefix(string.Format("{0} {1} ", variable.typeFullNameFlat, variable.fullNameFlat));
+				if (variable.initializeExpression != null)
+				{
+					writer.Write("= ");
+					WriteExperesion(variable.initializeExpression, writer);
+				}
+				writer.WriteLine(';');
+			}
 		}
 
 		private static void WriteExperesion(Expression expression, StreamWriter writer)

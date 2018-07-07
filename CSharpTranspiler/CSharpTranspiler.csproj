@@ -227,6 +227,7 @@
     <Compile Include="Agnostic\Syntax\Expressions\LiteralExpression.cs" />
     <Compile Include="Agnostic\Syntax\LogicalBody.cs" />
     <Compile Include="Agnostic\Syntax\Statements\ExpressionStatement.cs" />
+    <Compile Include="Agnostic\Syntax\Statements\LocalDeclarationStatement.cs" />
     <Compile Include="Agnostic\Syntax\Statements\ReturnStatement.cs" />
     <Compile Include="Agnostic\Syntax\Statements\Statement.cs" />
     <Compile Include="Agnostic\Types\MemberDeclarations\VariableDeclaration.cs" />

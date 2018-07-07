@@ -102,6 +102,8 @@ System_Void TestApp_C_B_Program_Main(System_Array* args)
 	TestApp_C_B_Program_i = 888;
 	TestApp_C_B_Program_i = 999;
 	i = 22;
+	System_Int32 abc = 44;
+	abc = 33;
 }
 
 TestApp_Blaa_A2* TestApp_C_B_Program_Foo(TestApp_C_B_Program* this, System_Int32 hi, System_String* by)

@@ -11,11 +11,13 @@ namespace CSharpTranspiler.Agnostic.Syntax.Expressions
 {
 	public class IdentifierNameExpression : Expression
 	{
+		public IdentifierNameSyntax expression;
 		public string name;
 
 		public IdentifierNameExpression(IdentifierNameSyntax expression)
 		{
-			name = expression.Identifier.ValueText;// TODO: link identifier to Reign-Syntax object and determine scope ect.
+			this.expression = expression;
+			name = expression.Identifier.ValueText;
 		}
 	}
 }

@@ -32,6 +32,7 @@ namespace CSharpTranspiler.Agnostic.Syntax
 				{
 					case SyntaxKind.ExpressionStatement: statement = new ExpressionStatement((ExpressionStatementSyntax)s, semanticModel); break;
 					case SyntaxKind.ReturnStatement: statement = new ReturnStatement((ReturnStatementSyntax)s, semanticModel); break;
+					case SyntaxKind.LocalDeclarationStatement: statement = new LocalDeclarationStatement((LocalDeclarationStatementSyntax)s, semanticModel); break;
 					default: throw new NotImplementedException("Unsuported Statement SyntaxKind: " + kind);
 				}
 
