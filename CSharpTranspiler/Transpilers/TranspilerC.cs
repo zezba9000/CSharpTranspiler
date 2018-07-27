@@ -226,7 +226,7 @@ namespace CSharpTranspiler.Transpilers
 				var parameters = new Parameter[1];
 				parameters[0] = new Parameter()
 				{
-					name = property.name,
+					name = "value",
 					typeFullNameFlat = property.typeFullNameFlat,
 					isArray = property.isArray,
 					isValueType = property.isValueType

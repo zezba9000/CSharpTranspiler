@@ -11,17 +11,20 @@ namespace CSharpTranspiler.Agnostic.Syntax.Expressions
 {
 	public class CastExpression : Expression
 	{
-		public CastExpressionSyntax experesion;
+		public CastExpressionSyntax expression;
 		public string typeName, typeFullName, typeFullNameFlat;
+		public Expression castFromExpression;
 
-		public CastExpression(CastExpressionSyntax experesion, SemanticModel semanticModel)
+		public CastExpression(CastExpressionSyntax expression, SemanticModel semanticModel)
 		{
-			this.experesion = experesion;
+			this.expression = expression;
 
-			var symbolType = (ITypeSymbol)semanticModel.GetSymbolInfo(experesion.Type).Symbol;
+			var symbolType = (ITypeSymbol)semanticModel.GetSymbolInfo(expression.Type).Symbol;
 			typeName = Tools.GetFullTypeName(symbolType);
 			typeFullName = Tools.GetFullTypeName(symbolType);
 			typeFullNameFlat = Tools.GetFullTypeNameFlat(symbolType);
+
+			castFromExpression = CreateExpression(this, expression.Expression, semanticModel);
 		}
 	}
 }

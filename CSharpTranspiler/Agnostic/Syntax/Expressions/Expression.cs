@@ -11,14 +11,16 @@ namespace CSharpTranspiler.Agnostic.Syntax.Expressions
 {
 	public abstract class Expression
 	{
-		public static Expression CreateExpression(ExpressionSyntax e, SemanticModel semanticModel)
+		public Expression parent;
+
+		public static Expression CreateExpression(Expression parent, ExpressionSyntax e, SemanticModel semanticModel)
 		{
 			Expression expression;
 			var kind = e.Kind();
 			switch (kind)
 			{
 				case SyntaxKind.SimpleAssignmentExpression: expression = new AssignmentExpression((AssignmentExpressionSyntax)e, semanticModel); break;
-				case SyntaxKind.IdentifierName: expression = new IdentifierNameExpression((IdentifierNameSyntax)e); break;
+				case SyntaxKind.IdentifierName: expression = new IdentifierNameExpression((IdentifierNameSyntax)e, semanticModel); break;
 
 				case SyntaxKind.NumericLiteralExpression:
 				case SyntaxKind.NullLiteralExpression:
@@ -30,6 +32,7 @@ namespace CSharpTranspiler.Agnostic.Syntax.Expressions
 				default: throw new NotImplementedException("Unsuported ExpressionStatement SyntaxKind: " + kind);
 			}
 
+			expression.parent = parent;
 			return expression;
 		}
 	}

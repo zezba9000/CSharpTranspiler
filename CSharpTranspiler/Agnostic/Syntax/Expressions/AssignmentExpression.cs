@@ -20,8 +20,8 @@ namespace CSharpTranspiler.Agnostic.Syntax.Expressions
 		{
 			this.expression = expression;
 
-			left = CreateExpression(expression.Left, semanticModel);
-			right = CreateExpression(expression.Right, semanticModel);
+			left = CreateExpression(this, expression.Left, semanticModel);
+			right = CreateExpression(this, expression.Right, semanticModel);
 			op = expression.OperatorToken;
 		}
 	}

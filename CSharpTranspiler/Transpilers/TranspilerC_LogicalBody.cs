@@ -67,14 +67,25 @@ namespace CSharpTranspiler.Transpilers
 
 		private static void WriteAssignmentExpression(AssignmentExpression expression, StreamWriter writer)
 		{
-			WriteExperesion(expression.left, writer);
-			writer.Write(string.Format(" {0} ", expression.op.ValueText));
-			WriteExperesion(expression.right, writer);
+			var identifier = expression.left as IdentifierNameExpression;
+			if (identifier != null && identifier.isProperty)
+			{
+				writer.Write(identifier.fullNameFlat + "_set(");
+				WriteExperesion(expression.right, writer);
+				writer.Write(')');
+			}
+			else
+			{
+				WriteExperesion(expression.left, writer);
+				writer.Write(string.Format(" {0} ", expression.op.ValueText));
+				WriteExperesion(expression.right, writer);
+			}
 		}
 
 		private static void WriteIdentifierNameExperesion(IdentifierNameExpression expression, StreamWriter writer)
 		{
-			writer.Write(expression.name);
+			if (expression.isProperty) writer.Write(expression.fullNameFlat + "_get()");
+			else writer.Write(expression.fullNameFlat);
 		}
 
 		private static void WriteLiteralExpression(LiteralExpression expression, StreamWriter writer)
@@ -85,7 +96,8 @@ namespace CSharpTranspiler.Transpilers
 
 		private static void WriteCastExpression(CastExpression expression, StreamWriter writer)
 		{
-			writer.Write(expression.typeFullNameFlat);
+			writer.Write(string.Format("({0})", expression.typeFullNameFlat));
+			WriteExperesion(expression.castFromExpression, writer);
 		}
 
 		private static void WriteAccessExpression(AccessExpression expression, StreamWriter writer)

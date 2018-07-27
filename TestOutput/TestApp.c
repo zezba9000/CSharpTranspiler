@@ -61,9 +61,9 @@ System_Int32 TestApp_C_B_Program__i2;
 // Property forward declares
 // =============
 System_Int32 TestApp_C_B_Program_i2_get();
-void TestApp_C_B_Program_i2_set(System_Int32 i2);
+void TestApp_C_B_Program_i2_set(System_Int32 value);
 System_Single TestApp_C_B_Program_i6_get(TestApp_C_B_Program* this);
-void TestApp_C_B_Program_i7_set(TestApp_C_B_Program* this, System_Single i7);
+void TestApp_C_B_Program_i7_set(TestApp_C_B_Program* this, System_Single value);
 
 // =============
 // Method forward declares
@@ -76,12 +76,12 @@ TestApp_Blaa_A2* TestApp_C_B_Program_Foo(TestApp_C_B_Program* this, System_Int32
 // =============
 System_Int32 TestApp_C_B_Program_i2_get()
 {
-	return _i2;
+	return TestApp_C_B_Program__i2;
 }
 
-void TestApp_C_B_Program_i2_set(System_Int32 i2)
+void TestApp_C_B_Program_i2_set(System_Int32 value)
 {
-	_i2 = value;
+	TestApp_C_B_Program__i2 = value;
 }
 
 System_Single TestApp_C_B_Program_i6_get(TestApp_C_B_Program* this)
@@ -89,9 +89,9 @@ System_Single TestApp_C_B_Program_i6_get(TestApp_C_B_Program* this)
 	return 1.1f;
 }
 
-void TestApp_C_B_Program_i7_set(TestApp_C_B_Program* this, System_Single i7)
+void TestApp_C_B_Program_i7_set(TestApp_C_B_Program* this, System_Single value)
 {
-	i2 = System_Int32;
+	TestApp_C_B_Program_i2_set((System_Int32)value);
 }
 
 // =============
@@ -101,13 +101,13 @@ System_Void TestApp_C_B_Program_Main(System_Array* args)
 {
 	TestApp_C_B_Program_i = 888;
 	TestApp_C_B_Program_i = 999;
-	i = 22;
+	TestApp_C_B_Program_i = 22;
 	System_Int32 abc = 44;
 	abc = 33;
 }
 
 TestApp_Blaa_A2* TestApp_C_B_Program_Foo(TestApp_C_B_Program* this, System_Int32 hi, System_String* by)
 {
-	return a;
+	return TestApp_C_B_Program_a;
 }
 

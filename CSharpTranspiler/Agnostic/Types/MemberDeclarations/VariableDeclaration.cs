@@ -76,7 +76,7 @@ namespace CSharpTranspiler.Agnostic.Types.MemberDeclarations
 			// get initialized value
 			if (declaration.Initializer != null && declaration.Initializer.Value != null)
 			{
-				initializeExpression = Expression.CreateExpression(declaration.Initializer.Value, semanticModel);
+				initializeExpression = Expression.CreateExpression(null, declaration.Initializer.Value, semanticModel);
 			}
 		}
 	}

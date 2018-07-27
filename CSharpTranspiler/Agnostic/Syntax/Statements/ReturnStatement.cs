@@ -16,7 +16,7 @@ namespace CSharpTranspiler.Agnostic.Syntax.Statements
 
 		public ReturnStatement(ReturnStatementSyntax statement, SemanticModel semanticModel)
 		{
-			expression = Expression.CreateExpression(statement.Expression, semanticModel);
+			expression = Expression.CreateExpression(null, statement.Expression, semanticModel);
 		}
 	}
 }

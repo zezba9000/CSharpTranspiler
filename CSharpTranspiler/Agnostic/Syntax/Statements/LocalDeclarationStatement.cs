@@ -13,6 +13,7 @@ namespace CSharpTranspiler.Agnostic.Syntax.Statements
 {
 	public class LocalDeclarationStatement : Statement
 	{
+		public LocalDeclarationStatementSyntax statement;
 		public List<VariableDeclaration> variables;
 
 		public LocalDeclarationStatement(LocalDeclarationStatementSyntax statement, SemanticModel semanticModel)
