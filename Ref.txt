@@ -1,4 +1,4 @@
-Roslyn compiler from NuGet (Install or Update these ONLY):
+Roslyn compiler from NuGet (Install or Update these ONLY): https://gist.github.com/DustinCampbell/32cd69d04ea1c08a16ae5c4cd21dd3a3
 1) Microsoft.VisualStudio.LanguageServices
 2) Microsoft.CodeAnalysis.Workspaces.MSBuild
 3) Microsoft.Build.Locator
