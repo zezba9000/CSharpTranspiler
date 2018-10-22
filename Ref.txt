@@ -1,7 +1,7 @@
 Roslyn compiler from NuGet (Install or Update these ONLY):
 1) Microsoft.VisualStudio.LanguageServices
 2) Microsoft.CodeAnalysis.Workspaces.MSBuild
-3) Microsoft.Build.Runtime
+3) Microsoft.Build.Locator
 
 To uninstall all packaged for clean updates
 1) Open in VS: "Tools->NuGet Package Manager->Package Manager Consonle"
