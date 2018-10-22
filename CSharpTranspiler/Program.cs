@@ -1,5 +1,6 @@
 ﻿using CSharpTranspiler.Agnostic;
 using CSharpTranspiler.Transpilers;
+using Microsoft.Build.Locator;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -16,6 +17,8 @@ namespace CSharpTranspiler
 
 		static async Task Compile()
 		{
+            MSBuildLocator.RegisterDefaults();
+
 			try
 			{
 				string path = Path.Combine(Environment.CurrentDirectory, @"..\..\..\");
