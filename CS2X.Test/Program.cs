@@ -9,11 +9,14 @@ using System.Threading.Tasks;
 
 namespace CS2X.Test
 {
-	static class TestTools
+	class Program
 	{
-		public static void CompileToAllLangs(Solution solution)
+		static void Main(string[] args)
 		{
 			string path = Path.Combine(Environment.CurrentDirectory, @"..\..\..\");
+			var solution = new Solution(Path.Combine(path, @"TestApp\TestApp.csproj"));
+			var task = solution.Parse();
+			task.Wait();
 			TranspilerC.CompileSolution(solution, TranspilerC.TargetTypes.VCPP, Path.Combine(path, @"TestOutput\"));
 		}
 	}

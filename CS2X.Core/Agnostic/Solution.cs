@@ -23,11 +23,12 @@ namespace CS2X.Core.Agnostic
 
 		static Solution()
 		{
-			MSBuildLocator.RegisterDefaults();
+			if (MSBuildLocator.CanRegister) MSBuildLocator.RegisterDefaults();
 		}
 
 		public Solution(string filename)
 		{
+			if (!File.Exists(filename)) throw new Exception("File does not exists: " + filename);
 			this.filename = filename;
 			if (Path.GetExtension(filename) == ".csproj") isProjFilename = true;
 		}
