@@ -1,4 +1,4 @@
-# C# / CSharp Transpiler<br>
+# CS2X - C# / CSharp Transpiler<br>
 
 This project is for doing preliminary experiments to compile a C# 3.0 subset using Roslyn to portable C. This will come with a micro deterministic GC/defragger that targets embedded devices with 1kb or higher and also a similar GC used on legacy hardware targets such as classic mac for example \[or anything else\] (think macOS9, SNES, DOS, Arduino, RISC-V, MIPS, SPARK, PPC, Homebrew etc). The point is to run C# in an <u>optimized fashion</u> across unsupported .NET targets with <u>minimal effort</u>. Testing on old/different compilers and toolchains will prove that point.<br>
 
