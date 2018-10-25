@@ -1,11 +1,11 @@
-﻿using CSharpTranspiler.Agnostic;
-using CSharpTranspiler.Transpilers;
+﻿using CS2X.Core.Agnostic;
+using CS2X.Core.Transpilers;
 using Microsoft.Build.Locator;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace CSharpTranspiler
+namespace CS2X
 {
 	class Program
 	{
