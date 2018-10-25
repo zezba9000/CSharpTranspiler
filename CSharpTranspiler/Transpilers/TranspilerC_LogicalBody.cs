@@ -45,7 +45,7 @@ namespace CSharpTranspiler.Transpilers
 		{
 			foreach (var variable in statement.variables)
 			{
-				writer.WritePrefix(string.Format("{0} {1} ", variable.typeFullNameFlat, variable.fullNameFlat));
+				writer.WritePrefix($"{variable.typeFullNameFlat} {variable.fullNameFlat} ");
 				if (variable.initializeExpression != null)
 				{
 					writer.Write("= ");
@@ -77,7 +77,7 @@ namespace CSharpTranspiler.Transpilers
 			else
 			{
 				WriteExperesion(expression.left, writer);
-				writer.Write(string.Format(" {0} ", expression.op.ValueText));
+				writer.Write($" {expression.op.ValueText} ");
 				WriteExperesion(expression.right, writer);
 			}
 		}
@@ -96,7 +96,7 @@ namespace CSharpTranspiler.Transpilers
 
 		private static void WriteCastExpression(CastExpression expression, StreamWriter writer)
 		{
-			writer.Write(string.Format("({0})", expression.typeFullNameFlat));
+			writer.Write($"({expression.typeFullNameFlat})");
 			WriteExperesion(expression.castFromExpression, writer);
 		}
 

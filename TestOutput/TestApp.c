@@ -45,6 +45,7 @@ struct TestApp_C_MyBase
 	System_Int32 baseInt;
 };
 
+
 struct TestApp_C_B
 {
 };
@@ -57,6 +58,7 @@ struct TestApp_C_B_Program
 TestApp_Blaa_A2* TestApp_C_B_Program_a;
 System_Int32 TestApp_C_B_Program_i;
 System_Int32 TestApp_C_B_Program__i2;
+
 // =============
 // Property forward declares
 // =============

@@ -20,6 +20,8 @@ namespace CSharpTranspiler.Transpilers
 			//Clang
 		}
 
+		private delegate void CallbackMethod();
+
 		public static void CompileSolution(Solution solution, TargetTypes type, string outputPath)
 		{
 			foreach (var project in solution.projects)
@@ -44,7 +46,7 @@ namespace CSharpTranspiler.Transpilers
 				writer.WriteLine(string.Format("// ============={0}// Library References{0}// =============", Environment.NewLine));
 				foreach (var reference in project.references)
 				{
-					writer.WriteLine(string.Format("#include \"{0}.h\"", reference));
+					writer.WriteLine($"#include \"{reference}.h\"");
 				}
 
 				// write object forward declares
@@ -86,8 +88,8 @@ namespace CSharpTranspiler.Transpilers
 		private static void WriteObjectDeclares(ObjectType obj, StreamWriter writer)
 		{
 			var type = obj.GetType();
-			if (type.IsSubclassOf(typeof(LogicalType))) writer.WriteLine(string.Format("struct {0};", obj.fullNameFlat));
-			else if (type == typeof(EnumType)) writer.WriteLine(string.Format("enum {0};", obj.fullNameFlat));
+			if (type.IsSubclassOf(typeof(LogicalType))) writer.WriteLine($"struct {obj.fullNameFlat};");
+			else if (type == typeof(EnumType)) writer.WriteLine($"enum {obj.fullNameFlat};");
 		}
 
 		private static void WriteObject(ObjectType obj, StreamWriter writer)
@@ -101,7 +103,7 @@ namespace CSharpTranspiler.Transpilers
 			else throw new Exception("CompileObjectDefinition: Unsuported type: " + type);
 
 			// write type
-			writer.Write(string.Format("{0} {1}", typeName, obj.fullNameFlat));
+			writer.Write($"{typeName} {obj.fullNameFlat}");
 			if (type == typeof(EnumType))
 			{
 				if (obj.baseObjects.Count != 0) writer.WriteLine(" : " + obj.baseObjects[0].fullNameFlat);
@@ -113,9 +115,10 @@ namespace CSharpTranspiler.Transpilers
 			}
 
 			// write body
-			//writer.WriteLine('{');
-			WriteObjectBody(obj, type, writer);
-			//writer.WriteLine("};" + Environment.NewLine);
+			writer.WriteLine('{');
+			WriteObjectBody(obj, type, writer, out var writeStaticMembers);
+			writer.WriteLine("};" + Environment.NewLine);
+			writeStaticMembers?.Invoke();
 		}
 
 		private static void WriteObjectBodyVariables(LogicalType logicalObj, StreamWriter writer)
@@ -130,42 +133,53 @@ namespace CSharpTranspiler.Transpilers
 			foreach (var variable in logicalObj.variables)
 			{
 				if (variable.isStatic) continue;
-				if (variable.isValueType) writer.WriteLine(string.Format("\t{0} {1};", variable.typeFullNameFlat, variable.name));
-				else writer.WriteLine(string.Format("\t{0}* {1};", variable.typeFullNameFlat, variable.name));
+				if (variable.isValueType) writer.WriteLine($"\t{variable.typeFullNameFlat} {variable.name};");
+				else writer.WriteLine($"\t{variable.typeFullNameFlat}* {variable.name};");
 			}
 		}
 
-		private static void WriteObjectBody(ObjectType obj, Type type, StreamWriter writer)
+		private static void WriteObjectBody(ObjectType obj, Type type, StreamWriter writer, out CallbackMethod writeStaticMembers)
 		{
 			if (type.IsSubclassOf(typeof(LogicalType)))
 			{
 				var logicalObj = (LogicalType)obj;
 
 				// write non-static
-				writer.WriteLine('{');
 				WriteObjectBodyVariables(logicalObj, writer);
-				writer.WriteLine("};" + Environment.NewLine);
 
 				// write static fields
-				foreach (var variable in logicalObj.variables)
+				void writeExternalMembers()
 				{
-					if (!variable.isStatic) continue;
-					if (variable.isValueType) writer.WriteLine(string.Format("{0} {1};", variable.typeFullNameFlat, variable.fullNameFlat));
-					else writer.WriteLine(string.Format("{0}* {1};", variable.typeFullNameFlat, variable.fullNameFlat));
+					if (logicalObj.variables.Count != 0)
+					{
+						foreach (var variable in logicalObj.variables)
+						{
+							if (!variable.isStatic) continue;
+							if (variable.isValueType) writer.WriteLine($"{variable.typeFullNameFlat} {variable.fullNameFlat};");
+							else writer.WriteLine($"{variable.typeFullNameFlat}* {variable.fullNameFlat};");
+						}
+
+						writer.WriteLine();
+					}
 				}
+
+				writeStaticMembers = writeExternalMembers;
 			}
 			else if (type == typeof(EnumType))
 			{
-				writer.WriteLine('{');
 				var enumObj = (EnumType)obj;
 				foreach (var member in enumObj.members)
 				{
 					if (!member.valueIsExplicitlySet) writer.Write('\t' + member.name);
-					else writer.Write(string.Format("\t{0} = {1}", member.name, member.value));
+					else writer.Write($"\t{member.name} = {member.value}");
 					if (member.name != enumObj.members[enumObj.members.Count-1].name) writer.WriteLine(',');
 					else writer.WriteLine();
 				}
-				writer.WriteLine("};" + Environment.NewLine);
+				writeStaticMembers = null;
+			}
+			else
+			{
+				writeStaticMembers = null;
 			}
 		}
 
@@ -179,12 +193,12 @@ namespace CSharpTranspiler.Transpilers
 			// write return type
 			if (returnIsArray)
 			{
-				writer.Write(string.Format("System_Array* {0}(", fullNameFlat));
+				writer.Write($"System_Array* {fullNameFlat}(");
 			}
 			else
 			{
-				if (returnIsValueType) writer.Write(string.Format("{0} {1}(", returnFullNameFlat, fullNameFlat));
-				else writer.Write(string.Format("{0}* {1}(", returnFullNameFlat, fullNameFlat));
+				if (returnIsValueType) writer.Write($"{returnFullNameFlat} {fullNameFlat}(");
+				else writer.Write($"{returnFullNameFlat}* {fullNameFlat}(");
 			}
 
 			// if method and object are not static pass "this" ref
@@ -199,12 +213,12 @@ namespace CSharpTranspiler.Transpilers
 					var parameter = paramerters[i];
 					if (parameter.isArray)
 					{
-						writer.Write(string.Format("System_Array* {0}", parameter.name));
+						writer.Write($"System_Array* {parameter.name}");
 					}
 					else
 					{
-						if (parameter.isValueType) writer.Write(string.Format("{0} {1}", parameter.typeFullNameFlat, parameter.name));
-						else writer.Write(string.Format("{0}* {1}", parameter.typeFullNameFlat, parameter.name));
+						if (parameter.isValueType) writer.Write($"{parameter.typeFullNameFlat} {parameter.name}");
+						else writer.Write($"{parameter.typeFullNameFlat}* {parameter.name}");
 					}
 
 					if (i != count-1) writer.Write(", ");
