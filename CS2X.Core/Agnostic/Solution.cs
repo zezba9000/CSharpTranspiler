@@ -41,7 +41,6 @@ namespace CS2X.Core.Agnostic
 			using (var workspace = MSBuildWorkspace.Create())
 			{
 				// load projects
-				var projects = new List<Project>();
 				if (!isProjFileName)
 				{
 					solution = await workspace.OpenSolutionAsync(filename);
@@ -52,6 +51,7 @@ namespace CS2X.Core.Agnostic
 					solution = csProj.Solution;
 				}
 
+				var projects = new List<Project>();
 				foreach (var csProj in solution.Projects)
 				{
 					if (csProj.Name == "CoreLib") continue;// HACK: skip until we can parse CoreLib
