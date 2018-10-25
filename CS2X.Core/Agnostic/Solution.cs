@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using Microsoft.Build.Locator;
 
 namespace CS2X.Core.Agnostic
 {
@@ -19,6 +20,11 @@ namespace CS2X.Core.Agnostic
 		private bool isProjFilename;
 
 		public List<Project> projects;
+
+		static Solution()
+		{
+			MSBuildLocator.RegisterDefaults();
+		}
 
 		public Solution(string filename)
 		{
