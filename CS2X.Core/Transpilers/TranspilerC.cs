@@ -116,9 +116,9 @@ namespace CS2X.Core.Transpilers
 
 			// write body
 			writer.WriteLine('{');
-			WriteObjectBody(obj, type, writer, out var writeStaticMembers);
+			WriteObjectBody(obj, type, writer, out var writeExternalMembers);
 			writer.WriteLine("};" + Environment.NewLine);
-			writeStaticMembers?.Invoke();
+			writeExternalMembers?.Invoke();
 		}
 
 		private static void WriteObjectBodyVariables(LogicalType logicalObj, StreamWriter writer)
@@ -138,7 +138,7 @@ namespace CS2X.Core.Transpilers
 			}
 		}
 
-		private static void WriteObjectBody(ObjectType obj, Type type, StreamWriter writer, out CallbackMethod writeStaticMembers)
+		private static void WriteObjectBody(ObjectType obj, Type type, StreamWriter writer, out CallbackMethod writeExternalMembers)
 		{
 			if (type.IsSubclassOf(typeof(LogicalType)))
 			{
@@ -148,7 +148,7 @@ namespace CS2X.Core.Transpilers
 				WriteObjectBodyVariables(logicalObj, writer);
 
 				// write static fields
-				void writeExternalMembers()
+				void writeStaticMembers()
 				{
 					if (logicalObj.variables.Count != 0)
 					{
@@ -163,7 +163,7 @@ namespace CS2X.Core.Transpilers
 					}
 				}
 
-				writeStaticMembers = writeExternalMembers;
+				writeExternalMembers = writeStaticMembers;
 			}
 			else if (type == typeof(EnumType))
 			{
@@ -175,11 +175,11 @@ namespace CS2X.Core.Transpilers
 					if (member.name != enumObj.members[enumObj.members.Count-1].name) writer.WriteLine(',');
 					else writer.WriteLine();
 				}
-				writeStaticMembers = null;
+				writeExternalMembers = null;
 			}
 			else
 			{
-				writeStaticMembers = null;
+				writeExternalMembers = null;
 			}
 		}
 
