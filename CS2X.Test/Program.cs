@@ -14,7 +14,12 @@ namespace CS2X.Test
 		static void Main(string[] args)
 		{
 			string path = Path.Combine(Environment.CurrentDirectory, @"..\..\..\");
-			var solution = new Solution(Path.Combine(path, @"TestApp\TestApp.csproj"));
+			var projFileNames = new string[]
+			{
+				Path.Combine(path, @"TestLib\TestLib.csproj"),
+				Path.Combine(path, @"TestApp\TestApp.csproj")
+			};
+			var solution = new Solution(projFileNames);
 			var task = solution.Parse();
 			task.Wait();
 			TranspilerC.CompileSolution(solution, TranspilerC.TargetTypes.VCPP, Path.Combine(path, @"TestOutput\"));

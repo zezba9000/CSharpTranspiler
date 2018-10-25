@@ -21,7 +21,7 @@ namespace CS2X.Core.Agnostic.Types
 		public TypeInfo typeInfo;
 		public string name, fullName, fullNameFlat;
 
-		public bool isPrimitive;
+		public bool isSpecial;
 		public ObjectType objectType;
 
 		public BaseObject(ObjectType childObjectType, BaseTypeSyntax baseType, SemanticModel semanticModel)
@@ -35,20 +35,26 @@ namespace CS2X.Core.Agnostic.Types
 			fullName = Tools.GetFullTypeName(symbol);
 			fullNameFlat = Tools.GetFullTypeNameFlat(symbol);
 
-			isPrimitive = symbol.SpecialType != SpecialType.None;
+			isSpecial = symbol.SpecialType != SpecialType.None;
 		}
 
-		public void Resolve()
+		public async Task Resolve()
 		{
-			if (isPrimitive) return;
+			if (isSpecial) return;// HACK: TODO: skip these until we can parse CoreLib
 
 			foreach (var project in childObjectType.project.solution.projects)
-			foreach (var obj in project.allObjects)
 			{
-				if (obj.fullName == fullName)
+				// parse dependency project if needed
+				if (!project.isParsed) await project.Parse();
+
+				// find parsed object
+				foreach (var obj in project.allObjects)
 				{
-					objectType = obj;
-					return;
+					if (obj.fullName == fullName)
+					{
+						objectType = obj;
+						return;
+					}
 				}
 			}
 
@@ -108,12 +114,12 @@ namespace CS2X.Core.Agnostic.Types
 			AddBaseObjects(declarationSyntax, semanticModel);
 		}
 
-		public void Resolve()
+		public async Task Resolve()
 		{
 			// parse base types
 			foreach (var baseObject in baseObjects)
 			{
-				baseObject.Resolve();
+				await baseObject.Resolve();
 			}
 		}
 	}

@@ -42,6 +42,7 @@ struct TestApp_Blaa_A2
 
 struct TestApp_C_MyBase
 {
+	System_Int32 b;
 	System_Int32 baseInt;
 };
 
@@ -52,6 +53,7 @@ struct TestApp_C_B
 
 struct TestApp_C_B_Program
 {
+	System_Int32 b;
 	System_Int32 baseInt;
 };
 

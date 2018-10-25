@@ -5,6 +5,6 @@ namespace TestLib
 {
     public class MyTestLibClass
     {
-		public int b = 1 + 1;
+		public int b;// = 1 + 1;
     }
 }

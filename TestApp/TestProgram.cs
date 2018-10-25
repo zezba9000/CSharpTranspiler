@@ -3,7 +3,7 @@ using TestLib;
 
 namespace TestApp.C
 {
-	class MyBase// : MyTestLibClass
+	class MyBase : MyTestLibClass
 	{
 		int baseInt;
 	}

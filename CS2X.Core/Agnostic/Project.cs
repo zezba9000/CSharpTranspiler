@@ -19,13 +19,13 @@ namespace CS2X.Core.Agnostic
 
 	public class Project
 	{
-		public Solution solution;
-		public Microsoft.CodeAnalysis.Project project;
+		public readonly Solution solution;
+		public readonly Microsoft.CodeAnalysis.Project project;
 
-		public ProjectTypes type;
-		public bool isReleaseBuild;
-		public string filename, assemblyName;
-		public List<string> references;
+		public readonly ProjectTypes type;
+		public readonly bool isReleaseBuild;
+		public readonly string filename, assemblyName;
+		public readonly IReadOnlyList<string> references;
 
 		public List<ObjectType> allObjects;
 		public List<ClassType> classObjects;
@@ -33,22 +33,14 @@ namespace CS2X.Core.Agnostic
 		public List<InterfaceType> interfaceObjects;
 		public List<EnumType> enumObjects;
 
+		public bool isParsed {get; private set;}
+
 		public Project(Solution solution, Microsoft.CodeAnalysis.Project project)
 		{
 			this.solution = solution;
 			this.project = project;
 			this.filename = project.FilePath;
-		}
-
-		public async Task Parse()
-		{
-			// init main objects
-			assemblyName = project.AssemblyName;
-			allObjects = new List<ObjectType>();
-			classObjects = new List<ClassType>();
-			structObjects = new List<StructType>();
-			interfaceObjects = new List<InterfaceType>();
-			enumObjects = new List<EnumType>();
+			this.assemblyName = project.AssemblyName;
 
 			// validate compiler options
 			var parseOptions = (CSharpParseOptions)project.ParseOptions;
@@ -56,7 +48,7 @@ namespace CS2X.Core.Agnostic
 
 			var compilationOptions = project.CompilationOptions;
 			if (compilationOptions.Platform != Platform.AnyCpu) throw new Exception("Project platform must be AnyCpu: " + project.FilePath);
-			
+
 			// get project type
 			var kind = compilationOptions.OutputKind;
 			if (kind == OutputKind.DynamicallyLinkedLibrary) type = ProjectTypes.Dll;
@@ -67,13 +59,25 @@ namespace CS2X.Core.Agnostic
 			isReleaseBuild = compilationOptions.OptimizationLevel == OptimizationLevel.Release;
 
 			// gather references
-			references = new List<string>();
+			var references = new List<string>();
 			var sln = project.Solution;
 			foreach (var reference in project.AllProjectReferences)
 			{
-				var p = sln.GetProject(reference.ProjectId);
-				references.Add(p.AssemblyName);
+				var proj = sln.GetProject(reference.ProjectId);
+				references.Add(proj.AssemblyName);
 			}
+
+			this.references = references;
+		}
+
+		public async Task Parse()
+		{
+			// init main objects
+			allObjects = new List<ObjectType>();
+			classObjects = new List<ClassType>();
+			structObjects = new List<StructType>();
+			interfaceObjects = new List<InterfaceType>();
+			enumObjects = new List<EnumType>();
 
 			// parse syntax tree
 			var compilation = await project.GetCompilationAsync();
@@ -91,10 +95,13 @@ namespace CS2X.Core.Agnostic
 			allObjects.AddRange(structObjects);
 			allObjects.AddRange(classObjects);
 
+			// project is now parsed
+			isParsed = true;
+
 			// resolve objects
 			foreach (var obj in allObjects)
 			{
-				obj.Resolve();
+				await obj.Resolve();
 			}
 		}
 
