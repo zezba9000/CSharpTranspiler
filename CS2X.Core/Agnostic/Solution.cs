@@ -13,19 +13,11 @@ using Microsoft.Build.Locator;
 
 namespace CS2X.Core.Agnostic
 {
-	public enum SolutionSources
-	{
-		Sln,
-		CSProj,
-		CSProjFiles
-	}
-
 	public class Solution
 	{
 		public Microsoft.CodeAnalysis.Solution solution {get; private set;}
 		public readonly string filename;
-		public readonly string[] projFileNames;
-		private readonly SolutionSources source;
+		private readonly bool isProjFileName;
 
 		public IReadOnlyList<Project> projects {get; private set;}
 
@@ -39,21 +31,9 @@ namespace CS2X.Core.Agnostic
 			this.filename = filename;
 			if (!File.Exists(filename)) throw new Exception("File does not exists: " + filename);
 			string ext = Path.GetExtension(filename);
-			if (ext == ".csproj") source = SolutionSources.CSProj;
-			else if (ext == ".sln") source = SolutionSources.Sln;
+			if (ext == ".csproj") isProjFileName = true;
+			else if (ext == ".sln") isProjFileName = false;
 			else throw new Exception("Invalid file type: " + filename);
-		}
-
-		public Solution(string[] projFileNames)
-		{
-			this.projFileNames = projFileNames;
-			source = SolutionSources.CSProjFiles;
-			foreach (string filename in projFileNames)
-			{
-				if (!File.Exists(filename)) throw new Exception("File does not exists: " + filename);
-				this.filename = filename;
-				if (Path.GetExtension(filename) != ".csproj") throw new Exception("Invalid file type: " + filename);
-			}
 		}
 
 		public async Task Parse()
@@ -62,35 +42,21 @@ namespace CS2X.Core.Agnostic
 			{
 				// load projects
 				var projects = new List<Project>();
-				if (source == SolutionSources.Sln)
+				if (!isProjFileName)
 				{
 					solution = await workspace.OpenSolutionAsync(filename);
-					foreach (var csProj in solution.Projects)
-					{
-						var proj = new Project(this, csProj);
-						projects.Add(proj);
-					}
-				}
-				else if (source == SolutionSources.CSProj)
-				{
-					var csProj = await workspace.OpenProjectAsync(filename);
-					solution = csProj.Solution;
-					var proj = new Project(this, csProj);
-					projects.Add(proj);
-				}
-				else if (source == SolutionSources.CSProjFiles)
-				{
-					foreach (string projFileName in projFileNames)
-					{
-						var csProj = await workspace.OpenProjectAsync(projFileName);
-						solution = csProj.Solution;
-						var proj = new Project(this, csProj);
-						projects.Add(proj);
-					}
 				}
 				else
 				{
-					throw new Exception("Unsuported source type: " + source);
+					var csProj = await workspace.OpenProjectAsync(filename);
+					solution = csProj.Solution;
+				}
+
+				foreach (var csProj in solution.Projects)
+				{
+					if (csProj.Name == "CoreLib") continue;// HACK: skip until we can parse CoreLib
+					var proj = new Project(this, csProj);
+					projects.Add(proj);
 				}
 
 				this.projects = projects;
