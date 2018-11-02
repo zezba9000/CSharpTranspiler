@@ -7,7 +7,7 @@
     <ProjectGuid>{A0E84D5E-BDC6-450E-BD60-F854E4939F5D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CoreLib</RootNamespace>
+    <RootNamespace>System</RootNamespace>
     <AssemblyName>CoreLib</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -32,6 +32,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Attribute.cs" />
+    <Compile Include="AttributeTargets.cs" />
+    <Compile Include="AttributeUsageAttribute.cs" />
+    <Compile Include="CLSCompliantAttribute.cs" />
+    <Compile Include="CodeDom\Compiler\GeneratedCodeAttribute.cs" />
     <Compile Include="Collections\ArrayList.cs" />
     <Compile Include="Collections\DictionaryEntry.cs" />
     <Compile Include="Collections\ICollection.cs" />
@@ -47,11 +52,15 @@
     <Compile Include="Collections\Generic\Queue.cs" />
     <Compile Include="Collections\Generic\Stack.cs" />
     <Compile Include="Collections\Stack.cs" />
+    <Compile Include="ComponentModel\BrowsableAttribute.cs" />
     <Compile Include="ComponentModel\DependencyAttribute.cs" />
+    <Compile Include="ComponentModel\EditorBrowsableAttribute.cs" />
+    <Compile Include="ComponentModel\EditorBrowsableState.cs" />
     <Compile Include="ComponentModel\IContainer.cs" />
     <Compile Include="Diagnostics\ConditionalAttribute.cs" />
     <Compile Include="Diagnostics\Debug.cs" />
     <Compile Include="Diagnostics\SuppressMessageAttribute.cs" />
+    <Compile Include="FlagsAttribute.cs" />
     <Compile Include="Globalization\CultureInfo.cs" />
     <Compile Include="Globalization\NumberFormatInfo.cs" />
     <Compile Include="Action.cs" />
@@ -71,10 +80,33 @@
     <Compile Include="Int16.cs" />
     <Compile Include="Int32.cs" />
     <Compile Include="Int64.cs" />
+    <Compile Include="IntPtr.cs" />
     <Compile Include="Math.cs" />
+    <Compile Include="MulticastDelegate.cs" />
     <Compile Include="Nullable.cs" />
     <Compile Include="Object.cs" />
-    <Compile Include="Runtime.cs" />
+    <Compile Include="ObsoleteAttribute.cs" />
+    <Compile Include="ParamArrayAttribute.cs" />
+    <Compile Include="Reflection\AssemblyCompanyAttribute.cs" />
+    <Compile Include="Reflection\AssemblyConfigurationAttribute.cs" />
+    <Compile Include="Reflection\AssemblyCopyrightAttribute.cs" />
+    <Compile Include="Reflection\AssemblyCultureAttribute.cs" />
+    <Compile Include="Reflection\AssemblyDelaySignAttribute.cs" />
+    <Compile Include="Reflection\AssemblyDescriptionAttribute.cs" />
+    <Compile Include="Reflection\AssemblyFileVersionAttribute.cs" />
+    <Compile Include="Reflection\AssemblyInformationalVersionAttribute.cs" />
+    <Compile Include="Reflection\AssemblyKeyFileAttribute.cs" />
+    <Compile Include="Reflection\AssemblyProductAttribute.cs" />
+    <Compile Include="Reflection\AssemblyTitleAttribute.cs" />
+    <Compile Include="Reflection\AssemblyTrademarkAttribute.cs" />
+    <Compile Include="Reflection\AssemblyVersionAttribute.cs" />
+    <Compile Include="Reflection\DefaultMemberAttribute.cs" />
+    <Compile Include="RuntimeFieldHandle.cs" />
+    <Compile Include="RuntimeTypeHandle.cs" />
+    <Compile Include="Runtime\CompilerServices\CompilerGeneratedAttribute.cs" />
+    <Compile Include="Runtime\CompilerServices\DecimalConstantAttribute.cs" />
+    <Compile Include="Runtime\CompilerServices\RuntimeHelpers.cs" />
+    <Compile Include="Runtime\InteropServices\OutAttribute.cs" />
     <Compile Include="SByte.cs" />
     <Compile Include="Single.cs" />
     <Compile Include="String.cs" />
@@ -83,8 +115,11 @@
     <Compile Include="UInt16.cs" />
     <Compile Include="UInt32.cs" />
     <Compile Include="UInt64.cs" />
+    <Compile Include="UIntPtr.cs" />
+    <Compile Include="ValueType.cs" />
     <Compile Include="Void.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
