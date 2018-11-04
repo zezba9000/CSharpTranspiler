@@ -169,35 +169,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Agnostic\Member.cs" />
-    <Compile Include="Agnostic\Project.cs" />
-    <Compile Include="Agnostic\Solution.cs" />
-    <Compile Include="Agnostic\Syntax\Expressions\AccessExpression.cs" />
-    <Compile Include="Agnostic\Syntax\Expressions\AssignmentExpression.cs" />
-    <Compile Include="Agnostic\Syntax\Expressions\CastExpression.cs" />
-    <Compile Include="Agnostic\Syntax\Expressions\Expression.cs" />
-    <Compile Include="Agnostic\Syntax\Expressions\IdentifierNameExpression.cs" />
-    <Compile Include="Agnostic\Syntax\Expressions\LiteralExpression.cs" />
-    <Compile Include="Agnostic\Syntax\LogicalBody.cs" />
-    <Compile Include="Agnostic\Syntax\Modifiers.cs" />
-    <Compile Include="Agnostic\Syntax\Statements\ExpressionStatement.cs" />
-    <Compile Include="Agnostic\Syntax\Statements\LocalDeclarationStatement.cs" />
-    <Compile Include="Agnostic\Syntax\Statements\ReturnStatement.cs" />
-    <Compile Include="Agnostic\Syntax\Statements\Statement.cs" />
-    <Compile Include="Agnostic\Tools.cs" />
-    <Compile Include="Agnostic\Types\ClassType.cs" />
-    <Compile Include="Agnostic\Types\EnumType.cs" />
-    <Compile Include="Agnostic\Types\InterfaceType.cs" />
-    <Compile Include="Agnostic\Types\LogicalType.cs" />
-    <Compile Include="Agnostic\Types\MemberDeclarations\MethodDeclaration.cs" />
-    <Compile Include="Agnostic\Types\MemberDeclarations\PropertyDeclaration.cs" />
-    <Compile Include="Agnostic\Types\MemberDeclarations\VariableDeclaration.cs" />
-    <Compile Include="Agnostic\Types\ObjectType.cs" />
-    <Compile Include="Agnostic\Types\StructType.cs" />
+    <Compile Include="Emitters\Emitter.cs" />
+    <Compile Include="Emitters\EmitterC.cs" />
+    <Compile Include="Project.cs" />
+    <Compile Include="Solution.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StreamWriterEx.cs" />
-    <Compile Include="Transpilers\TranspilerC.cs" />
-    <Compile Include="Transpilers\TranspilerC_LogicalBody.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -207,6 +184,7 @@
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.2.6.1\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.2.6.1\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.2\build\SQLitePCLRaw.lib.e_sqlite3.linux.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.2\build\SQLitePCLRaw.lib.e_sqlite3.linux.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

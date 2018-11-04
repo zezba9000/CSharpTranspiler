@@ -18,7 +18,6 @@ struct TestLib_MyTestLibClass
 	System_Int32 b;
 };
 
-
 // =============
 // Property forward declares
 // =============

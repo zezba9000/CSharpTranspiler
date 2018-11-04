@@ -1,11 +1,7 @@
-﻿using CS2X.Core.Agnostic;
-using CS2X.Core.Transpilers;
+﻿using CS2X.Core;
+using CS2X.Core.Emitters;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CS2X.Test
 {
@@ -13,11 +9,17 @@ namespace CS2X.Test
 	{
 		static void Main(string[] args)
 		{
+			// load solution
 			string path = Path.Combine(Environment.CurrentDirectory, @"..\..\..\");
 			var solution = new Solution(Path.Combine(path, @"TestApp\TestApp.csproj"));
+
+			// parse solution
 			var task = solution.Parse();
 			task.Wait();
-			TranspilerC.CompileSolution(solution, TranspilerC.TargetTypes.VCPP, Path.Combine(path, @"TestOutput\"));
+
+			// emit solution
+			var emitter = new EmitterC(solution, Path.Combine(path, "TestOutput"), EmitterC.CompilerTargets.VCPP, EmitterC.PlatformTypes.Desktop, EmitterC.GCTypes.Micro);
+			emitter.Emit(false);
 		}
 	}
 }
