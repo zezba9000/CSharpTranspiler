@@ -7,6 +7,9 @@ Much of the work done here "at minimum" will be used in the ReignSDK for a C# to
 #### If the C# to C compiler works out well, I may try to transpile C# to other langs listed below.
 - CS2SL [C# to ShaderLang]
 - CS2C [C# to C]
+- CS2N [C# to Nim]
+- CS2D [C# to D]
+- CS2GO [C# to Go]
 - CS2JV [C# to Java]
 - CS2JS [C# to javaScript]
 - CS2PY [C# to Python]
