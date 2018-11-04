@@ -29,7 +29,12 @@ namespace TestApp.C
 		{
 			static A2 a = null;
 
-			static void Main(string[] args)
+			public Program()
+			{
+				this.b += 1;
+			}
+
+			static void Main()
 			{
 				C.B.Program.i = 888;
 				Program.i = 999;
@@ -44,8 +49,8 @@ namespace TestApp.C
 
 			A2 Foo(int hi, string by)
 			{
-				//int foo2 = hi + baseInt;
-				int foo2 = hi;
+				int foo2 = hi + baseInt;
+				foo2 = hi;
 				foo2 = baseInt;
 				return a;
 			}
@@ -82,6 +87,7 @@ namespace TestApp.C
 				{
 					i2 = (int)value;
 					i4 += i3;
+					i4 += i6;
 				}
 			}
 		}

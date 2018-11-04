@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 using CoreSolution = CS2X.Core.Solution;
 using CoreProject = CS2X.Core.Project;
@@ -127,7 +128,9 @@ namespace CS2X.Core.Emitters
 				// make sure libs only get included once
 				if (project.type == ProjectTypes.Dll)
 				{
-					writer.WriteLine("#pragma once" + Environment.NewLine);
+					writer.WriteLine("#pragma once");
+					if (project.roslynProject.Name == "CoreLib") writer.WriteLine("#define null 0" + Environment.NewLine);
+					else writer.WriteLine();
 				}
 
 				// write reference libs as included headers
@@ -170,6 +173,24 @@ namespace CS2X.Core.Emitters
 				writer.WriteLine(string.Format("// ============={0}// Methods{0}// =============", Environment.NewLine));
 				foreach (var obj in project.structObjects) WriteObjectMethods(obj, true);
 				foreach (var obj in project.classObjects) WriteObjectMethods(obj, true);
+
+				// write entry point
+				if (project.type == ProjectTypes.Exe && platform == PlatformTypes.Desktop)
+				{
+					writer.WriteLine(string.Format("// ============={0}// Entry Point{0}// =============", Environment.NewLine));
+					var entryPointMethod = project.compilation.GetEntryPoint(CancellationToken.None);
+					if (entryPointMethod != null)
+					{
+						writer.WriteLine("void main()");
+						writer.WriteLine('{');
+						writer.WriteLine($"\t{GetFullNameFlat(entryPointMethod)}();");
+						writer.WriteLine('}');
+					}
+					else
+					{
+						writer.WriteLine("// <<< NO ENTRY POINT FOUND >>>");
+					}
+				}
 			}
 		}
 
@@ -179,12 +200,27 @@ namespace CS2X.Core.Emitters
 			var type = obj.TypeKind;
 
 			// get type name
-			if (IsLogicalType(type)) writer.Write($"struct {GetFullNameFlat(obj)}");
-			else if (type == TypeKind.Enum) writer.Write($"enum {GetFullNameFlat(obj)}");
-			else throw new Exception("Unsuported TypeKind: " + type);
+			if (IsLogicalType(type))
+			{
+				string formatString;
+				if (writeBody) formatString = "struct {0}";
+				else formatString = "typedef struct {0} {0}";
+				writer.Write(string.Format(formatString, GetFullNameFlat(obj)));
+			}
+			else if (type == TypeKind.Enum)
+			{
+				string formatString;
+				if (writeBody) formatString = "enum {0}";
+				else formatString = "typedef enum {0} {0}";
+				writer.Write(string.Format(formatString, GetFullNameFlat(obj)));
+			}
+			else
+			{
+				throw new Exception("Unsuported TypeKind: " + type);
+			}
 
-			// if enum enforce bit
-			if (type == TypeKind.Enum) writer.Write(" : " + GetFullNameFlat(obj.EnumUnderlyingType));
+			// if enum enforce bit (TODO: consider best approch)
+			//if (type == TypeKind.Enum) writer.Write(" : " + GetFullNameFlat(obj.EnumUnderlyingType));
 
 			// finish
 			if (writeBody)
@@ -201,10 +237,12 @@ namespace CS2X.Core.Emitters
 			}
 		}
 
-		private void WriteObjectBodyNonStaticFields(INamedTypeSymbol obj)
+		private bool WriteObjectBodyNonStaticFields(INamedTypeSymbol obj)
 		{
+			bool fieldWrote = false;
+
 			// write base fields first
-			if (obj.BaseType != null) WriteObjectBodyNonStaticFields(obj.BaseType);
+			if (obj.BaseType != null) fieldWrote = WriteObjectBodyNonStaticFields(obj.BaseType);
 
 			// write non-static fields
 			foreach (var member in obj.GetMembers())
@@ -220,7 +258,11 @@ namespace CS2X.Core.Emitters
 				}
 				if (field.Type.IsValueType) writer.WriteLine($"\t{GetFullNameFlat(field.Type)} {field.Name};");
 				else writer.WriteLine($"\t{GetFullNameFlat(field.Type)}* {field.Name};");
+
+				fieldWrote = true;
 			}
+
+			return fieldWrote;
 		}
 
 		private void WriteObjectBody(INamedTypeSymbol obj, out CallbackMethod writeExternalMembers)
@@ -229,7 +271,7 @@ namespace CS2X.Core.Emitters
 			if (IsLogicalType(type))
 			{
 				// write non-static
-				WriteObjectBodyNonStaticFields(obj);
+				if (!WriteObjectBodyNonStaticFields(obj)) writer.WriteLine("\tchar : 0;");
 
 				// write static fields
 				void writeStaticFields()
@@ -258,16 +300,16 @@ namespace CS2X.Core.Emitters
 			}
 			else if (type == TypeKind.Enum)
 			{
-				bool firstField = true;
-				foreach (var member in obj.GetMembers())
+				var members = obj.GetMembers();
+				var lastMember = members.LastOrDefault(x => x.Kind == SymbolKind.Field);
+				foreach (var member in members)
 				{
 					if (member.Kind != SymbolKind.Field || member.IsImplicitlyDeclared) continue;
 
 					var field = (IFieldSymbol)member;
 					writer.Write($"\t{field.Name} = {field.ConstantValue}");
-					if (firstField) writer.WriteLine(',');
+					if (field != lastMember) writer.WriteLine(',');
 					else writer.WriteLine();
-					firstField = false;
 				}
 				writeExternalMembers = null;
 			}
@@ -286,7 +328,8 @@ namespace CS2X.Core.Emitters
 			}
 			else
 			{
-				if (method.ReturnType.IsValueType) writer.Write($"{GetFullNameFlat(method.ReturnType)} {GetFullNameFlat(method)}(");
+				if (method.MethodKind == MethodKind.Constructor) writer.Write($"System_Void {GetFullNameFlat(method).Replace(".ctor", "CONSTRUCTOR")}(");
+				else if (method.ReturnType.IsValueType) writer.Write($"{GetFullNameFlat(method.ReturnType)} {GetFullNameFlat(method)}(");
 				else writer.Write($"{GetFullNameFlat(method.ReturnType)}* {GetFullNameFlat(method)}(");
 			}
 
@@ -403,6 +446,11 @@ namespace CS2X.Core.Emitters
 					var syntax = (MethodDeclarationSyntax)syntaxDeclaration;
 					body = syntax.Body;
 				}
+				else if (syntaxDeclaration is ConstructorDeclarationSyntax)
+				{
+					var syntax = (ConstructorDeclarationSyntax)syntaxDeclaration;
+					body = syntax.Body;
+				}
 				else
 				{
 					throw new Exception("Unsupported method syntax type: " + syntaxDeclaration.GetType());
@@ -426,6 +474,7 @@ namespace CS2X.Core.Emitters
 				else if (statement is LocalDeclarationStatementSyntax) WriteLocalDeclarationStatement((LocalDeclarationStatementSyntax)statement);
 				else throw new NotImplementedException("Unsuported statement type: " + statement.GetType());
 			}
+			StreamWriterEx.prefix = "";
 		}
 
 		private void WriteExpressionStatement(ExpressionStatementSyntax statement)
@@ -445,7 +494,7 @@ namespace CS2X.Core.Emitters
 		private void WriteLocalDeclarationStatement(LocalDeclarationStatementSyntax statement)
 		{
 			var typeInfo = semanticModel.GetTypeInfo(statement.Declaration.Type);
-			string typeName = GetFullName(typeInfo.Type);
+			string typeName = GetFullNameFlat(typeInfo.Type);
 			var variables = GetVariables(statement, semanticModel);
 			foreach (var variable in variables)
 			{
@@ -462,36 +511,47 @@ namespace CS2X.Core.Emitters
 		private void WriteExperesion(ExpressionSyntax expression)
 		{
 			if (expression is AssignmentExpressionSyntax) WriteAssignmentExpression((AssignmentExpressionSyntax)expression);
+			else if (expression is BinaryExpressionSyntax) WriteBinaryExpression((BinaryExpressionSyntax)expression);
+			else if (expression is IdentifierNameSyntax || expression is MemberAccessExpressionSyntax) WriteSymbolAccess(expression);
 			else if (expression is LiteralExpressionSyntax) WriteLiteralExpression((LiteralExpressionSyntax)expression);
 			else if (expression is CastExpressionSyntax) WriteCastExpression((CastExpressionSyntax)expression);
-			else if (expression is IdentifierNameSyntax || expression is MemberAccessExpressionSyntax) WriteSymbolAccess(expression);
 			else throw new NotImplementedException("Unsuported expression type: " + expression.GetType());
 		}
 
 		private void WriteAssignmentExpression(AssignmentExpressionSyntax expression)
 		{
+			WriteBinaryExpression(expression.Left, expression.Right, expression.OperatorToken);
+		}
+
+		private void WriteBinaryExpression(BinaryExpressionSyntax expression)
+		{
+			WriteBinaryExpression(expression.Left, expression.Right, expression.OperatorToken);
+		}
+
+		private void WriteBinaryExpression(ExpressionSyntax expressionLeft, ExpressionSyntax expressionRight, SyntaxToken operatorToken)
+		{
 			// check if we need to convert property operator to method call
-			var symbolInfo = semanticModel.GetSymbolInfo(expression.Left);
+			var symbolInfo = semanticModel.GetSymbolInfo(expressionLeft);
 			var propertySymbol = symbolInfo.Symbol as IPropertySymbol;
-			if (propertySymbol != null)
+			if (propertySymbol != null && propertySymbol.ContainingType.GetMembers().Any(x => x.Kind == SymbolKind.Field && ((IFieldSymbol)x).AssociatedSymbol == null))
 			{
-				if (expression.OperatorToken.ValueText == "=")
+				if (operatorToken.ValueText == "=")
 				{
 					writer.Write($"{GetFullNameFlat(propertySymbol.SetMethod)}(");
 				}
 				else
 				{
-					writer.Write($"{GetFullNameFlat(propertySymbol.SetMethod)}({GetFullNameFlat(propertySymbol.GetMethod)}() {expression.OperatorToken.ValueText[0]} ");
+					writer.Write($"{GetFullNameFlat(propertySymbol.SetMethod)}({GetFullNameFlat(propertySymbol.GetMethod)}() {operatorToken.ValueText[0]} ");
 				}
-				WriteExperesion(expression.Right);
+				WriteExperesion(expressionRight);
 				writer.Write(')');
 				return;
 			}
-			
+
 			// write normal operator
-			WriteExperesion(expression.Left);
-			writer.Write($" {expression.OperatorToken.ValueText} ");
-			WriteExperesion(expression.Right);
+			WriteExperesion(expressionLeft);
+			writer.Write($" {operatorToken.ValueText} ");
+			WriteExperesion(expressionRight);
 		}
 
 		private void WriteSymbolAccess(ExpressionSyntax expression)
@@ -500,8 +560,14 @@ namespace CS2X.Core.Emitters
 			if (symbolInfo.Symbol is IPropertySymbol)
 			{
 				var propertySymbol = symbolInfo.Symbol as IPropertySymbol;
-				if (propertySymbol.IsStatic) writer.Write($"{GetFullNameFlat(propertySymbol.GetMethod)}()");
-				else writer.Write($"this->{symbolInfo.Symbol.Name}");
+				if (propertySymbol.IsStatic || !propertySymbol.ContainingType.GetMembers().Any(x => x.Kind == SymbolKind.Field && ((IFieldSymbol)x).AssociatedSymbol == propertySymbol))
+				{
+					writer.Write($"{GetFullNameFlat(propertySymbol.GetMethod)}(this)");
+				}
+				else
+				{
+					writer.Write($"this->{symbolInfo.Symbol.Name}");
+				}
 			}
 			else if (symbolInfo.Symbol.IsStatic)
 			{
@@ -519,8 +585,19 @@ namespace CS2X.Core.Emitters
 			var value = semanticModel.GetConstantValue(expression);
 			if (value.HasValue)
 			{
-				writer.Write(value.Value);
-				if (value.Value is float) writer.Write('f');
+				if (value.Value == null)
+				{
+					writer.Write("null");
+				}
+				else
+				{
+					writer.Write(value.Value);
+					if (value.Value is float) writer.Write('f');
+				}
+			}
+			else
+			{
+				throw new Exception("Unsupported literal token: " + expression.Token.ValueText);
 			}
 		}
 

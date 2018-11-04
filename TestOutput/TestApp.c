@@ -7,34 +7,35 @@
 // =============
 // Type forward declares
 // =============
-enum TestApp_Blaa_MyEnum : System_Int64;
-enum TestApp_Blaa_MyEnumDefault : System_Int32;
-struct TestApp_Blaa_MyInterface;
-struct MyPartial;
-struct TestApp_Blaa_A2;
-struct TestApp_C_MyBase;
-struct TestApp_C_B;
-struct TestApp_C_Program;
+typedef enum TestApp_Blaa_MyEnum TestApp_Blaa_MyEnum;
+typedef enum TestApp_Blaa_MyEnumDefault TestApp_Blaa_MyEnumDefault;
+typedef struct TestApp_Blaa_MyInterface TestApp_Blaa_MyInterface;
+typedef struct MyPartial MyPartial;
+typedef struct TestApp_Blaa_A2 TestApp_Blaa_A2;
+typedef struct TestApp_C_MyBase TestApp_C_MyBase;
+typedef struct TestApp_C_B TestApp_C_B;
+typedef struct TestApp_C_Program TestApp_C_Program;
 
 // =============
 // Types Definitions
 // =============
-enum TestApp_Blaa_MyEnum : System_Int64
+enum TestApp_Blaa_MyEnum
 {
 	A = 1,
-	B = 2
+	B = 2,
 	C = 4
 };
 
-enum TestApp_Blaa_MyEnumDefault : System_Int32
+enum TestApp_Blaa_MyEnumDefault
 {
 	A = 1,
-	B = 2
+	B = 2,
 	C = 4
 };
 
 struct TestApp_Blaa_MyInterface
 {
+	char : 0;
 };
 
 struct MyPartial
@@ -45,6 +46,7 @@ struct MyPartial
 
 struct TestApp_Blaa_A2
 {
+	char : 0;
 };
 
 struct TestApp_C_MyBase
@@ -55,6 +57,7 @@ struct TestApp_C_MyBase
 
 struct TestApp_C_B
 {
+	char : 0;
 };
 
 struct TestApp_C_Program
@@ -84,7 +87,8 @@ System_Void TestApp_C_Program_set_i7(TestApp_C_Program* this, System_Single valu
 // Method forward declares
 // =============
 System_Void MyPartial_Foo(MyPartial* this);
-System_Void TestApp_C_Program_Main(System_Array* args);
+System_Void TestApp_C_Program_CONSTRUCTOR(TestApp_C_Program* this);
+System_Void TestApp_C_Program_Main();
 TestApp_Blaa_A2* TestApp_C_Program_Foo(TestApp_C_Program* this, System_Int32 hi, System_String* by);
 
 // =============
@@ -109,6 +113,7 @@ System_Void TestApp_C_Program_set_i7(TestApp_C_Program* this, System_Single valu
 {
 	TestApp_C_Program_set_i2((System_Int32)value);
 	TestApp_C_Program_set_i4(TestApp_C_Program_get_i4() + this->i3);
+	TestApp_C_Program_set_i4(TestApp_C_Program_get_i4() + TestApp_C_Program_get_i6(this));
 }
 
 // =============
@@ -116,24 +121,37 @@ System_Void TestApp_C_Program_set_i7(TestApp_C_Program* this, System_Single valu
 // =============
 System_Void MyPartial_Foo(MyPartial* this)
 {
-	System.Int32 i = 0;
+	System_Int32 i = 0;
 }
 
-System_Void TestApp_C_Program_Main(System_Array* args)
+System_Void TestApp_C_Program_CONSTRUCTOR(TestApp_C_Program* this)
+{
+	this->b += 1;
+}
+
+System_Void TestApp_C_Program_Main()
 {
 	TestApp_C_Program_i = 888;
 	TestApp_C_Program_i = 999;
 	TestApp_C_Program_i = 22;
 	TestApp_C_Program_set_i2(0);
 	TestApp_C_Program_set_i2(1);
-	System.Int32 abc = 44;
+	System_Int32 abc = 44;
 	abc = 33;
 }
 
 TestApp_Blaa_A2* TestApp_C_Program_Foo(TestApp_C_Program* this, System_Int32 hi, System_String* by)
 {
-	System.Int32 foo2 = hi;
+	System_Int32 foo2 = hi + this->baseInt;
+	foo2 = hi;
 	foo2 = this->baseInt;
 	return TestApp_C_Program_a;
 }
 
+// =============
+// Entry Point
+// =============
+void main()
+{
+	TestApp_C_Program_Main();
+}
