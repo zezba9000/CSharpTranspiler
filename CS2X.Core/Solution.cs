@@ -50,7 +50,6 @@ namespace CS2X.Core
 				var projects = new List<Project>();
 				foreach (var csProj in roslynSolution.Projects)
 				{
-					//if (csProj.Name == "CoreLib") continue;// HACK: skip until we can parse CoreLib
 					var proj = new Project(this, csProj);
 					projects.Add(proj);
 				}
