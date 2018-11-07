@@ -185,7 +185,7 @@ namespace CS2X.Core.Emitters
 					{
 						writer.WriteLine("void main()");
 						writer.WriteLine('{');
-						writer.WriteLine($"\t{GetFullNameFlat(entryPointMethod)}();");
+						writer.WriteLine($"\t{GetFullNameFlat(entryPointMethod)}__0();");
 						writer.WriteLine('}');
 					}
 					else
@@ -286,7 +286,7 @@ namespace CS2X.Core.Emitters
 
 		private void GetFieldInfo(IFieldSymbol field, out ITypeSymbol fieldType, out string fieldName)
 		{
-			if (field.AssociatedSymbol != null && field.AssociatedSymbol.Kind == SymbolKind.Property)
+			if (IsBackingField(field))
 			{
 				var property = (IPropertySymbol)field.AssociatedSymbol;
 				fieldType = property.Type;
@@ -357,7 +357,7 @@ namespace CS2X.Core.Emitters
 			}
 			else
 			{
-				string methodOverloadValue = (methodOverload != null) ? ("_" + methodOverload.Value) : "";
+				string methodOverloadValue = (methodOverload != null) ? ("__" + methodOverload.Value) : "";
 				if (method.MethodKind == MethodKind.Constructor) writer.Write($"System_Void {GetFullNameFlat(method).Replace(".ctor", "CONSTRUCTOR")}{methodOverloadValue}(");
 				else if (method.ReturnType.IsValueType) writer.Write($"{GetFullNameFlat(GetCType(method.ReturnType))} {GetFullNameFlat(method)}{methodOverloadValue}(");
 				else writer.Write($"{GetFullNameFlat(GetCType(method.ReturnType))}* {GetFullNameFlat(method)}{methodOverloadValue}(");
@@ -396,13 +396,13 @@ namespace CS2X.Core.Emitters
 
 		private void WriteObjectProperties(INamedTypeSymbol obj, bool writeBody)
 		{
-			var members = obj.GetMembers();
-			foreach (var member in members)
+			foreach (var member in obj.GetMembers())
 			{
 				if (member.Kind != SymbolKind.Property || member.IsImplicitlyDeclared) continue;
-				if (members.Any(x => x.Kind == SymbolKind.Field && ((IFieldSymbol)x).AssociatedSymbol == member)) continue;
 
 				var property = (IPropertySymbol)member;
+				if (IsAutoPropery(property)) continue;
+
 				if (property.GetMethod != null)
 				{
 					WriteObjectMethodDeclare(property.GetMethod, null);
@@ -442,9 +442,9 @@ namespace CS2X.Core.Emitters
 			foreach (var member in members)
 			{
 				if (member.Kind != SymbolKind.Method || member.IsImplicitlyDeclared) continue;
-				if (members.Any(x => x.Kind == SymbolKind.Property && (((IPropertySymbol)x).GetMethod == member || ((IPropertySymbol)x).SetMethod == member))) continue;
 
 				var method = (IMethodSymbol)member;
+				if (IsBackingMethod(method)) continue;
 
 				MethodOverload overload;
 				overload = overloads.FirstOrDefault(x => x.name == method.Name);
@@ -454,7 +454,8 @@ namespace CS2X.Core.Emitters
 					overloads.Add(overload);
 				}
 
-				WriteObjectMethodDeclare(method, overload.count);
+				if (method.AssociatedSymbol != null && method.AssociatedSymbol is IPropertySymbol) WriteObjectMethodDeclare(method, null);
+				else WriteObjectMethodDeclare(method, overload.count);
 				if (writeBody)
 				{
 					writer.WriteLine(Environment.NewLine + '{');
@@ -557,6 +558,7 @@ namespace CS2X.Core.Emitters
 			else if (expression is IdentifierNameSyntax || expression is MemberAccessExpressionSyntax) WriteSymbolAccess(expression);
 			else if (expression is LiteralExpressionSyntax) WriteLiteralExpression((LiteralExpressionSyntax)expression);
 			else if (expression is CastExpressionSyntax) WriteCastExpression((CastExpressionSyntax)expression);
+			else if (expression is ParenthesizedExpressionSyntax) WriteParenthesizedExpression((ParenthesizedExpressionSyntax)expression);
 			else throw new NotImplementedException("Unsuported expression type: " + expression.GetType());
 		}
 
@@ -575,18 +577,22 @@ namespace CS2X.Core.Emitters
 			// check if we need to convert property operator to method call
 			var symbolInfo = semanticModel.GetSymbolInfo(expressionLeft);
 			var propertySymbol = symbolInfo.Symbol as IPropertySymbol;
-			if (propertySymbol != null && propertySymbol.ContainingType.GetMembers().Any(x => x.Kind == SymbolKind.Field && ((IFieldSymbol)x).AssociatedSymbol == null))
+			if (propertySymbol != null && !IsAutoPropery(propertySymbol))
 			{
 				if (operatorToken.ValueText == "=")
 				{
-					writer.Write($"{GetFullNameFlat(propertySymbol.SetMethod)}(");
+					if (propertySymbol.IsStatic) writer.Write($"{GetFullNameFlat(propertySymbol.SetMethod)}(");
+					else writer.Write($"{GetFullNameFlat(propertySymbol.SetMethod)}(this, ");
+					WriteExperesion(expressionRight);
+					writer.Write(')');
 				}
 				else
 				{
-					writer.Write($"{GetFullNameFlat(propertySymbol.SetMethod)}({GetFullNameFlat(propertySymbol.GetMethod)}() {operatorToken.ValueText[0]} ");
+					if (propertySymbol.IsStatic) writer.Write($"{GetFullNameFlat(propertySymbol.GetMethod)}() {operatorToken.ValueText[0]} ");
+					else writer.Write($"{GetFullNameFlat(propertySymbol.GetMethod)}(this) {operatorToken.ValueText[0]} ");
+					WriteExperesion(expressionRight);
 				}
-				WriteExperesion(expressionRight);
-				writer.Write(')');
+
 				return;
 			}
 
@@ -599,16 +605,16 @@ namespace CS2X.Core.Emitters
 		private void WriteSymbolAccess(ExpressionSyntax expression)
 		{
 			var symbolInfo = semanticModel.GetSymbolInfo(expression);
-			if (symbolInfo.Symbol is IPropertySymbol)
+			var propertySymbol = symbolInfo.Symbol as IPropertySymbol;
+			if (propertySymbol != null && !IsAutoPropery(propertySymbol))
 			{
-				var propertySymbol = symbolInfo.Symbol as IPropertySymbol;
-				if (propertySymbol.IsStatic || !propertySymbol.ContainingType.GetMembers().Any(x => x.Kind == SymbolKind.Field && ((IFieldSymbol)x).AssociatedSymbol == propertySymbol))
+				if (propertySymbol.IsStatic)
 				{
-					writer.Write($"{GetFullNameFlat(propertySymbol.GetMethod)}(this)");
+					writer.Write($"{GetFullNameFlat(propertySymbol.GetMethod)}()");
 				}
 				else
 				{
-					writer.Write($"this->{symbolInfo.Symbol.Name}");
+					writer.Write($"{GetFullNameFlat(propertySymbol.GetMethod)}(this)");
 				}
 			}
 			else if (symbolInfo.Symbol.IsStatic)
@@ -648,6 +654,13 @@ namespace CS2X.Core.Emitters
 			var symbolInfo = semanticModel.GetSymbolInfo(expression.Type);
 			writer.Write($"({GetFullNameFlat(symbolInfo.Symbol)})");
 			WriteExperesion(expression.Expression);
+		}
+
+		private void WriteParenthesizedExpression(ParenthesizedExpressionSyntax expression)
+		{
+			writer.Write('(');
+			WriteExperesion(expression.Expression);
+			writer.Write(')');
 		}
 		#endregion
 	}

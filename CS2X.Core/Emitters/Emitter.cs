@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Linq;
 
 using CoreSolution = CS2X.Core.Solution;
 
@@ -80,6 +81,22 @@ namespace CS2X.Core.Emitters
 			}
 
 			return false;
+		}
+
+		protected bool IsBackingField(IFieldSymbol field)
+		{
+			return field.AssociatedSymbol != null && field.AssociatedSymbol.Kind == SymbolKind.Property;
+		}
+
+		protected bool IsBackingMethod(IMethodSymbol method)
+		{
+			return method.AssociatedSymbol != null && method.AssociatedSymbol.Kind == SymbolKind.Property;
+		}
+
+		protected bool IsAutoPropery(IPropertySymbol property)
+		{
+			var members = property.ContainingType.GetMembers();
+			return members.Any(x => x.Kind == SymbolKind.Field && ((IFieldSymbol)x).AssociatedSymbol == property);
 		}
 	}
 }

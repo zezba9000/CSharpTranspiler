@@ -63,11 +63,11 @@ System_Void TestApp_C_Program_set_i7(TestApp_C_Program* this, System_Single valu
 // =============
 // Method forward declares
 // =============
-System_Void MyPartial_Foo_0(MyPartial* this);
-System_Void TestApp_C_Program_CONSTRUCTOR_0(TestApp_C_Program* this);
-TestApp_Blaa_A2* TestApp_C_Program_Foo_0(TestApp_C_Program* this);
-System_Void TestApp_C_Program_Main_0();
-TestApp_Blaa_A2* TestApp_C_Program_Foo_1(TestApp_C_Program* this, System_Int32 hi, System_String* by, System_String* by2);
+System_Void MyPartial_Foo__0(MyPartial* this);
+System_Void TestApp_C_Program_CONSTRUCTOR__0(TestApp_C_Program* this);
+TestApp_Blaa_A2* TestApp_C_Program_Foo__0(TestApp_C_Program* this);
+System_Void TestApp_C_Program_Main__0();
+TestApp_Blaa_A2* TestApp_C_Program_Foo__1(TestApp_C_Program* this, System_Int32 hi, System_String* by, System_String* by2);
 
 // =============
 // Properties
@@ -90,29 +90,33 @@ System_Single TestApp_C_Program_get_i6(TestApp_C_Program* this)
 System_Void TestApp_C_Program_set_i7(TestApp_C_Program* this, System_Single value)
 {
 	TestApp_C_Program_set_i2((System_Int32)value);
-	TestApp_C_Program_set_i4(TestApp_C_Program_get_i4() + this->i3);
-	TestApp_C_Program_set_i4(TestApp_C_Program_get_i4() + TestApp_C_Program_get_i6(this));
+	this->i4 += this->i3;
+	this->i4 += TestApp_C_Program_get_i6(this);
+	this->i4 = TestApp_C_Program_get_i6(this) + this->i3;
+	this->i4 = this->i3 + TestApp_C_Program_get_i6(this);
+	TestApp_C_Program_set_i2((System_Int32)(TestApp_C_Program_get_i6(this) + this->i3));
+	TestApp_C_Program_set_i2((System_Int32)(this->i3 + TestApp_C_Program_get_i6(this)));
 }
 
 // =============
 // Methods
 // =============
-System_Void MyPartial_Foo_0(MyPartial* this)
+System_Void MyPartial_Foo__0(MyPartial* this)
 {
 	System_Int32 i = 0;
 }
 
-System_Void TestApp_C_Program_CONSTRUCTOR_0(TestApp_C_Program* this)
+System_Void TestApp_C_Program_CONSTRUCTOR__0(TestApp_C_Program* this)
 {
 	this->b += 1;
 }
 
-TestApp_Blaa_A2* TestApp_C_Program_Foo_0(TestApp_C_Program* this)
+TestApp_Blaa_A2* TestApp_C_Program_Foo__0(TestApp_C_Program* this)
 {
 	return TestApp_C_Program_a;
 }
 
-System_Void TestApp_C_Program_Main_0()
+System_Void TestApp_C_Program_Main__0()
 {
 	TestApp_C_Program_i = 888;
 	TestApp_C_Program_i = 999;
@@ -123,7 +127,7 @@ System_Void TestApp_C_Program_Main_0()
 	abc = 33;
 }
 
-TestApp_Blaa_A2* TestApp_C_Program_Foo_1(TestApp_C_Program* this, System_Int32 hi, System_String* by, System_String* by2)
+TestApp_Blaa_A2* TestApp_C_Program_Foo__1(TestApp_C_Program* this, System_Int32 hi, System_String* by, System_String* by2)
 {
 	System_Int32 foo2 = hi + this->baseInt;
 	foo2 = hi;
@@ -136,5 +140,5 @@ TestApp_Blaa_A2* TestApp_C_Program_Foo_1(TestApp_C_Program* this, System_Int32 h
 // =============
 void main()
 {
-	TestApp_C_Program_Main();
+	TestApp_C_Program_Main__0();
 }

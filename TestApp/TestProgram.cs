@@ -93,6 +93,10 @@ namespace TestApp.C
 					i2 = (int)value;
 					i4 += i3;
 					i4 += i6;
+					i4 = i6 + i3;
+					i4 = i3 + i6;
+					i2 = (int)(i6 + i3);
+					i2 = (int)(i3 + i6);
 				}
 			}
 		}
