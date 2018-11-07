@@ -8,8 +8,6 @@
 // =============
 // Type forward declares
 // =============
-typedef enum System_AttributeTargets System_AttributeTargets;
-typedef enum System_ComponentModel_EditorBrowsableState System_ComponentModel_EditorBrowsableState;
 typedef struct System_IDisposable System_IDisposable;
 typedef struct System_Collections_ICollection System_Collections_ICollection;
 typedef struct System_Collections_IEnumerable System_Collections_IEnumerable;
@@ -86,32 +84,26 @@ typedef struct System_Runtime_InteropServices_OutAttribute System_Runtime_Intero
 // =============
 // Types Definitions
 // =============
-enum System_AttributeTargets
-{
-	Assembly = 1,
-	Module = 2,
-	Class = 4,
-	Struct = 8,
-	Enum = 16,
-	Constructor = 32,
-	Method = 64,
-	Property = 128,
-	Field = 256,
-	Event = 512,
-	Interface = 1024,
-	Parameter = 2048,
-	Delegate = 4096,
-	ReturnValue = 8192,
-	GenericParameter = 16384,
-	All = 32767
-};
+#define System_AttributeTargets_Assembly 1
+#define System_AttributeTargets_Module 2
+#define System_AttributeTargets_Class 4
+#define System_AttributeTargets_Struct 8
+#define System_AttributeTargets_Enum 16
+#define System_AttributeTargets_Constructor 32
+#define System_AttributeTargets_Method 64
+#define System_AttributeTargets_Property 128
+#define System_AttributeTargets_Field 256
+#define System_AttributeTargets_Event 512
+#define System_AttributeTargets_Interface 1024
+#define System_AttributeTargets_Parameter 2048
+#define System_AttributeTargets_Delegate 4096
+#define System_AttributeTargets_ReturnValue 8192
+#define System_AttributeTargets_GenericParameter 16384
+#define System_AttributeTargets_All 32767
 
-enum System_ComponentModel_EditorBrowsableState
-{
-	Always = 0,
-	Never = 1,
-	Advanced = 2
-};
+#define System_ComponentModel_EditorBrowsableState_Always 0
+#define System_ComponentModel_EditorBrowsableState_Never 1
+#define System_ComponentModel_EditorBrowsableState_Advanced 2
 
 struct System_IDisposable
 {
@@ -225,9 +217,8 @@ struct System_Void
 
 struct System_Collections_DictionaryEntry
 {
-	System_Object Key;
-	System_Object Value;
-	char : 0;
+	System_Object* Key;
+	System_Object* Value;
 };
 
 struct System_Attribute
@@ -237,7 +228,7 @@ struct System_Attribute
 
 struct System_AttributeUsageAttribute
 {
-	System_AttributeTargets _attributeTarget;
+	System_Int32 _attributeTarget;
 	System_Boolean AllowMultiple;
 	System_Boolean Inherited;
 };
@@ -366,7 +357,7 @@ struct System_ComponentModel_DependencyAttribute
 
 struct System_ComponentModel_EditorBrowsableAttribute
 {
-	System_ComponentModel_EditorBrowsableState _browsableState;
+	System_Int32 _browsableState;
 };
 
 struct System_Diagnostics_ConditionalAttribute
@@ -482,7 +473,7 @@ struct System_Runtime_InteropServices_OutAttribute
 // =============
 // Property forward declares
 // =============
-System_AttributeTargets System_AttributeUsageAttribute_get_ValidOn(System_AttributeUsageAttribute* this);
+System_Int32 System_AttributeUsageAttribute_get_ValidOn(System_AttributeUsageAttribute* this);
 System_Boolean System_CLSCompliantAttribute_get_IsCompliant(System_CLSCompliantAttribute* this);
 System_Int32 System_Array_get_Length(System_Array* this);
 System_Exception* System_Exception_get_InnerException(System_Exception* this);
@@ -497,7 +488,7 @@ System_String* System_CodeDom_Compiler_GeneratedCodeAttribute_get_Version(System
 System_Int32 System_Collections_ArrayList_get_Count(System_Collections_ArrayList* this);
 System_Int32 System_Collections_Queue_get_Count(System_Collections_Queue* this);
 System_Int32 System_Collections_Stack_get_Count(System_Collections_Stack* this);
-System_ComponentModel_EditorBrowsableState System_ComponentModel_EditorBrowsableAttribute_get_State(System_ComponentModel_EditorBrowsableAttribute* this);
+System_Int32 System_ComponentModel_EditorBrowsableAttribute_get_State(System_ComponentModel_EditorBrowsableAttribute* this);
 System_String* System_Diagnostics_ConditionalAttribute_get_ConditionString(System_Diagnostics_ConditionalAttribute* this);
 System_String* System_Reflection_AssemblyCompanyAttribute_get_Company(System_Reflection_AssemblyCompanyAttribute* this);
 System_String* System_Reflection_AssemblyConfigurationAttribute_get_Configuration(System_Reflection_AssemblyConfigurationAttribute* this);
@@ -518,7 +509,7 @@ System_String* System_Reflection_DefaultMemberAttribute_get_MemberName(System_Re
 // Method forward declares
 // =============
 System_Void System_Collections_DictionaryEntry_CONSTRUCTOR(System_Collections_DictionaryEntry* this, System_Object* key, System_Object* value);
-System_Void System_AttributeUsageAttribute_CONSTRUCTOR(System_AttributeUsageAttribute* this, System_AttributeTargets validOn);
+System_Void System_AttributeUsageAttribute_CONSTRUCTOR(System_AttributeUsageAttribute* this, System_Int32 validOn);
 System_Void System_CLSCompliantAttribute_CONSTRUCTOR(System_CLSCompliantAttribute* this, System_Boolean isCompliant);
 System_Collections_IEnumerator* System_Array_GetEnumerator(System_Array* this);
 System_Void System_Exception_CONSTRUCTOR(System_Exception* this);
@@ -532,7 +523,7 @@ System_Void System_CodeDom_Compiler_GeneratedCodeAttribute_CONSTRUCTOR(System_Co
 System_Collections_IEnumerator* System_Collections_ArrayList_GetEnumerator(System_Collections_ArrayList* this);
 System_Collections_IEnumerator* System_Collections_Queue_GetEnumerator(System_Collections_Queue* this);
 System_Collections_IEnumerator* System_Collections_Stack_GetEnumerator(System_Collections_Stack* this);
-System_Void System_ComponentModel_EditorBrowsableAttribute_CONSTRUCTOR(System_ComponentModel_EditorBrowsableAttribute* this, System_ComponentModel_EditorBrowsableState state);
+System_Void System_ComponentModel_EditorBrowsableAttribute_CONSTRUCTOR(System_ComponentModel_EditorBrowsableAttribute* this, System_Int32 state);
 System_Void System_Diagnostics_ConditionalAttribute_CONSTRUCTOR(System_Diagnostics_ConditionalAttribute* this, System_String* conditionString);
 System_Void System_Reflection_AssemblyCompanyAttribute_CONSTRUCTOR(System_Reflection_AssemblyCompanyAttribute* this, System_String* company);
 System_Void System_Reflection_AssemblyConfigurationAttribute_CONSTRUCTOR(System_Reflection_AssemblyConfigurationAttribute* this, System_String* configuration);
@@ -552,7 +543,7 @@ System_Void System_Reflection_DefaultMemberAttribute_CONSTRUCTOR(System_Reflecti
 // =============
 // Properties
 // =============
-System_AttributeTargets System_AttributeUsageAttribute_get_ValidOn(System_AttributeUsageAttribute* this)
+System_Int32 System_AttributeUsageAttribute_get_ValidOn(System_AttributeUsageAttribute* this)
 {
 	return this->_attributeTarget;
 }
@@ -627,7 +618,7 @@ System_Int32 System_Collections_Stack_get_Count(System_Collections_Stack* this)
 	return 0;
 }
 
-System_ComponentModel_EditorBrowsableState System_ComponentModel_EditorBrowsableAttribute_get_State(System_ComponentModel_EditorBrowsableAttribute* this)
+System_Int32 System_ComponentModel_EditorBrowsableAttribute_get_State(System_ComponentModel_EditorBrowsableAttribute* this)
 {
 	return this->_browsableState;
 }
@@ -716,7 +707,7 @@ System_Void System_Collections_DictionaryEntry_CONSTRUCTOR(System_Collections_Di
 	this->Value = value;
 }
 
-System_Void System_AttributeUsageAttribute_CONSTRUCTOR(System_AttributeUsageAttribute* this, System_AttributeTargets validOn)
+System_Void System_AttributeUsageAttribute_CONSTRUCTOR(System_AttributeUsageAttribute* this, System_Int32 validOn)
 {
 	this->_attributeTarget = validOn;
 }
@@ -785,7 +776,7 @@ System_Collections_IEnumerator* System_Collections_Stack_GetEnumerator(System_Co
 	return null;
 }
 
-System_Void System_ComponentModel_EditorBrowsableAttribute_CONSTRUCTOR(System_ComponentModel_EditorBrowsableAttribute* this, System_ComponentModel_EditorBrowsableState state)
+System_Void System_ComponentModel_EditorBrowsableAttribute_CONSTRUCTOR(System_ComponentModel_EditorBrowsableAttribute* this, System_Int32 state)
 {
 	this->_browsableState = state;
 }

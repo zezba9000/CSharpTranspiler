@@ -7,8 +7,6 @@
 // =============
 // Type forward declares
 // =============
-typedef enum TestApp_Blaa_MyEnum TestApp_Blaa_MyEnum;
-typedef enum TestApp_Blaa_MyEnumDefault TestApp_Blaa_MyEnumDefault;
 typedef struct TestApp_Blaa_MyInterface TestApp_Blaa_MyInterface;
 typedef struct MyPartial MyPartial;
 typedef struct TestApp_Blaa_A2 TestApp_Blaa_A2;
@@ -19,19 +17,13 @@ typedef struct TestApp_C_Program TestApp_C_Program;
 // =============
 // Types Definitions
 // =============
-enum TestApp_Blaa_MyEnum
-{
-	A = 1,
-	B = 2,
-	C = 4
-};
+#define TestApp_Blaa_MyEnum_A 1
+#define TestApp_Blaa_MyEnum_B 2
+#define TestApp_Blaa_MyEnum_C 4
 
-enum TestApp_Blaa_MyEnumDefault
-{
-	A = 1,
-	B = 2,
-	C = 4
-};
+#define TestApp_Blaa_MyEnumDefault_A 1
+#define TestApp_Blaa_MyEnumDefault_B 2
+#define TestApp_Blaa_MyEnumDefault_C 4
 
 struct TestApp_Blaa_MyInterface
 {

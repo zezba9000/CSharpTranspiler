@@ -195,6 +195,19 @@ namespace CS2X.Core.Emitters
 		}
 
 		#region Object Layout
+		private ITypeSymbol GetCType(ITypeSymbol type)
+		{
+			if (type.TypeKind == TypeKind.Enum)
+			{
+				var namedType = (INamedTypeSymbol)type;
+				return namedType.EnumUnderlyingType;
+			}
+			else
+			{
+				return type;
+			}
+		}
+
 		private void WriteObject(INamedTypeSymbol obj, bool writeBody)
 		{
 			var type = obj.TypeKind;
@@ -209,18 +222,26 @@ namespace CS2X.Core.Emitters
 			}
 			else if (type == TypeKind.Enum)
 			{
-				string formatString;
-				if (writeBody) formatString = "enum {0}";
-				else formatString = "typedef enum {0} {0}";
-				writer.Write(string.Format(formatString, GetFullNameFlat(obj)));
+				if (writeBody)
+				{
+					string name = GetFullNameFlat(obj);
+					foreach (var member in obj.GetMembers())
+					{
+						if (member.Kind != SymbolKind.Field || member.IsImplicitlyDeclared) continue;
+
+						var field = (IFieldSymbol)member;
+						writer.WriteLine($"#define {name}_{field.Name} {field.ConstantValue}");
+					}
+
+					writer.WriteLine();
+				}
+				
+				return;
 			}
 			else
 			{
 				throw new Exception("Unsuported TypeKind: " + type);
 			}
-
-			// if enum enforce bit (TODO: consider best approch)
-			//if (type == TypeKind.Enum) writer.Write(" : " + GetFullNameFlat(obj.EnumUnderlyingType));
 
 			// finish
 			if (writeBody)
@@ -250,14 +271,23 @@ namespace CS2X.Core.Emitters
 				if (member.Kind != SymbolKind.Field || member.IsStatic) continue;
 
 				var field = (IFieldSymbol)member;
+				ITypeSymbol fieldType;
+				string fieldName;
+
 				if (field.AssociatedSymbol != null && field.AssociatedSymbol.Kind == SymbolKind.Property)
 				{
 					var property = (IPropertySymbol)field.AssociatedSymbol;
-					writer.WriteLine($"\t{GetFullNameFlat(property.Type)} {property.Name};");
-					continue;
+					fieldType = property.Type;
+					fieldName = property.Name;
 				}
-				if (field.Type.IsValueType) writer.WriteLine($"\t{GetFullNameFlat(field.Type)} {field.Name};");
-				else writer.WriteLine($"\t{GetFullNameFlat(field.Type)}* {field.Name};");
+				else
+				{
+					fieldType = field.Type;
+					fieldName = field.Name;
+				}
+				
+				if (fieldType.IsValueType) writer.WriteLine($"\t{GetFullNameFlat(GetCType(fieldType))} {fieldName};");
+				else writer.WriteLine($"\t{GetFullNameFlat(GetCType(fieldType))}* {fieldName};");
 
 				fieldWrote = true;
 			}
@@ -282,14 +312,23 @@ namespace CS2X.Core.Emitters
 						if (member.Kind != SymbolKind.Field || !member.IsStatic) continue;
 
 						var field = (IFieldSymbol)member;
+						ITypeSymbol fieldType;
+						string fieldName;
+
 						if (field.AssociatedSymbol != null && field.AssociatedSymbol.Kind == SymbolKind.Property)
 						{
 							var property = (IPropertySymbol)field.AssociatedSymbol;
-							writer.WriteLine($"{GetFullNameFlat(property.Type)} {GetFullNameFlat(property)};");
-							continue;
+							fieldType = property.Type;
+							fieldName = property.Name;
 						}
-						if (field.Type.IsValueType) writer.WriteLine($"{GetFullNameFlat(field.Type)} {GetFullNameFlat(field)};");
-						else writer.WriteLine($"{GetFullNameFlat(field.Type)}* {GetFullNameFlat(field)};");
+						else
+						{
+							fieldType = field.Type;
+							fieldName = field.Name;
+						}
+						
+						if (fieldType.IsValueType) writer.WriteLine($"{GetFullNameFlat(GetCType(fieldType))} {GetFullNameFlat(GetCType(field.ContainingType))}_{fieldName};");
+						else writer.WriteLine($"{GetFullNameFlat(GetCType(fieldType))}* {GetFullNameFlat(GetCType(field.ContainingType))}_{fieldName};");
 						fieldWrote = true;
 					}
 
@@ -298,24 +337,9 @@ namespace CS2X.Core.Emitters
 
 				writeExternalMembers = writeStaticFields;
 			}
-			else if (type == TypeKind.Enum)
-			{
-				var members = obj.GetMembers();
-				var lastMember = members.LastOrDefault(x => x.Kind == SymbolKind.Field);
-				foreach (var member in members)
-				{
-					if (member.Kind != SymbolKind.Field || member.IsImplicitlyDeclared) continue;
-
-					var field = (IFieldSymbol)member;
-					writer.Write($"\t{field.Name} = {field.ConstantValue}");
-					if (field != lastMember) writer.WriteLine(',');
-					else writer.WriteLine();
-				}
-				writeExternalMembers = null;
-			}
 			else
 			{
-				writeExternalMembers = null;
+				throw new Exception("Unsupported object type: " + type);
 			}
 		}
 		
@@ -329,8 +353,8 @@ namespace CS2X.Core.Emitters
 			else
 			{
 				if (method.MethodKind == MethodKind.Constructor) writer.Write($"System_Void {GetFullNameFlat(method).Replace(".ctor", "CONSTRUCTOR")}(");
-				else if (method.ReturnType.IsValueType) writer.Write($"{GetFullNameFlat(method.ReturnType)} {GetFullNameFlat(method)}(");
-				else writer.Write($"{GetFullNameFlat(method.ReturnType)}* {GetFullNameFlat(method)}(");
+				else if (method.ReturnType.IsValueType) writer.Write($"{GetFullNameFlat(GetCType(method.ReturnType))} {GetFullNameFlat(method)}(");
+				else writer.Write($"{GetFullNameFlat(GetCType(method.ReturnType))}* {GetFullNameFlat(method)}(");
 			}
 
 			// if method and object are not static pass "this" ref
@@ -352,8 +376,8 @@ namespace CS2X.Core.Emitters
 					}
 					else
 					{
-						if (parameter.Type.IsValueType) writer.Write($"{GetFullNameFlat(parameter.Type)} {parameter.Name}");
-						else writer.Write($"{GetFullNameFlat(parameter.Type)}* {parameter.Name}");
+						if (parameter.Type.IsValueType) writer.Write($"{GetFullNameFlat(GetCType(parameter.Type))} {parameter.Name}");
+						else writer.Write($"{GetFullNameFlat(GetCType(parameter.Type))}* {parameter.Name}");
 					}
 
 					if (i != count - 1) writer.Write(", ");
