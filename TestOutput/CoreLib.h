@@ -1,4 +1,5 @@
 #pragma once
+#define EMPTY_OBJECT void*
 #define null 0
 
 // =============
@@ -8,61 +9,62 @@
 // =============
 // Type forward declares
 // =============
-typedef struct System_IDisposable System_IDisposable;
-typedef struct System_Collections_ICollection System_Collections_ICollection;
-typedef struct System_Collections_IEnumerable System_Collections_IEnumerable;
-typedef struct System_Collections_IEnumerator System_Collections_IEnumerator;
-typedef struct System_ComponentModel_IContainer System_ComponentModel_IContainer;
-typedef struct System_Boolean System_Boolean;
-typedef struct System_Byte System_Byte;
-typedef struct System_Char System_Char;
-typedef struct System_Double System_Double;
-typedef struct System_Int16 System_Int16;
-typedef struct System_Int32 System_Int32;
-typedef struct System_Int64 System_Int64;
-typedef struct System_IntPtr System_IntPtr;
-typedef struct System_RuntimeFieldHandle System_RuntimeFieldHandle;
-typedef struct System_RuntimeTypeHandle System_RuntimeTypeHandle;
-typedef struct System_SByte System_SByte;
-typedef struct System_Single System_Single;
-typedef struct System_UInt16 System_UInt16;
-typedef struct System_UInt32 System_UInt32;
-typedef struct System_UInt64 System_UInt64;
-typedef struct System_UIntPtr System_UIntPtr;
-typedef struct System_Void System_Void;
+typedef EMPTY_OBJECT System_IDisposable;
+typedef EMPTY_OBJECT System_Collections_ICollection;
+typedef EMPTY_OBJECT System_Collections_IEnumerable;
+typedef EMPTY_OBJECT System_Collections_IEnumerator;
+typedef EMPTY_OBJECT System_ComponentModel_IContainer;
+typedef EMPTY_OBJECT System_Boolean;
+typedef unsigned __int8 System_Byte;
+typedef EMPTY_OBJECT System_Char;
+typedef double System_Double;
+typedef __int16 System_Int16;
+typedef __int32 System_Int32;
+typedef __int64 System_Int64;
+typedef void* System_IntPtr;
+typedef EMPTY_OBJECT System_RuntimeFieldHandle;
+typedef EMPTY_OBJECT System_RuntimeTypeHandle;
+typedef __int8 System_SByte;
+typedef float System_Single;
+typedef unsigned __int16 System_UInt16;
+typedef unsigned __int32 System_UInt32;
+typedef unsigned __int64 System_UInt64;
+typedef void* System_UIntPtr;
+typedef void System_Void;
 typedef struct System_Collections_DictionaryEntry System_Collections_DictionaryEntry;
-typedef struct System_Attribute System_Attribute;
+typedef EMPTY_OBJECT System_Attribute;
 typedef struct System_AttributeUsageAttribute System_AttributeUsageAttribute;
 typedef struct System_CLSCompliantAttribute System_CLSCompliantAttribute;
-typedef struct System_FlagsAttribute System_FlagsAttribute;
-typedef struct System_Array System_Array;
-typedef struct System_CancelEventArgs System_CancelEventArgs;
-typedef struct System_Delegate System_Delegate;
-typedef struct System_Enum System_Enum;
-typedef struct System_EventArgs System_EventArgs;
-typedef struct System_Exception System_Exception;
-typedef struct System_Math System_Math;
-typedef struct System_MulticastDelegate System_MulticastDelegate;
-typedef struct System_Nullable System_Nullable;
-typedef struct System_Object System_Object;
+typedef EMPTY_OBJECT System_FlagsAttribute;
+typedef EMPTY_OBJECT System_Array;
+typedef EMPTY_OBJECT System_CancelEventArgs;
+typedef EMPTY_OBJECT System_Delegate;
+typedef EMPTY_OBJECT System_Enum;
+typedef EMPTY_OBJECT System_EventArgs;
+typedef EMPTY_OBJECT System_Exception;
+typedef EMPTY_OBJECT System_Math;
+typedef EMPTY_OBJECT System_MulticastDelegate;
+typedef struct System_NativeTypeNameAttribute System_NativeTypeNameAttribute;
+typedef EMPTY_OBJECT System_Nullable;
+typedef EMPTY_OBJECT System_Object;
 typedef struct System_ObsoleteAttribute System_ObsoleteAttribute;
-typedef struct System_ParamArrayAttribute System_ParamArrayAttribute;
-typedef struct System_String System_String;
-typedef struct System_StringBuilder System_StringBuilder;
-typedef struct System_Type System_Type;
-typedef struct System_ValueType System_ValueType;
+typedef EMPTY_OBJECT System_ParamArrayAttribute;
+typedef unsigned __int16* System_String;
+typedef EMPTY_OBJECT System_StringBuilder;
+typedef EMPTY_OBJECT System_Type;
+typedef EMPTY_OBJECT System_ValueType;
 typedef struct System_CodeDom_Compiler_GeneratedCodeAttribute System_CodeDom_Compiler_GeneratedCodeAttribute;
-typedef struct System_Collections_ArrayList System_Collections_ArrayList;
-typedef struct System_Collections_Queue System_Collections_Queue;
-typedef struct System_Collections_Stack System_Collections_Stack;
-typedef struct System_ComponentModel_BrowsableAttribute System_ComponentModel_BrowsableAttribute;
-typedef struct System_ComponentModel_DependencyAttribute System_ComponentModel_DependencyAttribute;
+typedef EMPTY_OBJECT System_Collections_ArrayList;
+typedef EMPTY_OBJECT System_Collections_Queue;
+typedef EMPTY_OBJECT System_Collections_Stack;
+typedef EMPTY_OBJECT System_ComponentModel_BrowsableAttribute;
+typedef EMPTY_OBJECT System_ComponentModel_DependencyAttribute;
 typedef struct System_ComponentModel_EditorBrowsableAttribute System_ComponentModel_EditorBrowsableAttribute;
 typedef struct System_Diagnostics_ConditionalAttribute System_Diagnostics_ConditionalAttribute;
-typedef struct System_Diagnostics_Debug System_Diagnostics_Debug;
-typedef struct System_Diagnostics_CodeAnalysis_SuppressMessageAttribute System_Diagnostics_CodeAnalysis_SuppressMessageAttribute;
-typedef struct System_Globalization_CultureInfo System_Globalization_CultureInfo;
-typedef struct System_Globalization_NumberFormatInfo System_Globalization_NumberFormatInfo;
+typedef EMPTY_OBJECT System_Diagnostics_Debug;
+typedef EMPTY_OBJECT System_Diagnostics_CodeAnalysis_SuppressMessageAttribute;
+typedef EMPTY_OBJECT System_Globalization_CultureInfo;
+typedef EMPTY_OBJECT System_Globalization_NumberFormatInfo;
 typedef struct System_Reflection_AssemblyCompanyAttribute System_Reflection_AssemblyCompanyAttribute;
 typedef struct System_Reflection_AssemblyConfigurationAttribute System_Reflection_AssemblyConfigurationAttribute;
 typedef struct System_Reflection_AssemblyCopyrightAttribute System_Reflection_AssemblyCopyrightAttribute;
@@ -77,9 +79,9 @@ typedef struct System_Reflection_AssemblyTitleAttribute System_Reflection_Assemb
 typedef struct System_Reflection_AssemblyTrademarkAttribute System_Reflection_AssemblyTrademarkAttribute;
 typedef struct System_Reflection_AssemblyVersionAttribute System_Reflection_AssemblyVersionAttribute;
 typedef struct System_Reflection_DefaultMemberAttribute System_Reflection_DefaultMemberAttribute;
-typedef struct System_Runtime_CompilerServices_CompilerGeneratedAttribute System_Runtime_CompilerServices_CompilerGeneratedAttribute;
-typedef struct System_Runtime_CompilerServices_RuntimeHelpers System_Runtime_CompilerServices_RuntimeHelpers;
-typedef struct System_Runtime_InteropServices_OutAttribute System_Runtime_InteropServices_OutAttribute;
+typedef EMPTY_OBJECT System_Runtime_CompilerServices_CompilerGeneratedAttribute;
+typedef EMPTY_OBJECT System_Runtime_CompilerServices_RuntimeHelpers;
+typedef EMPTY_OBJECT System_Runtime_InteropServices_OutAttribute;
 
 // =============
 // Types Definitions
@@ -101,129 +103,16 @@ typedef struct System_Runtime_InteropServices_OutAttribute System_Runtime_Intero
 #define System_AttributeTargets_GenericParameter 16384
 #define System_AttributeTargets_All 32767
 
+#define System_NativeTypeNameTargets_C 0
+
 #define System_ComponentModel_EditorBrowsableState_Always 0
 #define System_ComponentModel_EditorBrowsableState_Never 1
 #define System_ComponentModel_EditorBrowsableState_Advanced 2
-
-struct System_IDisposable
-{
-	char : 0;
-};
-
-struct System_Collections_ICollection
-{
-	char : 0;
-};
-
-struct System_Collections_IEnumerable
-{
-	char : 0;
-};
-
-struct System_Collections_IEnumerator
-{
-	char : 0;
-};
-
-struct System_ComponentModel_IContainer
-{
-	char : 0;
-};
-
-struct System_Boolean
-{
-	char : 0;
-};
-
-struct System_Byte
-{
-	char : 0;
-};
-
-struct System_Char
-{
-	char : 0;
-};
-
-struct System_Double
-{
-	char : 0;
-};
-
-struct System_Int16
-{
-	char : 0;
-};
-
-struct System_Int32
-{
-	char : 0;
-};
-
-struct System_Int64
-{
-	char : 0;
-};
-
-struct System_IntPtr
-{
-	char : 0;
-};
-
-struct System_RuntimeFieldHandle
-{
-	char : 0;
-};
-
-struct System_RuntimeTypeHandle
-{
-	char : 0;
-};
-
-struct System_SByte
-{
-	char : 0;
-};
-
-struct System_Single
-{
-	char : 0;
-};
-
-struct System_UInt16
-{
-	char : 0;
-};
-
-struct System_UInt32
-{
-	char : 0;
-};
-
-struct System_UInt64
-{
-	char : 0;
-};
-
-struct System_UIntPtr
-{
-	char : 0;
-};
-
-struct System_Void
-{
-	char : 0;
-};
 
 struct System_Collections_DictionaryEntry
 {
 	System_Object* Key;
 	System_Object* Value;
-};
-
-struct System_Attribute
-{
-	char : 0;
 };
 
 struct System_AttributeUsageAttribute
@@ -238,59 +127,10 @@ struct System_CLSCompliantAttribute
 	System_Boolean _isCompliant;
 };
 
-struct System_FlagsAttribute
+struct System_NativeTypeNameAttribute
 {
-	char : 0;
-};
-
-struct System_Array
-{
-	char : 0;
-};
-
-struct System_CancelEventArgs
-{
-	char : 0;
-};
-
-struct System_Delegate
-{
-	char : 0;
-};
-
-struct System_Enum
-{
-	char : 0;
-};
-
-struct System_EventArgs
-{
-	char : 0;
-};
-
-struct System_Exception
-{
-	char : 0;
-};
-
-struct System_Math
-{
-	char : 0;
-};
-
-struct System_MulticastDelegate
-{
-	char : 0;
-};
-
-struct System_Nullable
-{
-	char : 0;
-};
-
-struct System_Object
-{
-	char : 0;
+	System_Int32 Target;
+	System_String* Value;
 };
 
 struct System_ObsoleteAttribute
@@ -299,60 +139,10 @@ struct System_ObsoleteAttribute
 	System_String* _message;
 };
 
-struct System_ParamArrayAttribute
-{
-	char : 0;
-};
-
-struct System_String
-{
-	char : 0;
-};
-
-struct System_StringBuilder
-{
-	char : 0;
-};
-
-struct System_Type
-{
-	char : 0;
-};
-
-struct System_ValueType
-{
-	char : 0;
-};
-
 struct System_CodeDom_Compiler_GeneratedCodeAttribute
 {
 	System_String* _tool;
 	System_String* _version;
-};
-
-struct System_Collections_ArrayList
-{
-	char : 0;
-};
-
-struct System_Collections_Queue
-{
-	char : 0;
-};
-
-struct System_Collections_Stack
-{
-	char : 0;
-};
-
-struct System_ComponentModel_BrowsableAttribute
-{
-	char : 0;
-};
-
-struct System_ComponentModel_DependencyAttribute
-{
-	char : 0;
 };
 
 struct System_ComponentModel_EditorBrowsableAttribute
@@ -363,26 +153,6 @@ struct System_ComponentModel_EditorBrowsableAttribute
 struct System_Diagnostics_ConditionalAttribute
 {
 	System_String* _conditionString;
-};
-
-struct System_Diagnostics_Debug
-{
-	char : 0;
-};
-
-struct System_Diagnostics_CodeAnalysis_SuppressMessageAttribute
-{
-	char : 0;
-};
-
-struct System_Globalization_CultureInfo
-{
-	char : 0;
-};
-
-struct System_Globalization_NumberFormatInfo
-{
-	char : 0;
 };
 
 struct System_Reflection_AssemblyCompanyAttribute
@@ -455,21 +225,6 @@ struct System_Reflection_DefaultMemberAttribute
 	System_String* _memberName;
 };
 
-struct System_Runtime_CompilerServices_CompilerGeneratedAttribute
-{
-	char : 0;
-};
-
-struct System_Runtime_CompilerServices_RuntimeHelpers
-{
-	char : 0;
-};
-
-struct System_Runtime_InteropServices_OutAttribute
-{
-	char : 0;
-};
-
 // =============
 // Property forward declares
 // =============
@@ -508,37 +263,38 @@ System_String* System_Reflection_DefaultMemberAttribute_get_MemberName(System_Re
 // =============
 // Method forward declares
 // =============
-System_Void System_Collections_DictionaryEntry_CONSTRUCTOR(System_Collections_DictionaryEntry* this, System_Object* key, System_Object* value);
-System_Void System_AttributeUsageAttribute_CONSTRUCTOR(System_AttributeUsageAttribute* this, System_Int32 validOn);
-System_Void System_CLSCompliantAttribute_CONSTRUCTOR(System_CLSCompliantAttribute* this, System_Boolean isCompliant);
-System_Collections_IEnumerator* System_Array_GetEnumerator(System_Array* this);
-System_Void System_Exception_CONSTRUCTOR(System_Exception* this);
-System_Void System_Exception_CONSTRUCTOR(System_Exception* this, System_String* message);
-System_Type* System_Object_GetType(System_Object* this);
-System_String* System_Object_ToString(System_Object* this);
-System_Void System_ObsoleteAttribute_CONSTRUCTOR(System_ObsoleteAttribute* this);
-System_Void System_ObsoleteAttribute_CONSTRUCTOR(System_ObsoleteAttribute* this, System_String* message);
-System_Void System_ObsoleteAttribute_CONSTRUCTOR(System_ObsoleteAttribute* this, System_String* message, System_Boolean error);
-System_Void System_CodeDom_Compiler_GeneratedCodeAttribute_CONSTRUCTOR(System_CodeDom_Compiler_GeneratedCodeAttribute* this, System_String* tool, System_String* version);
-System_Collections_IEnumerator* System_Collections_ArrayList_GetEnumerator(System_Collections_ArrayList* this);
-System_Collections_IEnumerator* System_Collections_Queue_GetEnumerator(System_Collections_Queue* this);
-System_Collections_IEnumerator* System_Collections_Stack_GetEnumerator(System_Collections_Stack* this);
-System_Void System_ComponentModel_EditorBrowsableAttribute_CONSTRUCTOR(System_ComponentModel_EditorBrowsableAttribute* this, System_Int32 state);
-System_Void System_Diagnostics_ConditionalAttribute_CONSTRUCTOR(System_Diagnostics_ConditionalAttribute* this, System_String* conditionString);
-System_Void System_Reflection_AssemblyCompanyAttribute_CONSTRUCTOR(System_Reflection_AssemblyCompanyAttribute* this, System_String* company);
-System_Void System_Reflection_AssemblyConfigurationAttribute_CONSTRUCTOR(System_Reflection_AssemblyConfigurationAttribute* this, System_String* configuration);
-System_Void System_Reflection_AssemblyCopyrightAttribute_CONSTRUCTOR(System_Reflection_AssemblyCopyrightAttribute* this, System_String* copyright);
-System_Void System_Reflection_AssemblyCultureAttribute_CONSTRUCTOR(System_Reflection_AssemblyCultureAttribute* this, System_String* culture);
-System_Void System_Reflection_AssemblyDelaySignAttribute_CONSTRUCTOR(System_Reflection_AssemblyDelaySignAttribute* this, System_Boolean delaySign);
-System_Void System_Reflection_AssemblyDescriptionAttribute_CONSTRUCTOR(System_Reflection_AssemblyDescriptionAttribute* this, System_String* description);
-System_Void System_Reflection_AssemblyFileVersionAttribute_CONSTRUCTOR(System_Reflection_AssemblyFileVersionAttribute* this, System_String* version);
-System_Void System_Reflection_AssemblyInformationalVersionAttribute_CONSTRUCTOR(System_Reflection_AssemblyInformationalVersionAttribute* this, System_String* informationalVersion);
-System_Void System_Reflection_AssemblyKeyFileAttribute_CONSTRUCTOR(System_Reflection_AssemblyKeyFileAttribute* this, System_String* keyFile);
-System_Void System_Reflection_AssemblyProductAttribute_CONSTRUCTOR(System_Reflection_AssemblyProductAttribute* this, System_String* product);
-System_Void System_Reflection_AssemblyTitleAttribute_CONSTRUCTOR(System_Reflection_AssemblyTitleAttribute* this, System_String* title);
-System_Void System_Reflection_AssemblyTrademarkAttribute_CONSTRUCTOR(System_Reflection_AssemblyTrademarkAttribute* this, System_String* trademark);
-System_Void System_Reflection_AssemblyVersionAttribute_CONSTRUCTOR(System_Reflection_AssemblyVersionAttribute* this, System_String* version);
-System_Void System_Reflection_DefaultMemberAttribute_CONSTRUCTOR(System_Reflection_DefaultMemberAttribute* this, System_String* memberName);
+System_Void System_Collections_DictionaryEntry_CONSTRUCTOR_0(System_Collections_DictionaryEntry* this, System_Object* key, System_Object* value);
+System_Void System_AttributeUsageAttribute_CONSTRUCTOR_0(System_AttributeUsageAttribute* this, System_Int32 validOn);
+System_Void System_CLSCompliantAttribute_CONSTRUCTOR_0(System_CLSCompliantAttribute* this, System_Boolean isCompliant);
+System_Collections_IEnumerator* System_Array_GetEnumerator_0(System_Array* this);
+System_Void System_Exception_CONSTRUCTOR_0(System_Exception* this);
+System_Void System_Exception_CONSTRUCTOR_1(System_Exception* this, System_String* message);
+System_Void System_NativeTypeNameAttribute_CONSTRUCTOR_0(System_NativeTypeNameAttribute* this, System_Int32 target, System_String* value);
+System_Type* System_Object_GetType_0(System_Object* this);
+System_String* System_Object_ToString_0(System_Object* this);
+System_Void System_ObsoleteAttribute_CONSTRUCTOR_0(System_ObsoleteAttribute* this);
+System_Void System_ObsoleteAttribute_CONSTRUCTOR_1(System_ObsoleteAttribute* this, System_String* message);
+System_Void System_ObsoleteAttribute_CONSTRUCTOR_2(System_ObsoleteAttribute* this, System_String* message, System_Boolean error);
+System_Void System_CodeDom_Compiler_GeneratedCodeAttribute_CONSTRUCTOR_0(System_CodeDom_Compiler_GeneratedCodeAttribute* this, System_String* tool, System_String* version);
+System_Collections_IEnumerator* System_Collections_ArrayList_GetEnumerator_0(System_Collections_ArrayList* this);
+System_Collections_IEnumerator* System_Collections_Queue_GetEnumerator_0(System_Collections_Queue* this);
+System_Collections_IEnumerator* System_Collections_Stack_GetEnumerator_0(System_Collections_Stack* this);
+System_Void System_ComponentModel_EditorBrowsableAttribute_CONSTRUCTOR_0(System_ComponentModel_EditorBrowsableAttribute* this, System_Int32 state);
+System_Void System_Diagnostics_ConditionalAttribute_CONSTRUCTOR_0(System_Diagnostics_ConditionalAttribute* this, System_String* conditionString);
+System_Void System_Reflection_AssemblyCompanyAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyCompanyAttribute* this, System_String* company);
+System_Void System_Reflection_AssemblyConfigurationAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyConfigurationAttribute* this, System_String* configuration);
+System_Void System_Reflection_AssemblyCopyrightAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyCopyrightAttribute* this, System_String* copyright);
+System_Void System_Reflection_AssemblyCultureAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyCultureAttribute* this, System_String* culture);
+System_Void System_Reflection_AssemblyDelaySignAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyDelaySignAttribute* this, System_Boolean delaySign);
+System_Void System_Reflection_AssemblyDescriptionAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyDescriptionAttribute* this, System_String* description);
+System_Void System_Reflection_AssemblyFileVersionAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyFileVersionAttribute* this, System_String* version);
+System_Void System_Reflection_AssemblyInformationalVersionAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyInformationalVersionAttribute* this, System_String* informationalVersion);
+System_Void System_Reflection_AssemblyKeyFileAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyKeyFileAttribute* this, System_String* keyFile);
+System_Void System_Reflection_AssemblyProductAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyProductAttribute* this, System_String* product);
+System_Void System_Reflection_AssemblyTitleAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyTitleAttribute* this, System_String* title);
+System_Void System_Reflection_AssemblyTrademarkAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyTrademarkAttribute* this, System_String* trademark);
+System_Void System_Reflection_AssemblyVersionAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyVersionAttribute* this, System_String* version);
+System_Void System_Reflection_DefaultMemberAttribute_CONSTRUCTOR_0(System_Reflection_DefaultMemberAttribute* this, System_String* memberName);
 
 // =============
 // Properties
@@ -701,157 +457,163 @@ System_String* System_Reflection_DefaultMemberAttribute_get_MemberName(System_Re
 // =============
 // Methods
 // =============
-System_Void System_Collections_DictionaryEntry_CONSTRUCTOR(System_Collections_DictionaryEntry* this, System_Object* key, System_Object* value)
+System_Void System_Collections_DictionaryEntry_CONSTRUCTOR_0(System_Collections_DictionaryEntry* this, System_Object* key, System_Object* value)
 {
 	this->Key = key;
 	this->Value = value;
 }
 
-System_Void System_AttributeUsageAttribute_CONSTRUCTOR(System_AttributeUsageAttribute* this, System_Int32 validOn)
+System_Void System_AttributeUsageAttribute_CONSTRUCTOR_0(System_AttributeUsageAttribute* this, System_Int32 validOn)
 {
 	this->_attributeTarget = validOn;
 }
 
-System_Void System_CLSCompliantAttribute_CONSTRUCTOR(System_CLSCompliantAttribute* this, System_Boolean isCompliant)
+System_Void System_CLSCompliantAttribute_CONSTRUCTOR_0(System_CLSCompliantAttribute* this, System_Boolean isCompliant)
 {
 	this->_isCompliant = isCompliant;
 }
 
-System_Collections_IEnumerator* System_Array_GetEnumerator(System_Array* this)
+System_Collections_IEnumerator* System_Array_GetEnumerator_0(System_Array* this)
 {
 	return null;
 }
 
-System_Void System_Exception_CONSTRUCTOR(System_Exception* this)
+System_Void System_Exception_CONSTRUCTOR_0(System_Exception* this)
 {
 }
 
-System_Void System_Exception_CONSTRUCTOR(System_Exception* this, System_String* message)
+System_Void System_Exception_CONSTRUCTOR_1(System_Exception* this, System_String* message)
 {
 }
 
-System_Type* System_Object_GetType(System_Object* this)
+System_Void System_NativeTypeNameAttribute_CONSTRUCTOR_0(System_NativeTypeNameAttribute* this, System_Int32 target, System_String* value)
+{
+	this->Target = target;
+	this->Value = value;
+}
+
+System_Type* System_Object_GetType_0(System_Object* this)
 {
 	return null;
 }
 
-System_String* System_Object_ToString(System_Object* this)
+System_String* System_Object_ToString_0(System_Object* this)
 {
 	return null;
 }
 
-System_Void System_ObsoleteAttribute_CONSTRUCTOR(System_ObsoleteAttribute* this)
+System_Void System_ObsoleteAttribute_CONSTRUCTOR_0(System_ObsoleteAttribute* this)
 {
 }
 
-System_Void System_ObsoleteAttribute_CONSTRUCTOR(System_ObsoleteAttribute* this, System_String* message)
+System_Void System_ObsoleteAttribute_CONSTRUCTOR_1(System_ObsoleteAttribute* this, System_String* message)
 {
 	this->_message = message;
 }
 
-System_Void System_ObsoleteAttribute_CONSTRUCTOR(System_ObsoleteAttribute* this, System_String* message, System_Boolean error)
+System_Void System_ObsoleteAttribute_CONSTRUCTOR_2(System_ObsoleteAttribute* this, System_String* message, System_Boolean error)
 {
 	this->_message = message;
 	this->_error = error;
 }
 
-System_Void System_CodeDom_Compiler_GeneratedCodeAttribute_CONSTRUCTOR(System_CodeDom_Compiler_GeneratedCodeAttribute* this, System_String* tool, System_String* version)
+System_Void System_CodeDom_Compiler_GeneratedCodeAttribute_CONSTRUCTOR_0(System_CodeDom_Compiler_GeneratedCodeAttribute* this, System_String* tool, System_String* version)
 {
 	this->_tool = tool;
 	this->_version = version;
 }
 
-System_Collections_IEnumerator* System_Collections_ArrayList_GetEnumerator(System_Collections_ArrayList* this)
+System_Collections_IEnumerator* System_Collections_ArrayList_GetEnumerator_0(System_Collections_ArrayList* this)
 {
 	return null;
 }
 
-System_Collections_IEnumerator* System_Collections_Queue_GetEnumerator(System_Collections_Queue* this)
+System_Collections_IEnumerator* System_Collections_Queue_GetEnumerator_0(System_Collections_Queue* this)
 {
 	return null;
 }
 
-System_Collections_IEnumerator* System_Collections_Stack_GetEnumerator(System_Collections_Stack* this)
+System_Collections_IEnumerator* System_Collections_Stack_GetEnumerator_0(System_Collections_Stack* this)
 {
 	return null;
 }
 
-System_Void System_ComponentModel_EditorBrowsableAttribute_CONSTRUCTOR(System_ComponentModel_EditorBrowsableAttribute* this, System_Int32 state)
+System_Void System_ComponentModel_EditorBrowsableAttribute_CONSTRUCTOR_0(System_ComponentModel_EditorBrowsableAttribute* this, System_Int32 state)
 {
 	this->_browsableState = state;
 }
 
-System_Void System_Diagnostics_ConditionalAttribute_CONSTRUCTOR(System_Diagnostics_ConditionalAttribute* this, System_String* conditionString)
+System_Void System_Diagnostics_ConditionalAttribute_CONSTRUCTOR_0(System_Diagnostics_ConditionalAttribute* this, System_String* conditionString)
 {
 	this->_conditionString = conditionString;
 }
 
-System_Void System_Reflection_AssemblyCompanyAttribute_CONSTRUCTOR(System_Reflection_AssemblyCompanyAttribute* this, System_String* company)
+System_Void System_Reflection_AssemblyCompanyAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyCompanyAttribute* this, System_String* company)
 {
 	this->_company = company;
 }
 
-System_Void System_Reflection_AssemblyConfigurationAttribute_CONSTRUCTOR(System_Reflection_AssemblyConfigurationAttribute* this, System_String* configuration)
+System_Void System_Reflection_AssemblyConfigurationAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyConfigurationAttribute* this, System_String* configuration)
 {
 	this->_configuration = configuration;
 }
 
-System_Void System_Reflection_AssemblyCopyrightAttribute_CONSTRUCTOR(System_Reflection_AssemblyCopyrightAttribute* this, System_String* copyright)
+System_Void System_Reflection_AssemblyCopyrightAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyCopyrightAttribute* this, System_String* copyright)
 {
 	this->_copyright = copyright;
 }
 
-System_Void System_Reflection_AssemblyCultureAttribute_CONSTRUCTOR(System_Reflection_AssemblyCultureAttribute* this, System_String* culture)
+System_Void System_Reflection_AssemblyCultureAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyCultureAttribute* this, System_String* culture)
 {
 	this->_culture = culture;
 }
 
-System_Void System_Reflection_AssemblyDelaySignAttribute_CONSTRUCTOR(System_Reflection_AssemblyDelaySignAttribute* this, System_Boolean delaySign)
+System_Void System_Reflection_AssemblyDelaySignAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyDelaySignAttribute* this, System_Boolean delaySign)
 {
 	this->_delaySign = delaySign;
 }
 
-System_Void System_Reflection_AssemblyDescriptionAttribute_CONSTRUCTOR(System_Reflection_AssemblyDescriptionAttribute* this, System_String* description)
+System_Void System_Reflection_AssemblyDescriptionAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyDescriptionAttribute* this, System_String* description)
 {
 	this->_description = description;
 }
 
-System_Void System_Reflection_AssemblyFileVersionAttribute_CONSTRUCTOR(System_Reflection_AssemblyFileVersionAttribute* this, System_String* version)
+System_Void System_Reflection_AssemblyFileVersionAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyFileVersionAttribute* this, System_String* version)
 {
 	this->_version = version;
 }
 
-System_Void System_Reflection_AssemblyInformationalVersionAttribute_CONSTRUCTOR(System_Reflection_AssemblyInformationalVersionAttribute* this, System_String* informationalVersion)
+System_Void System_Reflection_AssemblyInformationalVersionAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyInformationalVersionAttribute* this, System_String* informationalVersion)
 {
 	this->_informationalVersion = informationalVersion;
 }
 
-System_Void System_Reflection_AssemblyKeyFileAttribute_CONSTRUCTOR(System_Reflection_AssemblyKeyFileAttribute* this, System_String* keyFile)
+System_Void System_Reflection_AssemblyKeyFileAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyKeyFileAttribute* this, System_String* keyFile)
 {
 	this->_keyFile = keyFile;
 }
 
-System_Void System_Reflection_AssemblyProductAttribute_CONSTRUCTOR(System_Reflection_AssemblyProductAttribute* this, System_String* product)
+System_Void System_Reflection_AssemblyProductAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyProductAttribute* this, System_String* product)
 {
 	this->_product = product;
 }
 
-System_Void System_Reflection_AssemblyTitleAttribute_CONSTRUCTOR(System_Reflection_AssemblyTitleAttribute* this, System_String* title)
+System_Void System_Reflection_AssemblyTitleAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyTitleAttribute* this, System_String* title)
 {
 	this->_title = title;
 }
 
-System_Void System_Reflection_AssemblyTrademarkAttribute_CONSTRUCTOR(System_Reflection_AssemblyTrademarkAttribute* this, System_String* trademark)
+System_Void System_Reflection_AssemblyTrademarkAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyTrademarkAttribute* this, System_String* trademark)
 {
 	this->_trademark = trademark;
 }
 
-System_Void System_Reflection_AssemblyVersionAttribute_CONSTRUCTOR(System_Reflection_AssemblyVersionAttribute* this, System_String* version)
+System_Void System_Reflection_AssemblyVersionAttribute_CONSTRUCTOR_0(System_Reflection_AssemblyVersionAttribute* this, System_String* version)
 {
 	this->_version = version;
 }
 
-System_Void System_Reflection_DefaultMemberAttribute_CONSTRUCTOR(System_Reflection_DefaultMemberAttribute* this, System_String* memberName)
+System_Void System_Reflection_DefaultMemberAttribute_CONSTRUCTOR_0(System_Reflection_DefaultMemberAttribute* this, System_String* memberName)
 {
 	this->_memberName = memberName;
 }

@@ -83,6 +83,7 @@
     <Compile Include="IntPtr.cs" />
     <Compile Include="Math.cs" />
     <Compile Include="MulticastDelegate.cs" />
+    <Compile Include="NativeTypeNameAttribute.cs" />
     <Compile Include="Nullable.cs" />
     <Compile Include="Object.cs" />
     <Compile Include="ObsoleteAttribute.cs" />

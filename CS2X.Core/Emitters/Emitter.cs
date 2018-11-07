@@ -7,6 +7,12 @@ using CoreSolution = CS2X.Core.Solution;
 
 namespace CS2X.Core.Emitters
 {
+	class MethodOverload
+	{
+		public string name;
+		public int count;
+	}
+
 	public abstract class Emitter
 	{
 		protected delegate void CallbackMethod();
@@ -63,6 +69,17 @@ namespace CS2X.Core.Emitters
 		{
 			var typeInfo = semanticModel.GetTypeInfo(statement.Declaration.Type);
 			return statement.Declaration.Variables;
+		}
+
+		protected bool ObjectHasNotStaticFields(ITypeSymbol obj)
+		{
+			foreach (var member in obj.GetMembers())
+			{
+				if (member.Kind != SymbolKind.Field || member.IsStatic) continue;
+				return true;
+			}
+
+			return false;
 		}
 	}
 }

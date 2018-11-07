@@ -34,6 +34,11 @@ namespace TestApp.C
 				this.b += 1;
 			}
 
+			A2 Foo()
+			{
+				return a;
+			}
+
 			static void Main()
 			{
 				C.B.Program.i = 888;
@@ -47,7 +52,7 @@ namespace TestApp.C
 				abc = 33;
 			}
 
-			A2 Foo(int hi, string by)
+			A2 Foo(int hi, string by, string by2)
 			{
 				int foo2 = hi + baseInt;
 				foo2 = hi;

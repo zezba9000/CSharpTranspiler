@@ -7,11 +7,11 @@
 // =============
 // Type forward declares
 // =============
-typedef struct TestApp_Blaa_MyInterface TestApp_Blaa_MyInterface;
+typedef EMPTY_OBJECT TestApp_Blaa_MyInterface;
 typedef struct MyPartial MyPartial;
-typedef struct TestApp_Blaa_A2 TestApp_Blaa_A2;
+typedef EMPTY_OBJECT TestApp_Blaa_A2;
 typedef struct TestApp_C_MyBase TestApp_C_MyBase;
-typedef struct TestApp_C_B TestApp_C_B;
+typedef EMPTY_OBJECT TestApp_C_B;
 typedef struct TestApp_C_Program TestApp_C_Program;
 
 // =============
@@ -25,31 +25,16 @@ typedef struct TestApp_C_Program TestApp_C_Program;
 #define TestApp_Blaa_MyEnumDefault_B 2
 #define TestApp_Blaa_MyEnumDefault_C 4
 
-struct TestApp_Blaa_MyInterface
-{
-	char : 0;
-};
-
 struct MyPartial
 {
 	System_Int32 iabc;
 	System_Int32 i234;
 };
 
-struct TestApp_Blaa_A2
-{
-	char : 0;
-};
-
 struct TestApp_C_MyBase
 {
 	System_Int32 b;
 	System_Int32 baseInt;
-};
-
-struct TestApp_C_B
-{
-	char : 0;
 };
 
 struct TestApp_C_Program
@@ -78,10 +63,11 @@ System_Void TestApp_C_Program_set_i7(TestApp_C_Program* this, System_Single valu
 // =============
 // Method forward declares
 // =============
-System_Void MyPartial_Foo(MyPartial* this);
-System_Void TestApp_C_Program_CONSTRUCTOR(TestApp_C_Program* this);
-System_Void TestApp_C_Program_Main();
-TestApp_Blaa_A2* TestApp_C_Program_Foo(TestApp_C_Program* this, System_Int32 hi, System_String* by);
+System_Void MyPartial_Foo_0(MyPartial* this);
+System_Void TestApp_C_Program_CONSTRUCTOR_0(TestApp_C_Program* this);
+TestApp_Blaa_A2* TestApp_C_Program_Foo_0(TestApp_C_Program* this);
+System_Void TestApp_C_Program_Main_0();
+TestApp_Blaa_A2* TestApp_C_Program_Foo_1(TestApp_C_Program* this, System_Int32 hi, System_String* by, System_String* by2);
 
 // =============
 // Properties
@@ -111,17 +97,22 @@ System_Void TestApp_C_Program_set_i7(TestApp_C_Program* this, System_Single valu
 // =============
 // Methods
 // =============
-System_Void MyPartial_Foo(MyPartial* this)
+System_Void MyPartial_Foo_0(MyPartial* this)
 {
 	System_Int32 i = 0;
 }
 
-System_Void TestApp_C_Program_CONSTRUCTOR(TestApp_C_Program* this)
+System_Void TestApp_C_Program_CONSTRUCTOR_0(TestApp_C_Program* this)
 {
 	this->b += 1;
 }
 
-System_Void TestApp_C_Program_Main()
+TestApp_Blaa_A2* TestApp_C_Program_Foo_0(TestApp_C_Program* this)
+{
+	return TestApp_C_Program_a;
+}
+
+System_Void TestApp_C_Program_Main_0()
 {
 	TestApp_C_Program_i = 888;
 	TestApp_C_Program_i = 999;
@@ -132,7 +123,7 @@ System_Void TestApp_C_Program_Main()
 	abc = 33;
 }
 
-TestApp_Blaa_A2* TestApp_C_Program_Foo(TestApp_C_Program* this, System_Int32 hi, System_String* by)
+TestApp_Blaa_A2* TestApp_C_Program_Foo_1(TestApp_C_Program* this, System_Int32 hi, System_String* by, System_String* by2)
 {
 	System_Int32 foo2 = hi + this->baseInt;
 	foo2 = hi;

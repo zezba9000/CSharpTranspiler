@@ -8,6 +8,7 @@ using System.Threading;
 using CoreSolution = CS2X.Core.Solution;
 using CoreProject = CS2X.Core.Project;
 using Microsoft.CodeAnalysis.CSharp;
+using System.Collections.Generic;
 
 namespace CS2X.Core.Emitters
 {
@@ -129,6 +130,7 @@ namespace CS2X.Core.Emitters
 				if (project.type == ProjectTypes.Dll)
 				{
 					writer.WriteLine("#pragma once");
+					writer.WriteLine("#define EMPTY_OBJECT void*");
 					if (project.roslynProject.Name == "CoreLib") writer.WriteLine("#define null 0" + Environment.NewLine);
 					else writer.WriteLine();
 				}
@@ -197,15 +199,13 @@ namespace CS2X.Core.Emitters
 		#region Object Layout
 		private ITypeSymbol GetCType(ITypeSymbol type)
 		{
-			if (type.TypeKind == TypeKind.Enum)
+			if (type is INamedTypeSymbol)
 			{
 				var namedType = (INamedTypeSymbol)type;
-				return namedType.EnumUnderlyingType;
+				if (type.TypeKind == TypeKind.Enum) return namedType.EnumUnderlyingType;
 			}
-			else
-			{
-				return type;
-			}
+			
+			return type;
 		}
 
 		private void WriteObject(INamedTypeSymbol obj, bool writeBody)
@@ -215,10 +215,36 @@ namespace CS2X.Core.Emitters
 			// get type name
 			if (IsLogicalType(type))
 			{
-				string formatString;
-				if (writeBody) formatString = "struct {0}";
-				else formatString = "typedef struct {0} {0}";
-				writer.Write(string.Format(formatString, GetFullNameFlat(obj)));
+				if (ObjectHasNotStaticFields(obj))
+				{
+					string formatString;
+					if (writeBody) formatString = "struct {0}";
+					else formatString = "typedef struct {0} {0}";
+					writer.Write(string.Format(formatString, GetFullNameFlat(obj)));
+				}
+				else
+				{
+					if (writeBody)
+					{
+						return;// C doesn't support emtpy objects
+					}
+					else
+					{
+						string nativeTypeName = "EMPTY_OBJECT";
+						foreach (var attribute in obj.GetAttributes())
+						{
+							if (attribute.AttributeClass.Name != "NativeTypeNameAttribute") continue;
+							var args = attribute.ConstructorArguments;
+							if (args != null && args.Length == 2 && (int)args[0].Value == 0)
+							{
+								nativeTypeName = (string)args[1].Value;
+								break;
+							}
+						}
+
+						writer.Write($"typedef {nativeTypeName} {GetFullNameFlat(obj)}");
+					}
+				}
 			}
 			else if (type == TypeKind.Enum)
 			{
@@ -236,7 +262,7 @@ namespace CS2X.Core.Emitters
 					writer.WriteLine();
 				}
 				
-				return;
+				return;// enum fields only need defines so return here
 			}
 			else
 			{
@@ -248,7 +274,7 @@ namespace CS2X.Core.Emitters
 			{
 				writer.WriteLine();
 				writer.WriteLine('{');
-				WriteObjectBody(obj, out var writeExternalMembers);
+				WriteObjectBodyFields(obj, out var writeExternalMembers);
 				writer.WriteLine("};" + Environment.NewLine);
 				writeExternalMembers?.Invoke();
 			}
@@ -258,12 +284,25 @@ namespace CS2X.Core.Emitters
 			}
 		}
 
-		private bool WriteObjectBodyNonStaticFields(INamedTypeSymbol obj)
+		private void GetFieldInfo(IFieldSymbol field, out ITypeSymbol fieldType, out string fieldName)
 		{
-			bool fieldWrote = false;
+			if (field.AssociatedSymbol != null && field.AssociatedSymbol.Kind == SymbolKind.Property)
+			{
+				var property = (IPropertySymbol)field.AssociatedSymbol;
+				fieldType = property.Type;
+				fieldName = property.Name;
+			}
+			else
+			{
+				fieldType = field.Type;
+				fieldName = field.Name;
+			}
+		}
 
+		private void WriteObjectBodyNonStaticFields(INamedTypeSymbol obj)
+		{
 			// write base fields first
-			if (obj.BaseType != null) fieldWrote = WriteObjectBodyNonStaticFields(obj.BaseType);
+			if (obj.BaseType != null) WriteObjectBodyNonStaticFields(obj.BaseType);
 
 			// write non-static fields
 			foreach (var member in obj.GetMembers())
@@ -271,37 +310,18 @@ namespace CS2X.Core.Emitters
 				if (member.Kind != SymbolKind.Field || member.IsStatic) continue;
 
 				var field = (IFieldSymbol)member;
-				ITypeSymbol fieldType;
-				string fieldName;
-
-				if (field.AssociatedSymbol != null && field.AssociatedSymbol.Kind == SymbolKind.Property)
-				{
-					var property = (IPropertySymbol)field.AssociatedSymbol;
-					fieldType = property.Type;
-					fieldName = property.Name;
-				}
-				else
-				{
-					fieldType = field.Type;
-					fieldName = field.Name;
-				}
-				
-				if (fieldType.IsValueType) writer.WriteLine($"\t{GetFullNameFlat(GetCType(fieldType))} {fieldName};");
-				else writer.WriteLine($"\t{GetFullNameFlat(GetCType(fieldType))}* {fieldName};");
-
-				fieldWrote = true;
+				GetFieldInfo(field, out var fieldType, out string fieldName);
+				writer.WriteLine(string.Format("\t{0}{2} {1};", GetFullNameFlat(GetCType(fieldType)), fieldName, fieldType.IsValueType ? "" : "*"));
 			}
-
-			return fieldWrote;
 		}
 
-		private void WriteObjectBody(INamedTypeSymbol obj, out CallbackMethod writeExternalMembers)
+		private void WriteObjectBodyFields(INamedTypeSymbol obj, out CallbackMethod writeExternalMembers)
 		{
 			var type = obj.TypeKind;
 			if (IsLogicalType(type))
 			{
 				// write non-static
-				if (!WriteObjectBodyNonStaticFields(obj)) writer.WriteLine("\tchar : 0;");
+				WriteObjectBodyNonStaticFields(obj);
 
 				// write static fields
 				void writeStaticFields()
@@ -312,23 +332,8 @@ namespace CS2X.Core.Emitters
 						if (member.Kind != SymbolKind.Field || !member.IsStatic) continue;
 
 						var field = (IFieldSymbol)member;
-						ITypeSymbol fieldType;
-						string fieldName;
-
-						if (field.AssociatedSymbol != null && field.AssociatedSymbol.Kind == SymbolKind.Property)
-						{
-							var property = (IPropertySymbol)field.AssociatedSymbol;
-							fieldType = property.Type;
-							fieldName = property.Name;
-						}
-						else
-						{
-							fieldType = field.Type;
-							fieldName = field.Name;
-						}
-						
-						if (fieldType.IsValueType) writer.WriteLine($"{GetFullNameFlat(GetCType(fieldType))} {GetFullNameFlat(GetCType(field.ContainingType))}_{fieldName};");
-						else writer.WriteLine($"{GetFullNameFlat(GetCType(fieldType))}* {GetFullNameFlat(GetCType(field.ContainingType))}_{fieldName};");
+						GetFieldInfo(field, out var fieldType, out string fieldName);
+						writer.WriteLine(string.Format("{0}{3} {1}_{2};", GetFullNameFlat(GetCType(fieldType)), GetFullNameFlat(GetCType(field.ContainingType)), fieldName, fieldType.IsValueType ? "" : "*"));
 						fieldWrote = true;
 					}
 
@@ -343,7 +348,7 @@ namespace CS2X.Core.Emitters
 			}
 		}
 		
-		private void WriteObjectMethodDeclare(IMethodSymbol method)
+		private void WriteObjectMethodDeclare(IMethodSymbol method, int? methodOverload)
 		{
 			// write return type
 			if (method.ReturnType.TypeKind == TypeKind.Array)
@@ -352,9 +357,10 @@ namespace CS2X.Core.Emitters
 			}
 			else
 			{
-				if (method.MethodKind == MethodKind.Constructor) writer.Write($"System_Void {GetFullNameFlat(method).Replace(".ctor", "CONSTRUCTOR")}(");
-				else if (method.ReturnType.IsValueType) writer.Write($"{GetFullNameFlat(GetCType(method.ReturnType))} {GetFullNameFlat(method)}(");
-				else writer.Write($"{GetFullNameFlat(GetCType(method.ReturnType))}* {GetFullNameFlat(method)}(");
+				string methodOverloadValue = (methodOverload != null) ? ("_" + methodOverload.Value) : "";
+				if (method.MethodKind == MethodKind.Constructor) writer.Write($"System_Void {GetFullNameFlat(method).Replace(".ctor", "CONSTRUCTOR")}{methodOverloadValue}(");
+				else if (method.ReturnType.IsValueType) writer.Write($"{GetFullNameFlat(GetCType(method.ReturnType))} {GetFullNameFlat(method)}{methodOverloadValue}(");
+				else writer.Write($"{GetFullNameFlat(GetCType(method.ReturnType))}* {GetFullNameFlat(method)}{methodOverloadValue}(");
 			}
 
 			// if method and object are not static pass "this" ref
@@ -399,7 +405,7 @@ namespace CS2X.Core.Emitters
 				var property = (IPropertySymbol)member;
 				if (property.GetMethod != null)
 				{
-					WriteObjectMethodDeclare(property.GetMethod);
+					WriteObjectMethodDeclare(property.GetMethod, null);
 					if (writeBody)
 					{
 						writer.WriteLine(Environment.NewLine + '{');
@@ -414,7 +420,7 @@ namespace CS2X.Core.Emitters
 
 				if (property.SetMethod != null)
 				{
-					WriteObjectMethodDeclare(property.SetMethod);
+					WriteObjectMethodDeclare(property.SetMethod, null);
 					if (writeBody)
 					{
 						writer.WriteLine(Environment.NewLine + '{');
@@ -432,13 +438,23 @@ namespace CS2X.Core.Emitters
 		private void WriteObjectMethods(INamedTypeSymbol obj, bool writeBody)
 		{
 			var members = obj.GetMembers();
+			var overloads = new List<MethodOverload>();
 			foreach (var member in members)
 			{
 				if (member.Kind != SymbolKind.Method || member.IsImplicitlyDeclared) continue;
 				if (members.Any(x => x.Kind == SymbolKind.Property && (((IPropertySymbol)x).GetMethod == member || ((IPropertySymbol)x).SetMethod == member))) continue;
 
 				var method = (IMethodSymbol)member;
-				WriteObjectMethodDeclare(method);
+
+				MethodOverload overload;
+				overload = overloads.FirstOrDefault(x => x.name == method.Name);
+				if (overload == null)
+				{
+					overload = new MethodOverload() { name = method.Name };
+					overloads.Add(overload);
+				}
+
+				WriteObjectMethodDeclare(method, overload.count);
 				if (writeBody)
 				{
 					writer.WriteLine(Environment.NewLine + '{');
@@ -449,6 +465,8 @@ namespace CS2X.Core.Emitters
 				{
 					writer.WriteLine(';');
 				}
+
+				++overload.count;
 			}
 		}
 		#endregion

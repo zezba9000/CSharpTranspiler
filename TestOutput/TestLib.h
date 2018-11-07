@@ -1,4 +1,5 @@
 #pragma once
+#define EMPTY_OBJECT void*
 
 // =============
 // Library References
