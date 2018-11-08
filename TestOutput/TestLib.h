@@ -1,4 +1,5 @@
 #pragma once
+#include <stdio.h>
 #define EMPTY_OBJECT void*
 
 // =============

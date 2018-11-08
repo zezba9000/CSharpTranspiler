@@ -1,6 +1,8 @@
+using System.CS2X;
+
 namespace System
 {
-	[NativeTypeName(NativeTypeNameTargets.C, "__int8")]
+	[NativeNameAttribute(NativeTargets.C, "__int8")]
 	public struct SByte
 	{
 	}

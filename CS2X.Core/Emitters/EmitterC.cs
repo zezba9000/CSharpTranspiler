@@ -9,6 +9,8 @@ using CoreSolution = CS2X.Core.Solution;
 using CoreProject = CS2X.Core.Project;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Generic;
+using System.CS2X;
+using System.Text;
 
 namespace CS2X.Core.Emitters
 {
@@ -103,7 +105,7 @@ namespace CS2X.Core.Emitters
 		private SemanticModel semanticModel;
 
 		public EmitterC(CoreSolution solution, string outputPath, CompilerTargets target, PlatformTypes platform, GCTypes gc)
-		: base(solution, outputPath)
+		: base(solution, outputPath, NativeTargets.C)
 		{
 			this.target = target;
 		}
@@ -130,6 +132,7 @@ namespace CS2X.Core.Emitters
 				if (project.type == ProjectTypes.Dll)
 				{
 					writer.WriteLine("#pragma once");
+					if (platform != PlatformTypes.Arduino) writer.WriteLine("#include <stdio.h>");
 					writer.WriteLine("#define EMPTY_OBJECT void*");
 					if (project.roslynProject.Name == "CoreLib") writer.WriteLine("#define null 0" + Environment.NewLine);
 					else writer.WriteLine();
@@ -197,15 +200,37 @@ namespace CS2X.Core.Emitters
 		}
 
 		#region Object Layout
-		private ITypeSymbol GetCType(ITypeSymbol type)
+		private bool AppendNativeTypeName(INamespaceOrTypeSymbol member, ref StringBuilder value)
+		{
+			if (!(member is ITypeSymbol)) return false;
+
+			var type = (ITypeSymbol)member;
+			if (type.IsValueType) value.Append(type.Name);
+			else value.Append(type.Name + '*');
+			return true;
+		}
+
+		private string GetNativeCTypeName(ITypeSymbol type)
 		{
 			if (type is INamedTypeSymbol)
 			{
-				var namedType = (INamedTypeSymbol)type;
-				if (type.TypeKind == TypeKind.Enum) return namedType.EnumUnderlyingType;
+				if (type.TypeKind == TypeKind.Enum)
+				{
+					var namedType = (INamedTypeSymbol)type;
+					return GetFullNameFlat(namedType.EnumUnderlyingType);
+				}
 			}
-			
-			return type;
+			if (type is IPointerTypeSymbol)
+			{
+				var ptrType = (IPointerTypeSymbol)type;
+				return GetFullNameFlat(ptrType.PointedAtType) + '*';
+			}
+			else if (type is IArrayTypeSymbol)
+			{
+				return GetFullNameFlat(project.compilation.GetSpecialType(SpecialType.System_Array)) + '*';
+			}
+
+			return GetFullNameFlat(type, AppendNativeTypeName);
 		}
 
 		private void WriteObject(INamedTypeSymbol obj, bool writeBody)
@@ -230,19 +255,8 @@ namespace CS2X.Core.Emitters
 					}
 					else
 					{
-						string nativeTypeName = "EMPTY_OBJECT";
-						foreach (var attribute in obj.GetAttributes())
-						{
-							if (attribute.AttributeClass.Name != "NativeTypeNameAttribute") continue;
-							var args = attribute.ConstructorArguments;
-							if (args != null && args.Length == 2 && (int)args[0].Value == 0)
-							{
-								nativeTypeName = (string)args[1].Value;
-								break;
-							}
-						}
-
-						writer.Write($"typedef {nativeTypeName} {GetFullNameFlat(obj)}");
+						string nativeName = GetNativeName(obj, "EMPTY_OBJECT");
+						writer.Write($"typedef {nativeName} {GetFullNameFlat(obj)}");
 					}
 				}
 			}
@@ -311,7 +325,7 @@ namespace CS2X.Core.Emitters
 
 				var field = (IFieldSymbol)member;
 				GetFieldInfo(field, out var fieldType, out string fieldName);
-				writer.WriteLine(string.Format("\t{0}{2} {1};", GetFullNameFlat(GetCType(fieldType)), fieldName, fieldType.IsValueType ? "" : "*"));
+				writer.WriteLine(string.Format("\t{0} {1};", GetNativeCTypeName(fieldType), fieldName));
 			}
 		}
 
@@ -333,7 +347,7 @@ namespace CS2X.Core.Emitters
 
 						var field = (IFieldSymbol)member;
 						GetFieldInfo(field, out var fieldType, out string fieldName);
-						writer.WriteLine(string.Format("{0}{3} {1}_{2};", GetFullNameFlat(GetCType(fieldType)), GetFullNameFlat(GetCType(field.ContainingType)), fieldName, fieldType.IsValueType ? "" : "*"));
+						writer.WriteLine(string.Format("{0} {1}_{2};", GetNativeCTypeName(fieldType), GetFullNameFlat(field.ContainingType), fieldName));
 						fieldWrote = true;
 					}
 
@@ -350,18 +364,9 @@ namespace CS2X.Core.Emitters
 		
 		private void WriteObjectMethodDeclare(IMethodSymbol method, int? methodOverload)
 		{
-			// write return type
-			if (method.ReturnType.TypeKind == TypeKind.Array)
-			{
-				writer.Write($"System_Array* {GetFullNameFlat(method)}(");
-			}
-			else
-			{
-				string methodOverloadValue = (methodOverload != null) ? ("__" + methodOverload.Value) : "";
-				if (method.MethodKind == MethodKind.Constructor) writer.Write($"System_Void {GetFullNameFlat(method).Replace(".ctor", "CONSTRUCTOR")}{methodOverloadValue}(");
-				else if (method.ReturnType.IsValueType) writer.Write($"{GetFullNameFlat(GetCType(method.ReturnType))} {GetFullNameFlat(method)}{methodOverloadValue}(");
-				else writer.Write($"{GetFullNameFlat(GetCType(method.ReturnType))}* {GetFullNameFlat(method)}{methodOverloadValue}(");
-			}
+			string methodOverloadValue = (methodOverload != null) ? ("__" + methodOverload.Value) : "";
+			if (method.MethodKind == MethodKind.Constructor) writer.Write($"System_Void {GetFullNameFlat(method).Replace(".ctor", "CONSTRUCTOR")}{methodOverloadValue}(");
+			else writer.Write($"{GetNativeCTypeName(method.ReturnType)} {GetFullNameFlat(method)}{methodOverloadValue}(");
 
 			// if method and object are not static pass "this" ref
 			if (!method.IsStatic && !method.ContainingType.IsStatic)
@@ -376,16 +381,7 @@ namespace CS2X.Core.Emitters
 				for (int i = 0; i != count; ++i)
 				{
 					var parameter = method.Parameters[i];
-					if (parameter.Type.TypeKind == TypeKind.Array)
-					{
-						writer.Write($"System_Array* {parameter.Name}");
-					}
-					else
-					{
-						if (parameter.Type.IsValueType) writer.Write($"{GetFullNameFlat(GetCType(parameter.Type))} {parameter.Name}");
-						else writer.Write($"{GetFullNameFlat(GetCType(parameter.Type))}* {parameter.Name}");
-					}
-
+					writer.Write($"{GetNativeCTypeName(parameter.Type)} {parameter.Name}");
 					if (i != count - 1) writer.Write(", ");
 				}
 			}
@@ -537,7 +533,7 @@ namespace CS2X.Core.Emitters
 		private void WriteLocalDeclarationStatement(LocalDeclarationStatementSyntax statement)
 		{
 			var typeInfo = semanticModel.GetTypeInfo(statement.Declaration.Type);
-			string typeName = GetFullNameFlat(typeInfo.Type);
+			string typeName = GetNativeCTypeName(typeInfo.Type);
 			var variables = GetVariables(statement, semanticModel);
 			foreach (var variable in variables)
 			{
@@ -555,10 +551,13 @@ namespace CS2X.Core.Emitters
 		{
 			if (expression is AssignmentExpressionSyntax) WriteAssignmentExpression((AssignmentExpressionSyntax)expression);
 			else if (expression is BinaryExpressionSyntax) WriteBinaryExpression((BinaryExpressionSyntax)expression);
-			else if (expression is IdentifierNameSyntax || expression is MemberAccessExpressionSyntax) WriteSymbolAccess(expression);
+			else if (expression is ThisExpressionSyntax) WriteThisExpression((ThisExpressionSyntax)expression);
+			else if (expression is IdentifierNameSyntax) WriteIdentifierName((IdentifierNameSyntax)expression);
+			else if (expression is MemberAccessExpressionSyntax) WriteMemberAccessExpression((MemberAccessExpressionSyntax)expression);
 			else if (expression is LiteralExpressionSyntax) WriteLiteralExpression((LiteralExpressionSyntax)expression);
 			else if (expression is CastExpressionSyntax) WriteCastExpression((CastExpressionSyntax)expression);
 			else if (expression is ParenthesizedExpressionSyntax) WriteParenthesizedExpression((ParenthesizedExpressionSyntax)expression);
+			else if (expression is InvocationExpressionSyntax) WriteInvocationExpression((InvocationExpressionSyntax)expression);
 			else throw new NotImplementedException("Unsuported expression type: " + expression.GetType());
 		}
 
@@ -602,7 +601,12 @@ namespace CS2X.Core.Emitters
 			WriteExperesion(expressionRight);
 		}
 
-		private void WriteSymbolAccess(ExpressionSyntax expression)
+		private void WriteThisExpression(ThisExpressionSyntax expression)
+		{
+			writer.Write("this");
+		}
+
+		private void WriteSymbolAccess(ExpressionSyntax expression, bool isMemberAccess, string thisMemberName)
 		{
 			var symbolInfo = semanticModel.GetSymbolInfo(expression);
 			var propertySymbol = symbolInfo.Symbol as IPropertySymbol;
@@ -614,7 +618,7 @@ namespace CS2X.Core.Emitters
 				}
 				else
 				{
-					writer.Write($"{GetFullNameFlat(propertySymbol.GetMethod)}(this)");
+					writer.Write($"{GetFullNameFlat(propertySymbol.GetMethod)}({thisMemberName})");
 				}
 			}
 			else if (symbolInfo.Symbol.IsStatic)
@@ -624,8 +628,35 @@ namespace CS2X.Core.Emitters
 			else
 			{
 				if (symbolInfo.Symbol is ILocalSymbol || symbolInfo.Symbol is IParameterSymbol) writer.Write(symbolInfo.Symbol.Name);
-				else writer.Write($"this->{symbolInfo.Symbol.Name}");
+				else if (!isMemberAccess) writer.Write($"{thisMemberName}->{symbolInfo.Symbol.Name}");
+				else writer.Write($"{symbolInfo.Symbol.Name}");
 			}
+		}
+
+		private void WriteIdentifierName(IdentifierNameSyntax expression)
+		{
+			WriteSymbolAccess(expression, false, "this");
+		}
+
+		private void WriteMemberAccessExpression(MemberAccessExpressionSyntax expression)
+		{
+			// if member is static just directly reference
+			var symbolInfo = semanticModel.GetSymbolInfo(expression);
+			if (symbolInfo.Symbol.IsStatic)
+			{
+				WriteSymbolAccess(expression, true, null);
+				return;
+			}
+
+			// unroll expression access (TODO)
+			var symbolInfoAccessor = semanticModel.GetSymbolInfo(expression.Expression);
+			if (!(symbolInfo.Symbol is IPropertySymbol))// TODO: don't write symbol access if property
+			{
+				WriteExperesion(expression.Expression);
+				if (expression.Expression.GetType() != typeof(ThisExpressionSyntax) && IsResultValueType(symbolInfoAccessor.Symbol)) writer.Write('.');
+				else writer.Write("->");
+			}
+			WriteSymbolAccess(expression, true, symbolInfoAccessor.Symbol.Name);// TODO: get full name
 		}
 
 		private void WriteLiteralExpression(LiteralExpressionSyntax expression)
@@ -639,7 +670,8 @@ namespace CS2X.Core.Emitters
 				}
 				else
 				{
-					writer.Write(value.Value);
+					if (value.Value is string) writer.Write($"L\"{value.Value}\"");
+					else writer.Write(value.Value);
 					if (value.Value is float) writer.Write('f');
 				}
 			}
@@ -660,6 +692,22 @@ namespace CS2X.Core.Emitters
 		{
 			writer.Write('(');
 			WriteExperesion(expression.Expression);
+			writer.Write(')');
+		}
+
+		private void WriteInvocationExpression(InvocationExpressionSyntax expression)
+		{
+			WriteExperesion(expression.Expression);
+			writer.Write('(');
+			if (expression.ArgumentList != null)
+			{
+				var lastArg = expression.ArgumentList.Arguments.Last();
+				foreach (var arg in expression.ArgumentList.Arguments)
+				{
+					WriteExperesion(arg.Expression);
+					if (arg != lastArg) writer.Write(", ");
+				}
+			}
 			writer.Write(')');
 		}
 		#endregion

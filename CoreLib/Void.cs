@@ -1,6 +1,8 @@
+using System.CS2X;
+
 namespace System
 {
-	[NativeTypeName(NativeTypeNameTargets.C, "void")]
+	[NativeNameAttribute(NativeTargets.C, "void")]
 	public struct Void
 	{
 	}

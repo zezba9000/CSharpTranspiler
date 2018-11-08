@@ -1,6 +1,8 @@
+using System.CS2X;
+
 namespace System
 {
-	[NativeTypeName(NativeTypeNameTargets.C, "__int16")]
+	[NativeNameAttribute(NativeTargets.C, "__int16")]
 	public struct Int16
 	{
 	}

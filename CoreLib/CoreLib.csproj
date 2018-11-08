@@ -22,6 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>3</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,6 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Attribute.cs" />
@@ -57,6 +59,8 @@
     <Compile Include="ComponentModel\EditorBrowsableAttribute.cs" />
     <Compile Include="ComponentModel\EditorBrowsableState.cs" />
     <Compile Include="ComponentModel\IContainer.cs" />
+    <Compile Include="Console.cs" />
+    <Compile Include="CS2X\NativeTargets.cs" />
     <Compile Include="Diagnostics\ConditionalAttribute.cs" />
     <Compile Include="Diagnostics\Debug.cs" />
     <Compile Include="Diagnostics\SuppressMessageAttribute.cs" />
@@ -83,7 +87,7 @@
     <Compile Include="IntPtr.cs" />
     <Compile Include="Math.cs" />
     <Compile Include="MulticastDelegate.cs" />
-    <Compile Include="NativeTypeNameAttribute.cs" />
+    <Compile Include="CS2X\NativeNameAttribute.cs" />
     <Compile Include="Nullable.cs" />
     <Compile Include="Object.cs" />
     <Compile Include="ObsoleteAttribute.cs" />

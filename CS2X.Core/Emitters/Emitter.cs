@@ -5,6 +5,7 @@ using System.Text;
 using System.Linq;
 
 using CoreSolution = CS2X.Core.Solution;
+using System.CS2X;
 
 namespace CS2X.Core.Emitters
 {
@@ -17,48 +18,51 @@ namespace CS2X.Core.Emitters
 	public abstract class Emitter
 	{
 		protected delegate void CallbackMethod();
+		protected delegate bool AppendMemberName(INamespaceOrTypeSymbol member, ref StringBuilder value);
 
 		public readonly CoreSolution solution;
 		public readonly string outputPath;
+		public readonly NativeTargets target;
 
-		public Emitter(CoreSolution solution, string outputPath)
+		public Emitter(CoreSolution solution, string outputPath, NativeTargets target)
 		{
 			this.solution = solution;
 			this.outputPath = outputPath;
+			this.target = target;
 		}
 
 		public abstract void Emit(bool clean);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected string GetFullNameFlat<T>(T member) where T : ISymbol
+		protected string GetFullNameFlat<T>(T member, AppendMemberName writeMemberName = null) where T : ISymbol
 		{
-			return GetFullName(member, '_');
+			return GetFullName(member, '_', writeMemberName);
 		}
 
-		protected string GetFullName<T>(T member, char delimiter = '.') where T : ISymbol
+		protected string GetFullName<T>(T member, char delimiter = '.', AppendMemberName writeMemberName = null) where T : ISymbol
 		{
 			var value = new StringBuilder();
 			var namedSymbol = member as INamespaceOrTypeSymbol;
 			if (namedSymbol != null)
 			{
-				BuildFullName(namedSymbol, ref value, delimiter);
+				BuildFullName(namedSymbol, ref value, delimiter, writeMemberName);
 			}
 			else
 			{
-				BuildFullName(member.ContainingType, ref value, delimiter);
+				BuildFullName(member.ContainingType, ref value, delimiter, writeMemberName);
 				value.Append(delimiter);
 				value.Append(member.Name);
 			}
 			return value.ToString();
 		}
 
-		private void BuildFullName(INamespaceOrTypeSymbol member, ref StringBuilder value, char delimiter)
+		private void BuildFullName(INamespaceOrTypeSymbol member, ref StringBuilder value, char delimiter, AppendMemberName appendMemberName)
 		{
-			if (member.ContainingNamespace != null && !member.ContainingNamespace.IsGlobalNamespace) BuildFullName(member.ContainingNamespace, ref value, delimiter);
-			else if (member.ContainingType != null) BuildFullName(member.ContainingType, ref value, delimiter);
+			if (member.ContainingNamespace != null && !member.ContainingNamespace.IsGlobalNamespace) BuildFullName(member.ContainingNamespace, ref value, delimiter, appendMemberName);
+			else if (member.ContainingType != null) BuildFullName(member.ContainingType, ref value, delimiter, appendMemberName);
 
 			if (value.Length != 0) value.Append(delimiter);
-			value.Append(member.Name);
+			if (appendMemberName == null || !appendMemberName(member, ref value)) value.Append(member.Name);
 		}
 
 		protected bool IsLogicalType(TypeKind typeKind)
@@ -97,6 +101,68 @@ namespace CS2X.Core.Emitters
 		{
 			var members = property.ContainingType.GetMembers();
 			return members.Any(x => x.Kind == SymbolKind.Field && ((IFieldSymbol)x).AssociatedSymbol == property);
+		}
+
+		protected bool HasNativeName(INamedTypeSymbol obj)
+		{
+			foreach (var attribute in obj.GetAttributes())
+			{
+				if (attribute.AttributeClass.Name != "NativeNameAttribute") continue;
+				var args = attribute.ConstructorArguments;
+				if (args != null && args.Length == 2 && (NativeTargets)args[0].Value == target)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		protected string GetNativeName(INamedTypeSymbol obj, string defaultValue)
+		{
+			foreach (var attribute in obj.GetAttributes())
+			{
+				if (attribute.AttributeClass.Name != "NativeNameAttribute") continue;
+				var args = attribute.ConstructorArguments;
+				if (args != null && args.Length == 2 && (NativeTargets)args[0].Value == target)
+				{
+					defaultValue = (string)args[1].Value;
+					break;
+				}
+			}
+
+			return defaultValue;
+		}
+
+		protected bool IsResultValueType(ISymbol obj)
+		{
+			if (obj is IParameterSymbol)
+			{
+				var type = (IParameterSymbol)obj;
+				return type.Type.IsValueType;
+			}
+			else if (obj is IPropertySymbol)
+			{
+				var type = (IPropertySymbol)obj;
+				return type.Type.IsValueType;
+			}
+			else if (obj is IFieldSymbol)
+			{
+				var type = (IFieldSymbol)obj;
+				return type.Type.IsValueType;
+			}
+			else if (obj is IMethodSymbol)
+			{
+				var type = (IMethodSymbol)obj;
+				return type.ReturnType.IsValueType;
+			}
+			else if (obj is ITypeSymbol)
+			{
+				var type = (ITypeSymbol)obj;
+				return type.IsValueType;
+			}
+			
+			return true;
 		}
 	}
 }

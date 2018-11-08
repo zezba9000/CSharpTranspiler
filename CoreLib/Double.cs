@@ -1,6 +1,8 @@
+using System.CS2X;
+
 namespace System
 {
-	[NativeTypeName(NativeTypeNameTargets.C, "double")]
+	[NativeNameAttribute(NativeTargets.C, "double")]
 	public struct Double
 	{
 	}

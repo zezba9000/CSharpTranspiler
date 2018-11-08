@@ -1,4 +1,5 @@
 #pragma once
+#include <stdio.h>
 #define EMPTY_OBJECT void*
 #define null 0
 
@@ -16,7 +17,7 @@ typedef EMPTY_OBJECT System_Collections_IEnumerator;
 typedef EMPTY_OBJECT System_ComponentModel_IContainer;
 typedef EMPTY_OBJECT System_Boolean;
 typedef unsigned __int8 System_Byte;
-typedef EMPTY_OBJECT System_Char;
+typedef wchar_t* System_Char;
 typedef double System_Double;
 typedef __int16 System_Int16;
 typedef __int32 System_Int32;
@@ -35,8 +36,9 @@ typedef struct System_Collections_DictionaryEntry System_Collections_DictionaryE
 typedef EMPTY_OBJECT System_Attribute;
 typedef struct System_AttributeUsageAttribute System_AttributeUsageAttribute;
 typedef struct System_CLSCompliantAttribute System_CLSCompliantAttribute;
+typedef EMPTY_OBJECT System_Console;
 typedef EMPTY_OBJECT System_FlagsAttribute;
-typedef EMPTY_OBJECT System_Array;
+typedef struct System_Array System_Array;
 typedef EMPTY_OBJECT System_CancelEventArgs;
 typedef EMPTY_OBJECT System_Delegate;
 typedef EMPTY_OBJECT System_Enum;
@@ -44,12 +46,11 @@ typedef EMPTY_OBJECT System_EventArgs;
 typedef EMPTY_OBJECT System_Exception;
 typedef EMPTY_OBJECT System_Math;
 typedef EMPTY_OBJECT System_MulticastDelegate;
-typedef struct System_NativeTypeNameAttribute System_NativeTypeNameAttribute;
 typedef EMPTY_OBJECT System_Nullable;
 typedef EMPTY_OBJECT System_Object;
 typedef struct System_ObsoleteAttribute System_ObsoleteAttribute;
 typedef EMPTY_OBJECT System_ParamArrayAttribute;
-typedef unsigned __int16* System_String;
+typedef struct System_String System_String;
 typedef EMPTY_OBJECT System_StringBuilder;
 typedef EMPTY_OBJECT System_Type;
 typedef EMPTY_OBJECT System_ValueType;
@@ -60,6 +61,7 @@ typedef EMPTY_OBJECT System_Collections_Stack;
 typedef EMPTY_OBJECT System_ComponentModel_BrowsableAttribute;
 typedef EMPTY_OBJECT System_ComponentModel_DependencyAttribute;
 typedef struct System_ComponentModel_EditorBrowsableAttribute System_ComponentModel_EditorBrowsableAttribute;
+typedef struct System_CS2X_NativeNameAttribute System_CS2X_NativeNameAttribute;
 typedef struct System_Diagnostics_ConditionalAttribute System_Diagnostics_ConditionalAttribute;
 typedef EMPTY_OBJECT System_Diagnostics_Debug;
 typedef EMPTY_OBJECT System_Diagnostics_CodeAnalysis_SuppressMessageAttribute;
@@ -103,11 +105,11 @@ typedef EMPTY_OBJECT System_Runtime_InteropServices_OutAttribute;
 #define System_AttributeTargets_GenericParameter 16384
 #define System_AttributeTargets_All 32767
 
-#define System_NativeTypeNameTargets_C 0
-
 #define System_ComponentModel_EditorBrowsableState_Always 0
 #define System_ComponentModel_EditorBrowsableState_Never 1
 #define System_ComponentModel_EditorBrowsableState_Advanced 2
+
+#define System_CS2X_NativeTargets_C 0
 
 struct System_Collections_DictionaryEntry
 {
@@ -127,16 +129,20 @@ struct System_CLSCompliantAttribute
 	System_Boolean _isCompliant;
 };
 
-struct System_NativeTypeNameAttribute
+struct System_Array
 {
-	System_Int32 Target;
-	System_String* Value;
+	System_Void* buffer;
 };
 
 struct System_ObsoleteAttribute
 {
 	System_Boolean _error;
 	System_String* _message;
+};
+
+struct System_String
+{
+	System_Char* buffer;
 };
 
 struct System_CodeDom_Compiler_GeneratedCodeAttribute
@@ -148,6 +154,12 @@ struct System_CodeDom_Compiler_GeneratedCodeAttribute
 struct System_ComponentModel_EditorBrowsableAttribute
 {
 	System_Int32 _browsableState;
+};
+
+struct System_CS2X_NativeNameAttribute
+{
+	System_Int32 Target;
+	System_String* Value;
 };
 
 struct System_Diagnostics_ConditionalAttribute
@@ -266,10 +278,11 @@ System_String* System_Reflection_DefaultMemberAttribute_get_MemberName(System_Re
 System_Void System_Collections_DictionaryEntry_CONSTRUCTOR__0(System_Collections_DictionaryEntry* this, System_Object* key, System_Object* value);
 System_Void System_AttributeUsageAttribute_CONSTRUCTOR__0(System_AttributeUsageAttribute* this, System_Int32 validOn);
 System_Void System_CLSCompliantAttribute_CONSTRUCTOR__0(System_CLSCompliantAttribute* this, System_Boolean isCompliant);
+System_Void System_Console_Write__0(System_Char* value);
+System_Void System_Console_WriteLine__0(System_String* value);
 System_Collections_IEnumerator* System_Array_GetEnumerator__0(System_Array* this);
 System_Void System_Exception_CONSTRUCTOR__0(System_Exception* this);
 System_Void System_Exception_CONSTRUCTOR__1(System_Exception* this, System_String* message);
-System_Void System_NativeTypeNameAttribute_CONSTRUCTOR__0(System_NativeTypeNameAttribute* this, System_Int32 target, System_String* value);
 System_Type* System_Object_GetType__0(System_Object* this);
 System_String* System_Object_ToString__0(System_Object* this);
 System_Void System_ObsoleteAttribute_CONSTRUCTOR__0(System_ObsoleteAttribute* this);
@@ -280,6 +293,7 @@ System_Collections_IEnumerator* System_Collections_ArrayList_GetEnumerator__0(Sy
 System_Collections_IEnumerator* System_Collections_Queue_GetEnumerator__0(System_Collections_Queue* this);
 System_Collections_IEnumerator* System_Collections_Stack_GetEnumerator__0(System_Collections_Stack* this);
 System_Void System_ComponentModel_EditorBrowsableAttribute_CONSTRUCTOR__0(System_ComponentModel_EditorBrowsableAttribute* this, System_Int32 state);
+System_Void System_CS2X_NativeNameAttribute_CONSTRUCTOR__0(System_CS2X_NativeNameAttribute* this, System_Int32 target, System_String* value);
 System_Void System_Diagnostics_ConditionalAttribute_CONSTRUCTOR__0(System_Diagnostics_ConditionalAttribute* this, System_String* conditionString);
 System_Void System_Reflection_AssemblyCompanyAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyCompanyAttribute* this, System_String* company);
 System_Void System_Reflection_AssemblyConfigurationAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyConfigurationAttribute* this, System_String* configuration);
@@ -459,8 +473,8 @@ System_String* System_Reflection_DefaultMemberAttribute_get_MemberName(System_Re
 // =============
 System_Void System_Collections_DictionaryEntry_CONSTRUCTOR__0(System_Collections_DictionaryEntry* this, System_Object* key, System_Object* value)
 {
-	this->Key = key;
-	this->Value = value;
+	Key = key;
+	Value = value;
 }
 
 System_Void System_AttributeUsageAttribute_CONSTRUCTOR__0(System_AttributeUsageAttribute* this, System_Int32 validOn)
@@ -471,6 +485,15 @@ System_Void System_AttributeUsageAttribute_CONSTRUCTOR__0(System_AttributeUsageA
 System_Void System_CLSCompliantAttribute_CONSTRUCTOR__0(System_CLSCompliantAttribute* this, System_Boolean isCompliant)
 {
 	this->_isCompliant = isCompliant;
+}
+
+System_Void System_Console_Write__0(System_Char* value)
+{
+}
+
+System_Void System_Console_WriteLine__0(System_String* value)
+{
+	System_Console_Write(value->buffer);
 }
 
 System_Collections_IEnumerator* System_Array_GetEnumerator__0(System_Array* this)
@@ -484,12 +507,6 @@ System_Void System_Exception_CONSTRUCTOR__0(System_Exception* this)
 
 System_Void System_Exception_CONSTRUCTOR__1(System_Exception* this, System_String* message)
 {
-}
-
-System_Void System_NativeTypeNameAttribute_CONSTRUCTOR__0(System_NativeTypeNameAttribute* this, System_Int32 target, System_String* value)
-{
-	this->Target = target;
-	this->Value = value;
 }
 
 System_Type* System_Object_GetType__0(System_Object* this)
@@ -541,6 +558,12 @@ System_Collections_IEnumerator* System_Collections_Stack_GetEnumerator__0(System
 System_Void System_ComponentModel_EditorBrowsableAttribute_CONSTRUCTOR__0(System_ComponentModel_EditorBrowsableAttribute* this, System_Int32 state)
 {
 	this->_browsableState = state;
+}
+
+System_Void System_CS2X_NativeNameAttribute_CONSTRUCTOR__0(System_CS2X_NativeNameAttribute* this, System_Int32 target, System_String* value)
+{
+	this->Target = target;
+	this->Value = value;
 }
 
 System_Void System_Diagnostics_ConditionalAttribute_CONSTRUCTOR__0(System_Diagnostics_ConditionalAttribute* this, System_String* conditionString)

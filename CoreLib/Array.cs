@@ -2,8 +2,10 @@ using System.Collections;
 
 namespace System
 {
-	public abstract class Array : IEnumerable
+	public unsafe abstract class Array : IEnumerable
 	{
+		internal void* buffer;
+
 		public int Length
 		{
 			get

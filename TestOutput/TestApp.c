@@ -41,6 +41,7 @@ struct TestApp_C_Program
 {
 	System_Int32 b;
 	System_Int32 baseInt;
+	System_Array* boo2;
 	System_Int32 iBlaa;
 	System_Single i3;
 	System_Single i4;
@@ -68,6 +69,7 @@ System_Void TestApp_C_Program_CONSTRUCTOR__0(TestApp_C_Program* this);
 TestApp_Blaa_A2* TestApp_C_Program_Foo__0(TestApp_C_Program* this);
 System_Void TestApp_C_Program_Main__0();
 TestApp_Blaa_A2* TestApp_C_Program_Foo__1(TestApp_C_Program* this, System_Int32 hi, System_String* by, System_String* by2);
+System_Void TestApp_C_Program_Yahoo__0(TestApp_C_Program* this, TestApp_C_Program* p);
 
 // =============
 // Properties
@@ -113,6 +115,9 @@ System_Void TestApp_C_Program_CONSTRUCTOR__0(TestApp_C_Program* this)
 
 TestApp_Blaa_A2* TestApp_C_Program_Foo__0(TestApp_C_Program* this)
 {
+	System_Array* boo;
+	System_String* myString = L"Hello World!";
+	System_Console_WriteLine(myString);
 	return TestApp_C_Program_a;
 }
 
@@ -133,6 +138,11 @@ TestApp_Blaa_A2* TestApp_C_Program_Foo__1(TestApp_C_Program* this, System_Int32 
 	foo2 = hi;
 	foo2 = this->baseInt;
 	return TestApp_C_Program_a;
+}
+
+System_Void TestApp_C_Program_Yahoo__0(TestApp_C_Program* this, TestApp_C_Program* p)
+{
+	System_Single val = TestApp_C_Program_get_i6(p);
 }
 
 // =============

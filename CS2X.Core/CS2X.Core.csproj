@@ -169,6 +169,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\CoreLib\CS2X\NativeTargets.cs">
+      <Link>NativeTargets.cs</Link>
+    </Compile>
     <Compile Include="Emitters\Emitter.cs" />
     <Compile Include="Emitters\EmitterC.cs" />
     <Compile Include="Project.cs" />

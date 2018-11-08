@@ -1,7 +1,10 @@
+using System.CS2X;
+
 namespace System
 {
-	[NativeTypeName(NativeTypeNameTargets.C, "unsigned __int16*")]
-	public sealed class String
+	//[NativeName(NativeTargets.C, "unsigned __int16*")]
+	public unsafe sealed class String
 	{
+		internal char* buffer;
 	}
 }

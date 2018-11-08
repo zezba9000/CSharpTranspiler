@@ -1,4 +1,5 @@
-﻿using TestApp.Blaa;
+﻿using System;
+using TestApp.Blaa;
 using TestLib;
 
 partial class MyPartial
@@ -28,6 +29,7 @@ namespace TestApp.C
 		partial class Program : MyInterface
 		{
 			static A2 a = null;
+			int[] boo2;
 
 			public Program()
 			{
@@ -36,6 +38,9 @@ namespace TestApp.C
 
 			A2 Foo()
 			{
+				int[] boo;
+				string myString = "Hello World!";
+				Console.WriteLine(myString);
 				return a;
 			}
 
@@ -50,6 +55,8 @@ namespace TestApp.C
 
 				int abc = 44;
 				abc = 33;
+
+
 			}
 
 			A2 Foo(int hi, string by, string by2)
@@ -65,6 +72,11 @@ namespace TestApp.C
 		{
 			static int i = 123;
 			int iBlaa;
+
+			void Yahoo(Program p)
+			{
+				var val = p.i6;
+			}
 
 			static int _i2 = 22;
 			static int i2
