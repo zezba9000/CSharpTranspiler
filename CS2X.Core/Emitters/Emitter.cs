@@ -18,7 +18,7 @@ namespace CS2X.Core.Emitters
 	public abstract class Emitter
 	{
 		protected delegate void CallbackMethod();
-		protected delegate bool AppendMemberName(INamespaceOrTypeSymbol member, ref StringBuilder value);
+		protected delegate bool AppendMemberNameCallback(INamespaceOrTypeSymbol member, ref StringBuilder value);
 
 		public readonly CoreSolution solution;
 		public readonly string outputPath;
@@ -34,29 +34,29 @@ namespace CS2X.Core.Emitters
 		public abstract void Emit(bool clean);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected string GetFullNameFlat<T>(T member, AppendMemberName writeMemberName = null) where T : ISymbol
+		protected string GetFullNameFlat<T>(T member, AppendMemberNameCallback writeMemberNameCallback = null) where T : ISymbol
 		{
-			return GetFullName(member, '_', writeMemberName);
+			return GetFullName(member, '_', writeMemberNameCallback);
 		}
 
-		protected string GetFullName<T>(T member, char delimiter = '.', AppendMemberName writeMemberName = null) where T : ISymbol
+		protected string GetFullName<T>(T member, char delimiter = '.', AppendMemberNameCallback writeMemberNameCallback = null) where T : ISymbol
 		{
 			var value = new StringBuilder();
 			var namedSymbol = member as INamespaceOrTypeSymbol;
 			if (namedSymbol != null)
 			{
-				BuildFullName(namedSymbol, ref value, delimiter, writeMemberName);
+				BuildFullName(namedSymbol, ref value, delimiter, writeMemberNameCallback);
 			}
 			else
 			{
-				BuildFullName(member.ContainingType, ref value, delimiter, writeMemberName);
+				BuildFullName(member.ContainingType, ref value, delimiter, writeMemberNameCallback);
 				value.Append(delimiter);
 				value.Append(member.Name);
 			}
 			return value.ToString();
 		}
 
-		private void BuildFullName(INamespaceOrTypeSymbol member, ref StringBuilder value, char delimiter, AppendMemberName appendMemberName)
+		private void BuildFullName(INamespaceOrTypeSymbol member, ref StringBuilder value, char delimiter, AppendMemberNameCallback appendMemberName)
 		{
 			if (member.ContainingNamespace != null && !member.ContainingNamespace.IsGlobalNamespace) BuildFullName(member.ContainingNamespace, ref value, delimiter, appendMemberName);
 			else if (member.ContainingType != null) BuildFullName(member.ContainingType, ref value, delimiter, appendMemberName);
@@ -103,7 +103,7 @@ namespace CS2X.Core.Emitters
 			return members.Any(x => x.Kind == SymbolKind.Field && ((IFieldSymbol)x).AssociatedSymbol == property);
 		}
 
-		protected bool HasNativeName(INamedTypeSymbol obj)
+		protected bool HasNativeName(ISymbol obj)
 		{
 			foreach (var attribute in obj.GetAttributes())
 			{
@@ -118,7 +118,7 @@ namespace CS2X.Core.Emitters
 			return false;
 		}
 
-		protected string GetNativeName(INamedTypeSymbol obj, string defaultValue)
+		protected string GetNativeName(ISymbol obj, string defaultValue)
 		{
 			foreach (var attribute in obj.GetAttributes())
 			{
@@ -163,6 +163,23 @@ namespace CS2X.Core.Emitters
 			}
 			
 			return true;
+		}
+
+		protected int GetMethodOverloadIndex(IMethodSymbol method)
+		{
+			int overload = 0;
+			foreach (var member in method.ContainingType.GetMembers())
+			{
+				if (member.Kind != SymbolKind.Method || member.IsImplicitlyDeclared) continue;
+
+				var memberMethod = (IMethodSymbol)member;
+				if (IsBackingMethod(memberMethod) || HasNativeName(memberMethod) || memberMethod.Name != method.Name) continue;
+
+				if (memberMethod == method) break;
+				++overload;
+			}
+
+			return overload;
 		}
 	}
 }

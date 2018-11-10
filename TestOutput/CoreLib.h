@@ -278,7 +278,6 @@ System_String* System_Reflection_DefaultMemberAttribute_get_MemberName(System_Re
 System_Void System_Collections_DictionaryEntry_CONSTRUCTOR__0(System_Collections_DictionaryEntry* this, System_Object* key, System_Object* value);
 System_Void System_AttributeUsageAttribute_CONSTRUCTOR__0(System_AttributeUsageAttribute* this, System_Int32 validOn);
 System_Void System_CLSCompliantAttribute_CONSTRUCTOR__0(System_CLSCompliantAttribute* this, System_Boolean isCompliant);
-System_Void System_Console_Write__0(System_Char* value);
 System_Void System_Console_WriteLine__0(System_String* value);
 System_Collections_IEnumerator* System_Array_GetEnumerator__0(System_Array* this);
 System_Void System_Exception_CONSTRUCTOR__0(System_Exception* this);
@@ -487,13 +486,9 @@ System_Void System_CLSCompliantAttribute_CONSTRUCTOR__0(System_CLSCompliantAttri
 	this->_isCompliant = isCompliant;
 }
 
-System_Void System_Console_Write__0(System_Char* value)
-{
-}
-
 System_Void System_Console_WriteLine__0(System_String* value)
 {
-	System_Console_Write(value->buffer);
+	wprintf(value->buffer);
 }
 
 System_Collections_IEnumerator* System_Array_GetEnumerator__0(System_Array* this)

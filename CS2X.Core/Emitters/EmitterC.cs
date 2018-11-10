@@ -199,8 +199,7 @@ namespace CS2X.Core.Emitters
 			}
 		}
 
-		#region Object Layout
-		private bool AppendNativeTypeName(INamespaceOrTypeSymbol member, ref StringBuilder value)
+		private bool AppendNativeTypeNameCallback(INamespaceOrTypeSymbol member, ref StringBuilder value)
 		{
 			if (!(member is ITypeSymbol)) return false;
 
@@ -230,9 +229,10 @@ namespace CS2X.Core.Emitters
 				return GetFullNameFlat(project.compilation.GetSpecialType(SpecialType.System_Array)) + '*';
 			}
 
-			return GetFullNameFlat(type, AppendNativeTypeName);
+			return GetFullNameFlat(type, AppendNativeTypeNameCallback);
 		}
 
+		#region Object Layout
 		private void WriteObject(INamedTypeSymbol obj, bool writeBody)
 		{
 			var type = obj.TypeKind;
@@ -440,7 +440,7 @@ namespace CS2X.Core.Emitters
 				if (member.Kind != SymbolKind.Method || member.IsImplicitlyDeclared) continue;
 
 				var method = (IMethodSymbol)member;
-				if (IsBackingMethod(method)) continue;
+				if (IsBackingMethod(method) || HasNativeName(method)) continue;
 
 				MethodOverload overload;
 				overload = overloads.FirstOrDefault(x => x.name == method.Name);
@@ -623,7 +623,10 @@ namespace CS2X.Core.Emitters
 			}
 			else if (symbolInfo.Symbol.IsStatic)
 			{
-				writer.Write(GetFullNameFlat(symbolInfo.Symbol));
+				string flatName = GetFullNameFlat(symbolInfo.Symbol);
+				if (symbolInfo.Symbol.Kind == SymbolKind.Method) flatName += "__" + GetMethodOverloadIndex((IMethodSymbol)symbolInfo.Symbol);
+				string name = GetNativeName(symbolInfo.Symbol, flatName);
+				writer.Write(name);
 			}
 			else
 			{

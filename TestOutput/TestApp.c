@@ -117,7 +117,7 @@ TestApp_Blaa_A2* TestApp_C_Program_Foo__0(TestApp_C_Program* this)
 {
 	System_Array* boo;
 	System_String* myString = L"Hello World!";
-	System_Console_WriteLine(myString);
+	System_Console_WriteLine__0(myString);
 	return TestApp_C_Program_a;
 }
 
