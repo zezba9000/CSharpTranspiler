@@ -2,6 +2,36 @@
 using TestApp.Blaa;
 using TestLib;
 
+class TestStruct
+{
+	public int key { get; set; }
+	public TestStruct(int key, TestIn testIn)
+	{
+		this.key = Add(key);
+		this.key = this.Add(key);
+		this.key = AddStatic(key);
+		this.key = testIn.Add(key);
+	}
+
+	private int Add(int key)
+	{
+		return key + 1;
+	}
+
+	private static int AddStatic(int key)
+	{
+		return key + 1;
+	}
+}
+
+class TestIn
+{
+	public int Add(int key)
+	{
+		return key + 2;
+	}
+}
+
 partial class MyPartial
 {
 	public int iabc;

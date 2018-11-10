@@ -630,9 +630,23 @@ namespace CS2X.Core.Emitters
 			}
 			else
 			{
-				if (symbolInfo.Symbol is ILocalSymbol || symbolInfo.Symbol is IParameterSymbol) writer.Write(symbolInfo.Symbol.Name);
-				else if (!isMemberAccess) writer.Write($"{thisMemberName}->{symbolInfo.Symbol.Name}");
-				else writer.Write($"{symbolInfo.Symbol.Name}");
+				if (symbolInfo.Symbol is ILocalSymbol || symbolInfo.Symbol is IParameterSymbol)
+				{
+					writer.Write(symbolInfo.Symbol.Name);
+				}
+				else if (symbolInfo.Symbol is IMethodSymbol)
+				{
+					string flatName = $"{GetFullNameFlat(symbolInfo.Symbol)}__{GetMethodOverloadIndex((IMethodSymbol)symbolInfo.Symbol)}";
+					writer.Write(GetNativeName(symbolInfo.Symbol, flatName));
+				}
+				else if (!isMemberAccess)
+				{
+					writer.Write($"{thisMemberName}->{symbolInfo.Symbol.Name}");
+				}
+				else
+				{
+					writer.Write($"{symbolInfo.Symbol.Name}");
+				}
 			}
 		}
 
@@ -651,15 +665,16 @@ namespace CS2X.Core.Emitters
 				return;
 			}
 
-			// unroll expression access (TODO)
+			// unroll expression access
 			var symbolInfoAccessor = semanticModel.GetSymbolInfo(expression.Expression);
-			if (!(symbolInfo.Symbol is IPropertySymbol))// TODO: don't write symbol access if property
+			if (!(symbolInfo.Symbol is IPropertySymbol && !IsAutoPropery((IPropertySymbol)symbolInfo.Symbol)))
 			{
 				WriteExperesion(expression.Expression);
 				if (expression.Expression.GetType() != typeof(ThisExpressionSyntax) && IsResultValueType(symbolInfoAccessor.Symbol)) writer.Write('.');
 				else writer.Write("->");
 			}
-			WriteSymbolAccess(expression, true, symbolInfoAccessor.Symbol.Name);// TODO: get full name
+
+			WriteSymbolAccess(expression, true, GetFullNameFlat(symbolInfoAccessor.Symbol));
 		}
 
 		private void WriteLiteralExpression(LiteralExpressionSyntax expression)
@@ -702,6 +717,12 @@ namespace CS2X.Core.Emitters
 		{
 			WriteExperesion(expression.Expression);
 			writer.Write('(');
+			var symbolInfo = semanticModel.GetSymbolInfo(expression);
+			if (!symbolInfo.Symbol.IsStatic)
+			{
+				symbolInfo = semanticModel.GetSymbolInfo(expression.Expression);
+				writer.Write($"this, ");//{GetFullName(symbolInfo.Symbol)}
+			}
 			if (expression.ArgumentList != null)
 			{
 				var lastArg = expression.ArgumentList.Arguments.Last();

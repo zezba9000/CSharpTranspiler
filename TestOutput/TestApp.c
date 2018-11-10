@@ -8,6 +8,8 @@
 // Type forward declares
 // =============
 typedef EMPTY_OBJECT TestApp_Blaa_MyInterface;
+typedef struct TestStruct TestStruct;
+typedef EMPTY_OBJECT TestIn;
 typedef struct MyPartial MyPartial;
 typedef EMPTY_OBJECT TestApp_Blaa_A2;
 typedef struct TestApp_C_MyBase TestApp_C_MyBase;
@@ -24,6 +26,11 @@ typedef struct TestApp_C_Program TestApp_C_Program;
 #define TestApp_Blaa_MyEnumDefault_A 1
 #define TestApp_Blaa_MyEnumDefault_B 2
 #define TestApp_Blaa_MyEnumDefault_C 4
+
+struct TestStruct
+{
+	System_Int32 key;
+};
 
 struct MyPartial
 {
@@ -64,6 +71,10 @@ System_Void TestApp_C_Program_set_i7(TestApp_C_Program* this, System_Single valu
 // =============
 // Method forward declares
 // =============
+System_Void TestStruct_CONSTRUCTOR__0(TestStruct* this, System_Int32 key, TestIn* testIn);
+System_Int32 TestStruct_Add__0(TestStruct* this, System_Int32 key);
+System_Int32 TestStruct_AddStatic__0(System_Int32 key);
+System_Int32 TestIn_Add__0(TestIn* this, System_Int32 key);
 System_Void MyPartial_Foo__0(MyPartial* this);
 System_Void TestApp_C_Program_CONSTRUCTOR__0(TestApp_C_Program* this);
 TestApp_Blaa_A2* TestApp_C_Program_Foo__0(TestApp_C_Program* this);
@@ -103,6 +114,29 @@ System_Void TestApp_C_Program_set_i7(TestApp_C_Program* this, System_Single valu
 // =============
 // Methods
 // =============
+System_Void TestStruct_CONSTRUCTOR__0(TestStruct* this, System_Int32 key, TestIn* testIn)
+{
+	this->key = TestStruct_Add__0(this, key);
+	this->key = this->TestStruct_Add__0(this, key);
+	this->key = TestStruct_AddStatic__0(key);
+	this->key = testIn->TestIn_Add__0(this, key);
+}
+
+System_Int32 TestStruct_Add__0(TestStruct* this, System_Int32 key)
+{
+	return key + 1;
+}
+
+System_Int32 TestStruct_AddStatic__0(System_Int32 key)
+{
+	return key + 1;
+}
+
+System_Int32 TestIn_Add__0(TestIn* this, System_Int32 key)
+{
+	return key + 2;
+}
+
 System_Void MyPartial_Foo__0(MyPartial* this)
 {
 	System_Int32 i = 0;
@@ -142,7 +176,7 @@ TestApp_Blaa_A2* TestApp_C_Program_Foo__1(TestApp_C_Program* this, System_Int32 
 
 System_Void TestApp_C_Program_Yahoo__0(TestApp_C_Program* this, TestApp_C_Program* p)
 {
-	System_Single val = TestApp_C_Program_get_i6(p);
+	System_Single val = TestApp_C_Program_get_i6(TestApp_C_Program_p);
 }
 
 // =============

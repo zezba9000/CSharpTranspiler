@@ -472,8 +472,8 @@ System_String* System_Reflection_DefaultMemberAttribute_get_MemberName(System_Re
 // =============
 System_Void System_Collections_DictionaryEntry_CONSTRUCTOR__0(System_Collections_DictionaryEntry* this, System_Object* key, System_Object* value)
 {
-	Key = key;
-	Value = value;
+	this->Key = key;
+	this->Value = value;
 }
 
 System_Void System_AttributeUsageAttribute_CONSTRUCTOR__0(System_AttributeUsageAttribute* this, System_Int32 validOn)
