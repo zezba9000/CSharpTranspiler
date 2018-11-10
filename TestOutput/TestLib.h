@@ -10,7 +10,7 @@
 // =============
 // Type forward declares
 // =============
-typedef struct TestLib_MyTestLibClass TestLib_MyTestLibClass;
+typedef struct TestLib_MyTestLibClass* TestLib_MyTestLibClass;
 
 // =============
 // Types Definitions

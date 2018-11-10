@@ -7,10 +7,14 @@ class TestStruct
 	public int key { get; set; }
 	public TestStruct(int key, TestIn testIn)
 	{
+		TestIn.singleton.GetObj().Get().key = 123;
+		TestIn.singleton.GetObjProp = null;
 		this.key = Add(key);
-		this.key = this.Add(key);
-		this.key = AddStatic(key);
+		this.key = this.Add(this.key);
+		this.key = AddStatic(Add(key));
 		this.key = testIn.Add(key);
+		testIn.SetMe(this);
+		TestIn.singleton.SetMe(this);
 	}
 
 	private int Add(int key)
@@ -22,13 +26,43 @@ class TestStruct
 	{
 		return key + 1;
 	}
+
+	private TestStruct Get()
+	{
+		return this;
+	}
 }
 
 class TestIn
 {
+	public static TestIn singleton;
+	public TestStruct obj;
+
 	public int Add(int key)
 	{
 		return key + 2;
+	}
+
+	public void SetMe(TestStruct s)
+	{
+		
+	}
+
+	public TestStruct GetObj()
+	{
+		return obj;
+	}
+
+	public TestStruct GetObjProp
+	{
+		get
+		{
+			return obj;
+		}
+		set
+		{
+			obj = value;
+		}
 	}
 }
 

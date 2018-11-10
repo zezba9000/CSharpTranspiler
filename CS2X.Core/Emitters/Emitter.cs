@@ -18,7 +18,6 @@ namespace CS2X.Core.Emitters
 	public abstract class Emitter
 	{
 		protected delegate void CallbackMethod();
-		protected delegate bool AppendMemberNameCallback(INamespaceOrTypeSymbol member, ref StringBuilder value);
 
 		public readonly CoreSolution solution;
 		public readonly string outputPath;
@@ -34,35 +33,35 @@ namespace CS2X.Core.Emitters
 		public abstract void Emit(bool clean);
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		protected string GetFullNameFlat<T>(T member, AppendMemberNameCallback writeMemberNameCallback = null) where T : ISymbol
+		protected string GetFullNameFlat<T>(T member) where T : ISymbol
 		{
-			return GetFullName(member, '_', writeMemberNameCallback);
+			return GetFullName(member, '_');
 		}
 
-		protected string GetFullName<T>(T member, char delimiter = '.', AppendMemberNameCallback writeMemberNameCallback = null) where T : ISymbol
+		protected string GetFullName<T>(T member, char delimiter = '.') where T : ISymbol
 		{
 			var value = new StringBuilder();
 			var namedSymbol = member as INamespaceOrTypeSymbol;
 			if (namedSymbol != null)
 			{
-				BuildFullName(namedSymbol, ref value, delimiter, writeMemberNameCallback);
+				BuildFullName(namedSymbol, ref value, delimiter);
 			}
 			else
 			{
-				BuildFullName(member.ContainingType, ref value, delimiter, writeMemberNameCallback);
+				BuildFullName(member.ContainingType, ref value, delimiter);
 				value.Append(delimiter);
 				value.Append(member.Name);
 			}
 			return value.ToString();
 		}
 
-		private void BuildFullName(INamespaceOrTypeSymbol member, ref StringBuilder value, char delimiter, AppendMemberNameCallback appendMemberName)
+		private void BuildFullName(INamespaceOrTypeSymbol member, ref StringBuilder value, char delimiter)
 		{
-			if (member.ContainingNamespace != null && !member.ContainingNamespace.IsGlobalNamespace) BuildFullName(member.ContainingNamespace, ref value, delimiter, appendMemberName);
-			else if (member.ContainingType != null) BuildFullName(member.ContainingType, ref value, delimiter, appendMemberName);
+			if (member.ContainingNamespace != null && !member.ContainingNamespace.IsGlobalNamespace) BuildFullName(member.ContainingNamespace, ref value, delimiter);
+			else if (member.ContainingType != null) BuildFullName(member.ContainingType, ref value, delimiter);
 
 			if (value.Length != 0) value.Append(delimiter);
-			if (appendMemberName == null || !appendMemberName(member, ref value)) value.Append(member.Name);
+			value.Append(member.Name);
 		}
 
 		protected bool IsLogicalType(TypeKind typeKind)
@@ -76,7 +75,7 @@ namespace CS2X.Core.Emitters
 			return statement.Declaration.Variables;
 		}
 
-		protected bool ObjectHasNotStaticFields(ITypeSymbol obj)
+		protected bool ObjectHasNonStaticFields(ITypeSymbol obj)
 		{
 			foreach (var member in obj.GetMembers())
 			{

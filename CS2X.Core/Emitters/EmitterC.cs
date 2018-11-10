@@ -100,7 +100,7 @@ namespace CS2X.Core.Emitters
 		private StreamWriter writer;
 
 		/// <summary>
-		/// Active body syntax semantic model
+		/// Active method syntax semantic model
 		/// </summary>
 		private SemanticModel semanticModel;
 
@@ -199,16 +199,6 @@ namespace CS2X.Core.Emitters
 			}
 		}
 
-		private bool AppendNativeTypeNameCallback(INamespaceOrTypeSymbol member, ref StringBuilder value)
-		{
-			if (!(member is ITypeSymbol)) return false;
-
-			var type = (ITypeSymbol)member;
-			if (type.IsValueType) value.Append(type.Name);
-			else value.Append(type.Name + '*');
-			return true;
-		}
-
 		private string GetNativeCTypeName(ITypeSymbol type)
 		{
 			if (type is INamedTypeSymbol)
@@ -226,10 +216,10 @@ namespace CS2X.Core.Emitters
 			}
 			else if (type is IArrayTypeSymbol)
 			{
-				return GetFullNameFlat(project.compilation.GetSpecialType(SpecialType.System_Array)) + '*';
+				return GetFullNameFlat(project.compilation.GetSpecialType(SpecialType.System_Array));// + '*';
 			}
 
-			return GetFullNameFlat(type, AppendNativeTypeNameCallback);
+			return GetFullNameFlat(type);
 		}
 
 		#region Object Layout
@@ -240,18 +230,27 @@ namespace CS2X.Core.Emitters
 			// get type name
 			if (IsLogicalType(type))
 			{
-				if (ObjectHasNotStaticFields(obj))
+				if (ObjectHasNonStaticFields(obj))
 				{
 					string formatString;
-					if (writeBody) formatString = "struct {0}";
-					else formatString = "typedef struct {0} {0}";
+					if (writeBody)
+					{
+						formatString = "struct {0}";
+					}
+					else
+					{
+						if (obj.IsValueType) formatString = "typedef struct {0} {0}";
+						else formatString = "typedef struct {0}* {0}";
+					}
 					writer.Write(string.Format(formatString, GetFullNameFlat(obj)));
 				}
 				else
 				{
 					if (writeBody)
 					{
-						return;// C doesn't support emtpy objects
+						WriteObjectBodyFields(obj, out var writeExternalMembers);
+						writeExternalMembers?.Invoke();
+						return;
 					}
 					else
 					{
@@ -371,7 +370,8 @@ namespace CS2X.Core.Emitters
 			// if method and object are not static pass "this" ref
 			if (!method.IsStatic && !method.ContainingType.IsStatic)
 			{
-				writer.Write(string.Format("{0}* this{1}", GetFullNameFlat(method.ContainingType), (method.Parameters != null && method.Parameters.Length != 0) ? ", " : ""));
+				string ptr = method.ContainingType.IsValueType ? "*" : "";// this should allows pass by ref
+				writer.Write(string.Format("{0}{1} this{2}", GetFullNameFlat(method.ContainingType), ptr, (method.Parameters != null && method.Parameters.Length != 0) ? ", " : ""));
 			}
 
 			// write parameters
@@ -561,41 +561,47 @@ namespace CS2X.Core.Emitters
 			else throw new NotImplementedException("Unsuported expression type: " + expression.GetType());
 		}
 
+		private void WriteCaller(ExpressionSyntax expression)
+		{
+			if (expression is MemberAccessExpressionSyntax)
+			{
+				var accessExpression = (MemberAccessExpressionSyntax)expression;
+				expression = accessExpression.Expression;
+			}
+
+			WriteExperesion(expression);
+		}
+
 		private void WriteAssignmentExpression(AssignmentExpressionSyntax expression)
 		{
-			WriteBinaryExpression(expression.Left, expression.Right, expression.OperatorToken);
-		}
-
-		private void WriteBinaryExpression(BinaryExpressionSyntax expression)
-		{
-			WriteBinaryExpression(expression.Left, expression.Right, expression.OperatorToken);
-		}
-
-		private void WriteBinaryExpression(ExpressionSyntax expressionLeft, ExpressionSyntax expressionRight, SyntaxToken operatorToken)
-		{
 			// check if we need to convert property operator to method call
-			var symbolInfo = semanticModel.GetSymbolInfo(expressionLeft);
+			var symbolInfo = semanticModel.GetSymbolInfo(expression.Left);
 			var propertySymbol = symbolInfo.Symbol as IPropertySymbol;
 			if (propertySymbol != null && !IsAutoPropery(propertySymbol))
 			{
-				if (operatorToken.ValueText == "=")
+				writer.Write($"{GetFullNameFlat(propertySymbol.SetMethod)}(");
+				if (!propertySymbol.IsStatic)
 				{
-					if (propertySymbol.IsStatic) writer.Write($"{GetFullNameFlat(propertySymbol.SetMethod)}(");
-					else writer.Write($"{GetFullNameFlat(propertySymbol.SetMethod)}(this, ");
-					WriteExperesion(expressionRight);
-					writer.Write(')');
+					WriteCaller(expression.Left);
+					writer.Write(", ");
 				}
-				else
-				{
-					if (propertySymbol.IsStatic) writer.Write($"{GetFullNameFlat(propertySymbol.GetMethod)}() {operatorToken.ValueText[0]} ");
-					else writer.Write($"{GetFullNameFlat(propertySymbol.GetMethod)}(this) {operatorToken.ValueText[0]} ");
-					WriteExperesion(expressionRight);
-				}
+				WriteExperesion(expression.Right);
+				writer.Write(')');
 
 				return;
 			}
 
 			// write normal operator
+			WriteOperatorExpression(expression.Left, expression.Right, expression.OperatorToken);
+		}
+
+		private void WriteBinaryExpression(BinaryExpressionSyntax expression)
+		{
+			WriteOperatorExpression(expression.Left, expression.Right, expression.OperatorToken);
+		}
+
+		private void WriteOperatorExpression(ExpressionSyntax expressionLeft, ExpressionSyntax expressionRight, SyntaxToken operatorToken)
+		{
 			WriteExperesion(expressionLeft);
 			writer.Write($" {operatorToken.ValueText} ");
 			WriteExperesion(expressionRight);
@@ -606,75 +612,87 @@ namespace CS2X.Core.Emitters
 			writer.Write("this");
 		}
 
-		private void WriteSymbolAccess(ExpressionSyntax expression, bool isMemberAccess, string thisMemberName)
+		private void WriteSymbolAccess(ISymbol symbol)
 		{
-			var symbolInfo = semanticModel.GetSymbolInfo(expression);
-			var propertySymbol = symbolInfo.Symbol as IPropertySymbol;
-			if (propertySymbol != null && !IsAutoPropery(propertySymbol))
+			if (symbol.Kind == SymbolKind.Property && !IsAutoPropery((IPropertySymbol)symbol))
 			{
-				if (propertySymbol.IsStatic)
-				{
-					writer.Write($"{GetFullNameFlat(propertySymbol.GetMethod)}()");
-				}
-				else
-				{
-					writer.Write($"{GetFullNameFlat(propertySymbol.GetMethod)}({thisMemberName})");
-				}
+				var propertySymbol = (IPropertySymbol)symbol;
+				writer.Write(GetFullNameFlat(propertySymbol.GetMethod));
 			}
-			else if (symbolInfo.Symbol.IsStatic)
+			else if (symbol.Kind == SymbolKind.Method)
 			{
-				string flatName = GetFullNameFlat(symbolInfo.Symbol);
-				if (symbolInfo.Symbol.Kind == SymbolKind.Method) flatName += "__" + GetMethodOverloadIndex((IMethodSymbol)symbolInfo.Symbol);
-				string name = GetNativeName(symbolInfo.Symbol, flatName);
-				writer.Write(name);
+				var methodSymbol = (IMethodSymbol)symbol;
+				string name = $"{GetFullNameFlat(symbol)}__{GetMethodOverloadIndex(methodSymbol)}";
+				writer.Write(GetNativeName(symbol, name));
+
+			}
+			else if (symbol.IsStatic)
+			{
+				writer.Write(GetNativeName(symbol, GetFullNameFlat(symbol)));
 			}
 			else
 			{
-				if (symbolInfo.Symbol is ILocalSymbol || symbolInfo.Symbol is IParameterSymbol)
-				{
-					writer.Write(symbolInfo.Symbol.Name);
-				}
-				else if (symbolInfo.Symbol is IMethodSymbol)
-				{
-					string flatName = $"{GetFullNameFlat(symbolInfo.Symbol)}__{GetMethodOverloadIndex((IMethodSymbol)symbolInfo.Symbol)}";
-					writer.Write(GetNativeName(symbolInfo.Symbol, flatName));
-				}
-				else if (!isMemberAccess)
-				{
-					writer.Write($"{thisMemberName}->{symbolInfo.Symbol.Name}");
-				}
-				else
-				{
-					writer.Write($"{symbolInfo.Symbol.Name}");
-				}
+				writer.Write(symbol.Name);
 			}
 		}
 
 		private void WriteIdentifierName(IdentifierNameSyntax expression)
 		{
-			WriteSymbolAccess(expression, false, "this");
+			// get symbol info
+			var symbolInfo = semanticModel.GetSymbolInfo(expression);
+			bool isProperty = symbolInfo.Symbol.Kind == SymbolKind.Property && !IsAutoPropery((IPropertySymbol)symbolInfo.Symbol);
+			
+			// write 'this' access if non static field
+			if (!isProperty && !symbolInfo.Symbol.IsStatic && !(symbolInfo.Symbol is ILocalSymbol || symbolInfo.Symbol is IParameterSymbol || symbolInfo.Symbol is IMethodSymbol))
+			{
+				writer.Write("this->");
+			}
+
+			// write symbol
+			WriteSymbolAccess(symbolInfo.Symbol);
+
+			// write property closer
+			if (isProperty)
+			{
+				if (symbolInfo.Symbol.IsStatic) writer.Write("()");
+				else writer.Write("(this)");
+			}
 		}
 
 		private void WriteMemberAccessExpression(MemberAccessExpressionSyntax expression)
 		{
-			// if member is static just directly reference
+			// if member is globally defined just directly reference
 			var symbolInfo = semanticModel.GetSymbolInfo(expression);
-			if (symbolInfo.Symbol.IsStatic)
+			if (symbolInfo.Symbol is IMethodSymbol)
 			{
-				WriteSymbolAccess(expression, true, null);
+				WriteSymbolAccess(symbolInfo.Symbol);
 				return;
 			}
-
-			// unroll expression access
-			var symbolInfoAccessor = semanticModel.GetSymbolInfo(expression.Expression);
-			if (!(symbolInfo.Symbol is IPropertySymbol && !IsAutoPropery((IPropertySymbol)symbolInfo.Symbol)))
+			if (symbolInfo.Symbol is IPropertySymbol && !IsAutoPropery((IPropertySymbol)symbolInfo.Symbol))
 			{
-				WriteExperesion(expression.Expression);
-				if (expression.Expression.GetType() != typeof(ThisExpressionSyntax) && IsResultValueType(symbolInfoAccessor.Symbol)) writer.Write('.');
-				else writer.Write("->");
+				WriteSymbolAccess(symbolInfo.Symbol);
+				writer.Write('(');
+				if (!symbolInfo.Symbol.IsStatic) WriteCaller(expression.Expression);
+				writer.Write(')');
+				return;
 			}
+			else if (symbolInfo.Symbol.IsStatic)
+			{
+				WriteSymbolAccess(symbolInfo.Symbol);
+				return;
+			}
+			
 
-			WriteSymbolAccess(expression, true, GetFullNameFlat(symbolInfoAccessor.Symbol));
+			// write caller expression
+			WriteExperesion(expression.Expression);
+
+			// check caller access type
+			var symbolInfoAccessor = semanticModel.GetSymbolInfo(expression.Expression);
+			if (expression.Expression.GetType() != typeof(ThisExpressionSyntax) && IsResultValueType(symbolInfoAccessor.Symbol)) writer.Write('.');
+			else writer.Write("->");
+
+			// write final symbol
+			WriteSymbolAccess(symbolInfo.Symbol);
 		}
 
 		private void WriteLiteralExpression(LiteralExpressionSyntax expression)
@@ -715,17 +733,22 @@ namespace CS2X.Core.Emitters
 
 		private void WriteInvocationExpression(InvocationExpressionSyntax expression)
 		{
+			// write method name
 			WriteExperesion(expression.Expression);
+
+			// write body
 			writer.Write('(');
-			var symbolInfo = semanticModel.GetSymbolInfo(expression);
+
+			var symbolInfo = semanticModel.GetSymbolInfo(expression.Expression);
 			if (!symbolInfo.Symbol.IsStatic)
 			{
-				symbolInfo = semanticModel.GetSymbolInfo(expression.Expression);
-				writer.Write($"this, ");//{GetFullName(symbolInfo.Symbol)}
+				WriteCaller(expression.Expression);
+				if (expression.ArgumentList.Arguments.Count != 0) writer.Write(", ");
 			}
+
 			if (expression.ArgumentList != null)
 			{
-				var lastArg = expression.ArgumentList.Arguments.Last();
+				var lastArg = expression.ArgumentList.Arguments.LastOrDefault();
 				foreach (var arg in expression.ArgumentList.Arguments)
 				{
 					WriteExperesion(arg.Expression);
