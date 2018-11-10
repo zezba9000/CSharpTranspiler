@@ -100,7 +100,7 @@ namespace TestApp.C
 				this.b += 1;
 			}
 
-			A2 Foo()
+			static A2 Foo()
 			{
 				int[] boo;
 				string myString = "Hello World!";
@@ -120,7 +120,7 @@ namespace TestApp.C
 				int abc = 44;
 				abc = 33;
 
-
+				//Foo();
 			}
 
 			A2 Foo(int hi, string by, string by2)

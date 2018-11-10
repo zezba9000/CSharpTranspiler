@@ -6,5 +6,10 @@ namespace System
 	public unsafe sealed class String
 	{
 		internal char* buffer;
+		
+		public String(char* value)
+		{
+			buffer = value;
+		}
 	}
 }

@@ -88,6 +88,7 @@ namespace CS2X.Core.Emitters
 		public readonly CompilerTargets target;
 		public readonly PlatformTypes platform;
 		public readonly GCTypes gc;
+		private readonly string thisKeyword = "this";
 
 		/// <summary>
 		/// Active project
@@ -100,14 +101,20 @@ namespace CS2X.Core.Emitters
 		private StreamWriter writer;
 
 		/// <summary>
+		/// Active method
+		/// </summary>
+		private IMethodSymbol activeMethod;
+
+		/// <summary>
 		/// Active method syntax semantic model
 		/// </summary>
 		private SemanticModel semanticModel;
 
-		public EmitterC(CoreSolution solution, string outputPath, CompilerTargets target, PlatformTypes platform, GCTypes gc)
+		public EmitterC(CoreSolution solution, string outputPath, CompilerTargets target, PlatformTypes platform, GCTypes gc, string thisKeyword = "this")
 		: base(solution, outputPath, NativeTargets.C)
 		{
 			this.target = target;
+			this.thisKeyword = thisKeyword;
 		}
 
 		public override void Emit(bool clean)
@@ -216,7 +223,7 @@ namespace CS2X.Core.Emitters
 			}
 			else if (type is IArrayTypeSymbol)
 			{
-				return GetFullNameFlat(project.compilation.GetSpecialType(SpecialType.System_Array));// + '*';
+				return GetFullNameFlat(project.compilation.GetSpecialType(SpecialType.System_Array));
 			}
 
 			return GetFullNameFlat(type);
@@ -367,11 +374,11 @@ namespace CS2X.Core.Emitters
 			if (method.MethodKind == MethodKind.Constructor) writer.Write($"System_Void {GetFullNameFlat(method).Replace(".ctor", "CONSTRUCTOR")}{methodOverloadValue}(");
 			else writer.Write($"{GetNativeCTypeName(method.ReturnType)} {GetFullNameFlat(method)}{methodOverloadValue}(");
 
-			// if method and object are not static pass "this" ref
+			// if method and object are not static pass 'this' ref
 			if (!method.IsStatic && !method.ContainingType.IsStatic)
 			{
-				string ptr = method.ContainingType.IsValueType ? "*" : "";// this should allows pass by ref
-				writer.Write(string.Format("{0}{1} this{2}", GetFullNameFlat(method.ContainingType), ptr, (method.Parameters != null && method.Parameters.Length != 0) ? ", " : ""));
+				string ptr = method.ContainingType.IsValueType ? "*" : "";// 'this' should allows pass by ptr ref
+				writer.Write(string.Format("{0}{1} {2}{3}", GetFullNameFlat(method.ContainingType), ptr, thisKeyword, (method.Parameters != null && method.Parameters.Length != 0) ? ", " : ""));
 			}
 
 			// write parameters
@@ -497,6 +504,7 @@ namespace CS2X.Core.Emitters
 
 				if (body != null)
 				{
+					activeMethod = method;
 					semanticModel = project.compilation.GetSemanticModel(syntaxDeclaration.SyntaxTree);
 					WriteBlockSyntax(body);
 				}
@@ -568,6 +576,11 @@ namespace CS2X.Core.Emitters
 				var accessExpression = (MemberAccessExpressionSyntax)expression;
 				expression = accessExpression.Expression;
 			}
+			else
+			{
+				var symbolInfo = semanticModel.GetSymbolInfo(expression);
+				if (symbolInfo.Symbol.ContainingType == activeMethod.ContainingType) expression = SyntaxFactory.ThisExpression();
+			}
 
 			WriteExperesion(expression);
 		}
@@ -576,9 +589,9 @@ namespace CS2X.Core.Emitters
 		{
 			// check if we need to convert property operator to method call
 			var symbolInfo = semanticModel.GetSymbolInfo(expression.Left);
-			var propertySymbol = symbolInfo.Symbol as IPropertySymbol;
-			if (propertySymbol != null && !IsAutoPropery(propertySymbol))
+			if (symbolInfo.Symbol.Kind == SymbolKind.Property && !IsAutoPropery((IPropertySymbol)symbolInfo.Symbol))
 			{
+				var propertySymbol = symbolInfo.Symbol as IPropertySymbol;
 				writer.Write($"{GetFullNameFlat(propertySymbol.SetMethod)}(");
 				if (!propertySymbol.IsStatic)
 				{
@@ -609,7 +622,7 @@ namespace CS2X.Core.Emitters
 
 		private void WriteThisExpression(ThisExpressionSyntax expression)
 		{
-			writer.Write("this");
+			writer.Write(thisKeyword);
 		}
 
 		private void WriteSymbolAccess(ISymbol symbol)
@@ -645,7 +658,7 @@ namespace CS2X.Core.Emitters
 			// write 'this' access if non static field
 			if (!isProperty && !symbolInfo.Symbol.IsStatic && !(symbolInfo.Symbol is ILocalSymbol || symbolInfo.Symbol is IParameterSymbol || symbolInfo.Symbol is IMethodSymbol))
 			{
-				writer.Write("this->");
+				writer.Write($"{thisKeyword}->");
 			}
 
 			// write symbol
@@ -655,7 +668,7 @@ namespace CS2X.Core.Emitters
 			if (isProperty)
 			{
 				if (symbolInfo.Symbol.IsStatic) writer.Write("()");
-				else writer.Write("(this)");
+				else writer.Write($"({thisKeyword})");
 			}
 		}
 
@@ -735,10 +748,9 @@ namespace CS2X.Core.Emitters
 		{
 			// write method name
 			WriteExperesion(expression.Expression);
-
-			// write body
 			writer.Write('(');
 
+			// write caller
 			var symbolInfo = semanticModel.GetSymbolInfo(expression.Expression);
 			if (!symbolInfo.Symbol.IsStatic)
 			{
@@ -746,6 +758,7 @@ namespace CS2X.Core.Emitters
 				if (expression.ArgumentList.Arguments.Count != 0) writer.Write(", ");
 			}
 
+			// write arguments
 			if (expression.ArgumentList != null)
 			{
 				var lastArg = expression.ArgumentList.Arguments.LastOrDefault();
@@ -755,6 +768,7 @@ namespace CS2X.Core.Emitters
 					if (arg != lastArg) writer.Write(", ");
 				}
 			}
+
 			writer.Write(')');
 		}
 		#endregion

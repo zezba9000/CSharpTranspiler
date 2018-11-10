@@ -89,7 +89,7 @@ System_Void TestIn_SetMe__0(TestIn this, TestStruct s);
 TestStruct TestIn_GetObj__0(TestIn this);
 System_Void MyPartial_Foo__0(MyPartial this);
 System_Void TestApp_C_Program_CONSTRUCTOR__0(TestApp_C_Program this);
-TestApp_Blaa_A2 TestApp_C_Program_Foo__0(TestApp_C_Program this);
+TestApp_Blaa_A2 TestApp_C_Program_Foo__0();
 System_Void TestApp_C_Program_Main__0();
 TestApp_Blaa_A2 TestApp_C_Program_Foo__1(TestApp_C_Program this, System_Int32 hi, System_String by, System_String by2);
 System_Void TestApp_C_Program_Yahoo__0(TestApp_C_Program this, TestApp_C_Program p);
@@ -140,9 +140,9 @@ System_Void TestStruct_CONSTRUCTOR__0(TestStruct this, System_Int32 key, TestIn 
 {
 	TestStruct_Get__0(TestIn_GetObj__0(TestIn_singleton))->key = 123;
 	TestIn_set_GetObjProp(TestIn_singleton, null);
-	this->key = TestStruct_Add__0(TestStruct_Add__0, key);
+	this->key = TestStruct_Add__0(this, key);
 	this->key = TestStruct_Add__0(this, this->key);
-	this->key = TestStruct_AddStatic__0(TestStruct_Add__0(TestStruct_Add__0, key));
+	this->key = TestStruct_AddStatic__0(TestStruct_Add__0(this, key));
 	this->key = TestIn_Add__0(testIn, key);
 	TestIn_SetMe__0(testIn, this);
 	TestIn_SetMe__0(TestIn_singleton, this);
@@ -187,7 +187,7 @@ System_Void TestApp_C_Program_CONSTRUCTOR__0(TestApp_C_Program this)
 	this->b += 1;
 }
 
-TestApp_Blaa_A2 TestApp_C_Program_Foo__0(TestApp_C_Program this)
+TestApp_Blaa_A2 TestApp_C_Program_Foo__0()
 {
 	System_Array boo;
 	System_String myString = L"Hello World!";
@@ -216,7 +216,7 @@ TestApp_Blaa_A2 TestApp_C_Program_Foo__1(TestApp_C_Program this, System_Int32 hi
 
 System_Void TestApp_C_Program_Yahoo__0(TestApp_C_Program this, TestApp_C_Program p)
 {
-	System_Single val = TestApp_C_Program_get_i6(p);
+	System_Single val = TestApp_C_Program_get_i6(this);
 }
 
 // =============

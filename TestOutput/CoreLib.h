@@ -287,6 +287,7 @@ System_String System_Object_ToString__0(System_Object this);
 System_Void System_ObsoleteAttribute_CONSTRUCTOR__0(System_ObsoleteAttribute this);
 System_Void System_ObsoleteAttribute_CONSTRUCTOR__1(System_ObsoleteAttribute this, System_String message);
 System_Void System_ObsoleteAttribute_CONSTRUCTOR__2(System_ObsoleteAttribute this, System_String message, System_Boolean error);
+System_Void System_String_CONSTRUCTOR__0(System_String this, System_Char* value);
 System_Void System_CodeDom_Compiler_GeneratedCodeAttribute_CONSTRUCTOR__0(System_CodeDom_Compiler_GeneratedCodeAttribute this, System_String tool, System_String version);
 System_Collections_IEnumerator System_Collections_ArrayList_GetEnumerator__0(System_Collections_ArrayList this);
 System_Collections_IEnumerator System_Collections_Queue_GetEnumerator__0(System_Collections_Queue this);
@@ -527,6 +528,11 @@ System_Void System_ObsoleteAttribute_CONSTRUCTOR__2(System_ObsoleteAttribute thi
 {
 	this->_message = message;
 	this->_error = error;
+}
+
+System_Void System_String_CONSTRUCTOR__0(System_String this, System_Char* value)
+{
+	this->buffer = value;
 }
 
 System_Void System_CodeDom_Compiler_GeneratedCodeAttribute_CONSTRUCTOR__0(System_CodeDom_Compiler_GeneratedCodeAttribute this, System_String tool, System_String version)
