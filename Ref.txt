@@ -8,3 +8,6 @@ To uninstall all packaged for clean updates
 2) Run command: get-package | uninstall-package -removedependencies -force
 
 Other CoreLib ref: https://github.com/ASDAlexander77/cs2cpp/tree/master/CoreLib
+
+
+To build Beohm GC on Windows. Run: cmake -G "Visual Studio 15 2017"
