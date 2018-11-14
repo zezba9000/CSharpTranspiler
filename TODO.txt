@@ -1,0 +1,43 @@
+Implement C try / catch / finally (http://www.di.unipi.it/~nids/docs/longjump_try_trow_catch.html)
+
+#include <stdio.h>
+#include <setjmp.h>
+
+jmp_buf __threadExceptionBuff;
+
+#define TRY switch(setjmp(__threadExceptionBuff)) { case 0: while(1) {
+#define CATCH(x) break; case x:
+#define FINALLY break; } default: {
+#define TRY_END break; } }
+#define THROW(x) longjmp(__threadExceptionBuff, x)
+
+#define EXCEPTION (1)
+#define NOT_IMPLEMENTED_EXCEPTION (2)
+
+void Foo()
+{
+	THROW(NOT_IMPLEMENTED_EXCEPTION);
+}
+
+void main()
+{
+	TRY
+	{
+		printf("Start\n");
+		Foo();
+		printf("End\n");
+	}
+	CATCH (NOT_IMPLEMENTED_EXCEPTION)
+	{
+		printf("Catch Not Implemented Exception\n");
+	}
+	CATCH (EXCEPTION)
+	{
+		printf("Catch Exception\n");
+	}
+	FINALLY
+	{
+		printf("Finally\n");
+	}
+	TRY_END;
+}
