@@ -27,6 +27,15 @@
     <ClInclude Include="..\TestLib.h">
       <Filter>CS2C</Filter>
     </ClInclude>
+    <ClInclude Include="..\GC_Boehm.h">
+      <Filter>CS2C</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GC_Deterministic.h">
+      <Filter>CS2C</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GC_Micro.h">
+      <Filter>CS2C</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

@@ -1,7 +1,8 @@
 #pragma once
 #include <stdio.h>
-#define EMPTY_OBJECT void*
+#include "GC_Boehm.h"
 #define null 0
+#define EMPTY_OBJECT void*
 
 // =============
 // Library References
@@ -22,7 +23,7 @@ typedef double System_Double;
 typedef __int16 System_Int16;
 typedef __int32 System_Int32;
 typedef __int64 System_Int64;
-typedef void* System_IntPtr;
+typedef size_t System_IntPtr;
 typedef EMPTY_OBJECT System_RuntimeFieldHandle;
 typedef EMPTY_OBJECT System_RuntimeTypeHandle;
 typedef __int8 System_SByte;
@@ -30,7 +31,7 @@ typedef float System_Single;
 typedef unsigned __int16 System_UInt16;
 typedef unsigned __int32 System_UInt32;
 typedef unsigned __int64 System_UInt64;
-typedef void* System_UIntPtr;
+typedef size_t System_UIntPtr;
 typedef void System_Void;
 typedef struct System_Collections_DictionaryEntry System_Collections_DictionaryEntry;
 typedef EMPTY_OBJECT System_Attribute;

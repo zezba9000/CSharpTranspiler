@@ -2,7 +2,7 @@ using System.CS2X;
 
 namespace System
 {
-	[NativeNameAttribute(NativeTargets.C, "void")]
+	[NativeName(NativeTargets.C, "void")]
 	public struct Void
 	{
 	}

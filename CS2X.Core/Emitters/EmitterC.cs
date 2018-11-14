@@ -140,9 +140,13 @@ namespace CS2X.Core.Emitters
 				{
 					writer.WriteLine("#pragma once");
 					if (platform != PlatformTypes.Arduino) writer.WriteLine("#include <stdio.h>");
+					if (project.roslynProject.Name == "CoreLib")
+					{
+						writer.WriteLine("#include \"GC_Boehm.h\"");
+						writer.WriteLine("#define null 0");
+					}
 					writer.WriteLine("#define EMPTY_OBJECT void*");
-					if (project.roslynProject.Name == "CoreLib") writer.WriteLine("#define null 0" + Environment.NewLine);
-					else writer.WriteLine();
+					writer.WriteLine();
 				}
 
 				// write reference libs as included headers

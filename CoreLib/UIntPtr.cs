@@ -2,7 +2,7 @@
 
 namespace System
 {
-	[NativeNameAttribute(NativeTargets.C, "void*")]
+	[NativeName(NativeTargets.C, "size_t")]
 	public struct UIntPtr
 	{
 	}

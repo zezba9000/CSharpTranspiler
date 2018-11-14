@@ -222,7 +222,22 @@ System_Void TestApp_C_Program_Yahoo__0(TestApp_C_Program this, TestApp_C_Program
 // =============
 // Entry Point
 // =============
+char* ptr = 0;
+char* ptr2 = 0;
 void main()
 {
+	GC_INIT();
 	TestApp_C_Program_Main__0();
+	ptr = GC_New(sizeof(char) * 1024 * 1024 * 1024);
+	ptr2 = GC_New(sizeof(char) * 1024 * 1024);
+	size_t size = GC_get_free_bytes();
+	ptr = 0;
+	ptr2 = 0;
+	GC_gcollect();
+	size_t size2 = GC_get_free_bytes();
+	if (size == size2)
+	{
+		printf("Didn't remove memory");
+		return;
+	}
 }
