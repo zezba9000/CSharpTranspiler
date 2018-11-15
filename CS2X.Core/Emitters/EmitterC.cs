@@ -10,7 +10,6 @@ using CoreProject = CS2X.Core.Project;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Generic;
 using System.CS2X;
-using System.Text;
 
 namespace CS2X.Core.Emitters
 {
@@ -221,7 +220,7 @@ namespace CS2X.Core.Emitters
 			}
 		}
 
-		private string GetNativeCTypeName(ITypeSymbol type)
+		private string GetNativeCTypeInstance(ITypeSymbol type)
 		{
 			if (type is INamedTypeSymbol)
 			{
@@ -238,10 +237,12 @@ namespace CS2X.Core.Emitters
 			}
 			else if (type is IArrayTypeSymbol)
 			{
-				return GetFullNameFlat(project.compilation.GetSpecialType(SpecialType.System_Array));
+				return GetFullNameFlat(project.compilation.GetSpecialType(SpecialType.System_Array)) + '*';
 			}
 
-			return GetFullNameFlat(type);
+			string result = GetFullNameFlat(type);
+			if (!type.IsValueType) result += '*';
+			return result;
 		}
 
 		#region Object Layout
@@ -255,15 +256,8 @@ namespace CS2X.Core.Emitters
 				if (ObjectHasNonStaticFields(obj))
 				{
 					string formatString;
-					if (writeBody)
-					{
-						formatString = "struct {0}";
-					}
-					else
-					{
-						if (obj.IsValueType) formatString = "typedef struct {0} {0}";
-						else formatString = "typedef struct {0}* {0}";
-					}
+					if (writeBody) formatString = "struct {0}";
+					else formatString = "typedef struct {0} {0}";
 					writer.Write(string.Format(formatString, GetFullNameFlat(obj)));
 				}
 				else
@@ -346,7 +340,7 @@ namespace CS2X.Core.Emitters
 
 				var field = (IFieldSymbol)member;
 				GetFieldInfo(field, out var fieldType, out string fieldName);
-				writer.WriteLine(string.Format("\t{0} {1};", GetNativeCTypeName(fieldType), fieldName));
+				writer.WriteLine(string.Format("\t{0} {1};", GetNativeCTypeInstance(fieldType), fieldName));
 			}
 		}
 
@@ -368,7 +362,7 @@ namespace CS2X.Core.Emitters
 
 						var field = (IFieldSymbol)member;
 						GetFieldInfo(field, out var fieldType, out string fieldName);
-						writer.WriteLine(string.Format("{0} {1}_{2};", GetNativeCTypeName(fieldType), GetFullNameFlat(field.ContainingType), fieldName));
+						writer.WriteLine(string.Format("{0} {1}_{2};", GetNativeCTypeInstance(fieldType), GetFullNameFlat(field.ContainingType), fieldName));
 						fieldWrote = true;
 					}
 
@@ -388,19 +382,18 @@ namespace CS2X.Core.Emitters
 			string methodOverloadValue = (methodOverload != null) ? ("__" + methodOverload.Value) : "";
 			if (method.MethodKind == MethodKind.Constructor)
 			{
-				string ptr = method.ContainingType.IsValueType ? "*" : "";// return constructed type always by ref to avoid extra copies
-				writer.Write($"{GetFullNameFlat(method.ContainingType)}{ptr} {GetFullNameFlat(method).Replace(".ctor", "CONSTRUCTOR")}{methodOverloadValue}(");
+				writer.Write($"{GetFullNameFlat(method.ContainingType)}* {GetFullNameFlat(method).Replace(".ctor", "CONSTRUCTOR")}{methodOverloadValue}(");
 			}
 			else
 			{
-				writer.Write($"{GetNativeCTypeName(method.ReturnType)} {GetFullNameFlat(method)}{methodOverloadValue}(");
+				writer.Write($"{GetNativeCTypeInstance(method.ReturnType)} {GetFullNameFlat(method)}{methodOverloadValue}(");
 			}
 
 			// if method and object are not static pass 'this' ref
 			if (!method.IsStatic && !method.ContainingType.IsStatic)
 			{
-				string ptr = method.ContainingType.IsValueType ? "*" : "";// 'this' should allows pass by ptr ref
-				writer.Write(string.Format("{0}{1} {2}{3}", GetFullNameFlat(method.ContainingType), ptr, thisKeyword, (method.Parameters != null && method.Parameters.Length != 0) ? ", " : ""));
+				string paramEnd = (method.Parameters != null && method.Parameters.Length != 0) ? ", " : "";
+				writer.Write(string.Format("{0}* {1}{2}", GetFullNameFlat(method.ContainingType), thisKeyword, paramEnd));
 			}
 
 			// write parameters
@@ -410,7 +403,7 @@ namespace CS2X.Core.Emitters
 				for (int i = 0; i != count; ++i)
 				{
 					var parameter = method.Parameters[i];
-					writer.Write($"{GetNativeCTypeName(parameter.Type)} {parameter.Name}");
+					writer.Write($"{GetNativeCTypeInstance(parameter.Type)} {parameter.Name}");
 					if (i != count - 1) writer.Write(", ");
 				}
 			}
@@ -462,17 +455,6 @@ namespace CS2X.Core.Emitters
 
 		private void WriteObjectMethods(INamedTypeSymbol obj, bool writeBody)
 		{
-			// if struct generate default constructor
-			//if (obj.TypeKind == TypeKind.Struct)
-			//{
-			//	string typeName = GetFullNameFlat(obj);
-			//	writer.Write(string.Format("{0}* {0}_CONSTRUCTOR__0({0}* {1})", typeName, thisKeyword));
-			//	if (writeBody)
-			//	{
-					
-			//	}
-			//}
-
 			// generate normal methods
 			var members = obj.GetMembers();
 			var overloads = new List<MethodOverload>();
@@ -506,7 +488,7 @@ namespace CS2X.Core.Emitters
 				if (writeBody)
 				{
 					writer.WriteLine(Environment.NewLine + '{');
-					if (method.MethodKind == MethodKind.Constructor && obj.TypeKind != TypeKind.Struct) writer.WriteLine($"\tmemset({thisKeyword}, 0, sizeof({GetNativeCTypeName(obj)}));");
+					if (method.MethodKind == MethodKind.Constructor && obj.TypeKind != TypeKind.Struct) writer.WriteLine($"\tmemset({thisKeyword}, 0, sizeof({GetFullNameFlat(obj)}));");
 					if (!isDefaultConstructor) WriteMethodBody(method);
 					if (method.MethodKind == MethodKind.Constructor) writer.WriteLine("\treturn this;");// if constructor return allocated this ref
 					writer.WriteLine('}' + Environment.NewLine);
@@ -586,7 +568,7 @@ namespace CS2X.Core.Emitters
 		private void WriteLocalDeclarationStatement(LocalDeclarationStatementSyntax statement)
 		{
 			var typeInfo = semanticModel.GetTypeInfo(statement.Declaration.Type);
-			string typeName = GetNativeCTypeName(typeInfo.Type);
+			string typeName = GetNativeCTypeInstance(typeInfo.Type);
 			var variables = GetVariables(statement, semanticModel);
 			foreach (var variable in variables)
 			{

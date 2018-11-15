@@ -10,7 +10,7 @@
 // =============
 // Type forward declares
 // =============
-typedef struct TestLib_MyTestLibClass* TestLib_MyTestLibClass;
+typedef struct TestLib_MyTestLibClass TestLib_MyTestLibClass;
 
 // =============
 // Types Definitions
@@ -27,6 +27,7 @@ struct TestLib_MyTestLibClass
 // =============
 // Method forward declares
 // =============
+TestLib_MyTestLibClass* TestLib_MyTestLibClass_CONSTRUCTOR__0(TestLib_MyTestLibClass* this);
 
 // =============
 // Properties
@@ -34,3 +35,9 @@ struct TestLib_MyTestLibClass
 // =============
 // Methods
 // =============
+TestLib_MyTestLibClass* TestLib_MyTestLibClass_CONSTRUCTOR__0(TestLib_MyTestLibClass* this)
+{
+	memset(this, 0, sizeof(TestLib_MyTestLibClass));
+	return this;
+}
+

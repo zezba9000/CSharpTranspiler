@@ -4,9 +4,9 @@ using TestLib;
 
 struct TestStruct
 {
-	public float x;
+	public double x;
 
-	public TestStruct(float x)
+	public TestStruct(double x)
 	{
 		this.x = x;
 	}
