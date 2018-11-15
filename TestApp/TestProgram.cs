@@ -2,10 +2,25 @@
 using TestApp.Blaa;
 using TestLib;
 
-class TestStruct
+struct TestStruct
+{
+	public float x;
+
+	public TestStruct(float x)
+	{
+		this.x = x;
+	}
+
+	public TestStruct NewMe()
+	{
+		return new TestStruct();
+	}
+}
+
+class TestClassE
 {
 	public int key { get; set; }
-	public TestStruct(int key, TestIn testIn)
+	public TestClassE(int key, TestIn testIn)
 	{
 		TestIn.singleton.GetObj().Get().key = 123;
 		TestIn.singleton.GetObjProp = null;
@@ -27,33 +42,34 @@ class TestStruct
 		return key + 1;
 	}
 
-	private TestStruct Get()
+	private TestClassE Get()
 	{
 		return this;
+		return new TestClassE(0, null);
 	}
 }
 
 class TestIn
 {
 	public static TestIn singleton;
-	public TestStruct obj;
+	public TestClassE obj;
 
 	public int Add(int key)
 	{
 		return key + 2;
 	}
 
-	public void SetMe(TestStruct s)
+	public void SetMe(TestClassE s)
 	{
 		
 	}
 
-	public TestStruct GetObj()
+	public TestClassE GetObj()
 	{
 		return obj;
 	}
 
-	public TestStruct GetObjProp
+	public TestClassE GetObjProp
 	{
 		get
 		{

@@ -169,7 +169,7 @@ namespace CS2X.Core.Emitters
 			int overload = 0;
 			foreach (var member in method.ContainingType.GetMembers())
 			{
-				if (member.Kind != SymbolKind.Method || member.IsImplicitlyDeclared) continue;
+				if (member.Kind != SymbolKind.Method) continue;
 
 				var memberMethod = (IMethodSymbol)member;
 				if (IsBackingMethod(memberMethod) || HasNativeName(memberMethod) || memberMethod.Name != method.Name) continue;

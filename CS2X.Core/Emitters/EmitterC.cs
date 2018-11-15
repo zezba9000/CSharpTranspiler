@@ -23,9 +23,9 @@ namespace CS2X.Core.Emitters
 		public enum CompilerTargets
 		{
 			/// <summary>
-			/// Visual C++
+			/// Visual C
 			/// </summary>
-			VCPP,
+			VC,
 
 			/// <summary>
 			/// GNU Compiler Collection
@@ -114,6 +114,8 @@ namespace CS2X.Core.Emitters
 		: base(solution, outputPath, NativeTargets.C)
 		{
 			this.target = target;
+			this.platform = platform;
+			this.gc = gc;
 			this.thisKeyword = thisKeyword;
 		}
 
@@ -142,7 +144,15 @@ namespace CS2X.Core.Emitters
 					if (platform != PlatformTypes.Arduino) writer.WriteLine("#include <stdio.h>");
 					if (project.roslynProject.Name == "CoreLib")
 					{
-						writer.WriteLine("#include \"GC_Boehm.h\"");
+						switch (gc)
+						{
+							case GCTypes.Micro: writer.WriteLine("#include \"GC_Micro.h\""); break;
+							case GCTypes.Deterministic: writer.WriteLine("#include \"GC_Deterministic.h\""); break;
+							case GCTypes.Boehm: writer.WriteLine("#include \"GC_Boehm.h\""); break;
+
+							default: throw new Exception("Unsuported GC: " + gc);
+						}
+						
 						writer.WriteLine("#define null 0");
 					}
 					writer.WriteLine("#define EMPTY_OBJECT void*");
@@ -199,6 +209,7 @@ namespace CS2X.Core.Emitters
 					{
 						writer.WriteLine("void main()");
 						writer.WriteLine('{');
+						writer.WriteLine("\tCS2X_GC_Init();");
 						writer.WriteLine($"\t{GetFullNameFlat(entryPointMethod)}__0();");
 						writer.WriteLine('}');
 					}
@@ -375,8 +386,15 @@ namespace CS2X.Core.Emitters
 		private void WriteObjectMethodDeclare(IMethodSymbol method, int? methodOverload)
 		{
 			string methodOverloadValue = (methodOverload != null) ? ("__" + methodOverload.Value) : "";
-			if (method.MethodKind == MethodKind.Constructor) writer.Write($"System_Void {GetFullNameFlat(method).Replace(".ctor", "CONSTRUCTOR")}{methodOverloadValue}(");
-			else writer.Write($"{GetNativeCTypeName(method.ReturnType)} {GetFullNameFlat(method)}{methodOverloadValue}(");
+			if (method.MethodKind == MethodKind.Constructor)
+			{
+				string ptr = method.ContainingType.IsValueType ? "*" : "";// return constructed type always by ref to avoid extra copies
+				writer.Write($"{GetFullNameFlat(method.ContainingType)}{ptr} {GetFullNameFlat(method).Replace(".ctor", "CONSTRUCTOR")}{methodOverloadValue}(");
+			}
+			else
+			{
+				writer.Write($"{GetNativeCTypeName(method.ReturnType)} {GetFullNameFlat(method)}{methodOverloadValue}(");
+			}
 
 			// if method and object are not static pass 'this' ref
 			if (!method.IsStatic && !method.ContainingType.IsStatic)
@@ -444,15 +462,36 @@ namespace CS2X.Core.Emitters
 
 		private void WriteObjectMethods(INamedTypeSymbol obj, bool writeBody)
 		{
+			// if struct generate default constructor
+			//if (obj.TypeKind == TypeKind.Struct)
+			//{
+			//	string typeName = GetFullNameFlat(obj);
+			//	writer.Write(string.Format("{0}* {0}_CONSTRUCTOR__0({0}* {1})", typeName, thisKeyword));
+			//	if (writeBody)
+			//	{
+					
+			//	}
+			//}
+
+			// generate normal methods
 			var members = obj.GetMembers();
 			var overloads = new List<MethodOverload>();
 			foreach (var member in members)
 			{
-				if (member.Kind != SymbolKind.Method || member.IsImplicitlyDeclared) continue;
+				if (member.Kind != SymbolKind.Method) continue;
 
 				var method = (IMethodSymbol)member;
 				if (IsBackingMethod(method) || HasNativeName(method)) continue;
 
+				// check for struct default constructor
+				bool isDefaultConstructor = false;
+				if (method.IsImplicitlyDeclared)
+				{
+					if (method.MethodKind == MethodKind.Constructor) isDefaultConstructor = true;
+					else continue;
+				}
+
+				// get overload
 				MethodOverload overload;
 				overload = overloads.FirstOrDefault(x => x.name == method.Name);
 				if (overload == null)
@@ -461,12 +500,15 @@ namespace CS2X.Core.Emitters
 					overloads.Add(overload);
 				}
 
+				// write declaration
 				if (method.AssociatedSymbol != null && method.AssociatedSymbol is IPropertySymbol) WriteObjectMethodDeclare(method, null);
 				else WriteObjectMethodDeclare(method, overload.count);
 				if (writeBody)
 				{
 					writer.WriteLine(Environment.NewLine + '{');
-					WriteMethodBody(method);
+					if (method.MethodKind == MethodKind.Constructor && obj.TypeKind != TypeKind.Struct) writer.WriteLine($"\tmemset({thisKeyword}, 0, sizeof({GetNativeCTypeName(obj)}));");
+					if (!isDefaultConstructor) WriteMethodBody(method);
+					if (method.MethodKind == MethodKind.Constructor) writer.WriteLine("\treturn this;");// if constructor return allocated this ref
 					writer.WriteLine('}' + Environment.NewLine);
 				}
 				else
@@ -482,36 +524,35 @@ namespace CS2X.Core.Emitters
 		#region Logical Bodies
 		private void WriteMethodBody(IMethodSymbol method)
 		{
-			foreach (var syntaxRef in method.DeclaringSyntaxReferences)
+			if (method.DeclaringSyntaxReferences.Count() != 1) throw new Exception("Multiple method syntax refs not supported");
+			var syntaxRef = method.DeclaringSyntaxReferences.First();
+			var syntaxDeclaration = syntaxRef.GetSyntax();
+			BlockSyntax body = null;
+			if (syntaxDeclaration is AccessorDeclarationSyntax)
 			{
-				var syntaxDeclaration = syntaxRef.GetSyntax();
-				BlockSyntax body = null;
-				if (syntaxDeclaration is AccessorDeclarationSyntax)
-				{
-					var syntax = (AccessorDeclarationSyntax)syntaxDeclaration;
-					body = syntax.Body;
-				}
-				else if (syntaxDeclaration is MethodDeclarationSyntax)
-				{
-					var syntax = (MethodDeclarationSyntax)syntaxDeclaration;
-					body = syntax.Body;
-				}
-				else if (syntaxDeclaration is ConstructorDeclarationSyntax)
-				{
-					var syntax = (ConstructorDeclarationSyntax)syntaxDeclaration;
-					body = syntax.Body;
-				}
-				else
-				{
-					throw new Exception("Unsupported method syntax type: " + syntaxDeclaration.GetType());
-				}
+				var syntax = (AccessorDeclarationSyntax)syntaxDeclaration;
+				body = syntax.Body;
+			}
+			else if (syntaxDeclaration is MethodDeclarationSyntax)
+			{
+				var syntax = (MethodDeclarationSyntax)syntaxDeclaration;
+				body = syntax.Body;
+			}
+			else if (syntaxDeclaration is ConstructorDeclarationSyntax)
+			{
+				var syntax = (ConstructorDeclarationSyntax)syntaxDeclaration;
+				body = syntax.Body;
+			}
+			else
+			{
+				throw new Exception("Unsupported method syntax type: " + syntaxDeclaration.GetType());
+			}
 
-				if (body != null)
-				{
-					activeMethod = method;
-					semanticModel = project.compilation.GetSemanticModel(syntaxDeclaration.SyntaxTree);
-					WriteBlockSyntax(body);
-				}
+			if (body != null)
+			{
+				activeMethod = method;
+				semanticModel = project.compilation.GetSemanticModel(syntaxDeclaration.SyntaxTree);
+				WriteBlockSyntax(body);
 			}
 		}
 
@@ -570,6 +611,7 @@ namespace CS2X.Core.Emitters
 			else if (expression is CastExpressionSyntax) WriteCastExpression((CastExpressionSyntax)expression);
 			else if (expression is ParenthesizedExpressionSyntax) WriteParenthesizedExpression((ParenthesizedExpressionSyntax)expression);
 			else if (expression is InvocationExpressionSyntax) WriteInvocationExpression((InvocationExpressionSyntax)expression);
+			else if (expression is ObjectCreationExpressionSyntax) WriteObjectCreationExpression((ObjectCreationExpressionSyntax)expression);
 			else throw new NotImplementedException("Unsuported expression type: " + expression.GetType());
 		}
 
@@ -748,6 +790,19 @@ namespace CS2X.Core.Emitters
 			writer.Write(')');
 		}
 
+		private void WriteArguments(ArgumentListSyntax argumentList)
+		{
+			if (argumentList != null)
+			{
+				var lastArg = argumentList.Arguments.LastOrDefault();
+				foreach (var arg in argumentList.Arguments)
+				{
+					WriteExperesion(arg.Expression);
+					if (arg != lastArg) writer.Write(", ");
+				}
+			}
+		}
+
 		private void WriteInvocationExpression(InvocationExpressionSyntax expression)
 		{
 			// write method name
@@ -763,16 +818,22 @@ namespace CS2X.Core.Emitters
 			}
 
 			// write arguments
-			if (expression.ArgumentList != null)
-			{
-				var lastArg = expression.ArgumentList.Arguments.LastOrDefault();
-				foreach (var arg in expression.ArgumentList.Arguments)
-				{
-					WriteExperesion(arg.Expression);
-					if (arg != lastArg) writer.Write(", ");
-				}
-			}
+			if (expression.ArgumentList != null) WriteArguments(expression.ArgumentList);
+			writer.Write(')');
+		}
 
+		private void WriteObjectCreationExpression(ObjectCreationExpressionSyntax expression)
+		{
+			var symbolInfo = semanticModel.GetSymbolInfo(expression);
+			int overloadIndex = GetMethodOverloadIndex((IMethodSymbol)symbolInfo.Symbol);
+			var typeSymbolInfo = semanticModel.GetSymbolInfo(expression.Type);
+			var typeSymbol = (ITypeSymbol)typeSymbolInfo.Symbol;
+			if (typeSymbol.IsValueType) writer.Write($"*{GetFullNameFlat(typeSymbol)}_CONSTRUCTOR__{overloadIndex}(&({GetFullNameFlat(typeSymbol)}){{0}}");
+			else writer.Write($"{GetFullNameFlat(typeSymbol)}_CONSTRUCTOR__{overloadIndex}(CS2X_GC_New(sizeof({GetFullNameFlat(typeSymbol)}))");
+			if (expression.ArgumentList.Arguments.Count != 0) writer.Write(", ");
+
+			// write arguments
+			if (expression.ArgumentList != null) WriteArguments(expression.ArgumentList);
 			writer.Write(')');
 		}
 		#endregion

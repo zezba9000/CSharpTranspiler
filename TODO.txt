@@ -1,3 +1,4 @@
+==============================================================
 Implement C try / catch / finally (http://www.di.unipi.it/~nids/docs/longjump_try_trow_catch.html)
 
 #include <stdio.h>
@@ -40,4 +41,29 @@ void main()
 		printf("Finally\n");
 	}
 	TRY_END;
+}
+
+==============================================================
+Implement Beohm GC
+
+char* ptr = 0;
+char* ptr2 = 0;
+void main()
+{
+	CS2X_GC_Init();
+	TestApp_C_Program_Main__0();
+	ptr = CS2X_GC_New(sizeof(char) * 1024 * 1024 * 1024);
+	ptr2 = CS2X_GC_New(sizeof(char) * 1024 * 1024 * 6);
+	memset(ptr, 0, sizeof(char) * 1024 * 1024 * 1024);
+	memset(ptr2, 0, sizeof(char) * 1024 * 1024 * 6);
+	size_t size = GC_get_free_bytes();
+	ptr = 0;
+	ptr2 = 0;
+	CS2X_GC_Collect();
+	size_t size2 = GC_get_free_bytes();
+	if (size == size2)
+	{
+		printf("Didn't remove memory");
+		return;
+	}
 }

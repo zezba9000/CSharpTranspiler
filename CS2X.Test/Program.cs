@@ -18,7 +18,7 @@ namespace CS2X.Test
 			task.Wait();
 
 			// emit solution
-			var emitter = new EmitterC(solution, Path.Combine(path, "TestOutput"), EmitterC.CompilerTargets.VCPP, EmitterC.PlatformTypes.Desktop, EmitterC.GCTypes.Micro);
+			var emitter = new EmitterC(solution, Path.Combine(path, "TestOutput"), EmitterC.CompilerTargets.VC, EmitterC.PlatformTypes.Desktop, EmitterC.GCTypes.Boehm);
 			emitter.Emit(false);
 		}
 	}
