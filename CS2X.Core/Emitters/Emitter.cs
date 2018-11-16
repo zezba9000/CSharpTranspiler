@@ -6,6 +6,8 @@ using System.Linq;
 
 using CoreSolution = CS2X.Core.Solution;
 using System.CS2X;
+using System.Collections.Generic;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace CS2X.Core.Emitters
 {
@@ -180,5 +182,35 @@ namespace CS2X.Core.Emitters
 
 			return overload;
 		}
+
+		/*protected List<ISymbol> GetAllBodyStackAllocations(BlockSyntax body)
+		{
+			var locals = new List<ISymbol>();
+			var walker = new BodySyntaxWalker();
+			walker.Visit(body);
+			return locals;
+		}*/
 	}
+
+	/*class BodySyntaxWalker : CSharpSyntaxWalker
+	{
+		public List<CSharpSyntaxNode> stackAllocations;
+
+		public BodySyntaxWalker()
+		{
+			stackAllocations = new List<CSharpSyntaxNode>();
+		}
+
+		public override void VisitLocalDeclarationStatement(LocalDeclarationStatementSyntax node)
+		{
+			stackAllocations.Add(node);
+			base.VisitLocalDeclarationStatement(node);
+		}
+
+		public override void VisitObjectCreationExpression(ObjectCreationExpressionSyntax node)
+		{
+			stackAllocations.Add(node);
+			base.VisitObjectCreationExpression(node);
+		}
+	}*/
 }

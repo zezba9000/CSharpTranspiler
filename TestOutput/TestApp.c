@@ -193,7 +193,7 @@ System_Int32 TestClassE_AddStatic__0(System_Int32 key)
 TestClassE* TestClassE_Get__0(TestClassE* this)
 {
 	return this;
-	return TestClassE_CONSTRUCTOR__0(CS2X_GC_New(sizeof(TestClassE)), 0, null);
+	return TestClassE_CONSTRUCTOR__0(CS2X_GC_New(sizeof(TestClassE)), 0, TestIn_CONSTRUCTOR__0(CS2X_GC_New(sizeof(TestIn))));
 }
 
 System_Int32 TestIn_Add__0(TestIn* this, System_Int32 key)

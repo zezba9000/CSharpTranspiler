@@ -1,3 +1,8 @@
+
+Build system features.
+For VC/VC++ example: cl -I include -I libatomic_ops/src -Ox -DGC_THREADS -DTHREAD_LOCAL_ALLOC -DPARALLEL_MARK -c extra/gc.c
+
+
 ==============================================================
 Implement C try / catch / finally (http://www.di.unipi.it/~nids/docs/longjump_try_trow_catch.html)
 

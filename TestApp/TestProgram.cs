@@ -45,7 +45,7 @@ class TestClassE
 	private TestClassE Get()
 	{
 		return this;
-		return new TestClassE(0, null);
+		return new TestClassE(0, new TestIn());
 	}
 }
 
