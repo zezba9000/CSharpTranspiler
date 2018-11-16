@@ -9,12 +9,13 @@ Implement C try / catch / finally (http://www.di.unipi.it/~nids/docs/longjump_tr
 #include <stdio.h>
 #include <setjmp.h>
 
+jmp_buf __unhandledExceptionBuff;
 jmp_buf __threadExceptionBuff;
 
 #define TRY switch(setjmp(__threadExceptionBuff)) { case 0: while(1) {
 #define CATCH(x) break; case x:
 #define FINALLY break; } default: {
-#define TRY_END break; } }
+#define TRY_END memcpy_s(__threadExceptionBuff, sizeof(jmp_buf), __unhandledExceptionBuff, sizeof(jmp_buf)); break; } }
 #define THROW(x) longjmp(__threadExceptionBuff, x)
 
 #define EXCEPTION (1)
@@ -27,6 +28,13 @@ void Foo()
 
 void main()
 {
+	int result = setjmp(__unhandledExceptionBuff);
+	if (result != 0)
+	{
+		printf("Catch Unhandled Exception\n");
+		return;
+	}
+
 	TRY
 	{
 		printf("Start\n");
@@ -46,6 +54,8 @@ void main()
 		printf("Finally\n");
 	}
 	TRY_END;
+
+	THROW(EXCEPTION);
 }
 
 ==============================================================
