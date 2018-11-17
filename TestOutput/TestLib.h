@@ -27,7 +27,7 @@ struct TestLib_MyTestLibClass
 // =============
 // Method forward declares
 // =============
-TestLib_MyTestLibClass* TestLib_MyTestLibClass_CONSTRUCTOR__0(TestLib_MyTestLibClass* this);
+TestLib_MyTestLibClass* TestLib_MyTestLibClass_CONSTRUCTOR__0();
 
 // =============
 // Properties
@@ -35,8 +35,9 @@ TestLib_MyTestLibClass* TestLib_MyTestLibClass_CONSTRUCTOR__0(TestLib_MyTestLibC
 // =============
 // Methods
 // =============
-TestLib_MyTestLibClass* TestLib_MyTestLibClass_CONSTRUCTOR__0(TestLib_MyTestLibClass* this)
+TestLib_MyTestLibClass* TestLib_MyTestLibClass_CONSTRUCTOR__0()
 {
+	TestLib_MyTestLibClass* this = CS2X_GC_New(sizeof(TestLib_MyTestLibClass));
 	memset(this, 0, sizeof(TestLib_MyTestLibClass));
 	return this;
 }

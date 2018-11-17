@@ -276,82 +276,81 @@ System_String* System_Reflection_DefaultMemberAttribute_get_MemberName(System_Re
 // =============
 // Method forward declares
 // =============
-System_Boolean* System_Boolean_CONSTRUCTOR__0(System_Boolean* this);
-System_Byte* System_Byte_CONSTRUCTOR__0(System_Byte* this);
-System_Char* System_Char_CONSTRUCTOR__0(System_Char* this);
-System_Double* System_Double_CONSTRUCTOR__0(System_Double* this);
-System_Int16* System_Int16_CONSTRUCTOR__0(System_Int16* this);
-System_Int32* System_Int32_CONSTRUCTOR__0(System_Int32* this);
-System_Int64* System_Int64_CONSTRUCTOR__0(System_Int64* this);
-System_IntPtr* System_IntPtr_CONSTRUCTOR__0(System_IntPtr* this);
-System_RuntimeFieldHandle* System_RuntimeFieldHandle_CONSTRUCTOR__0(System_RuntimeFieldHandle* this);
-System_RuntimeTypeHandle* System_RuntimeTypeHandle_CONSTRUCTOR__0(System_RuntimeTypeHandle* this);
-System_SByte* System_SByte_CONSTRUCTOR__0(System_SByte* this);
-System_Single* System_Single_CONSTRUCTOR__0(System_Single* this);
-System_UInt16* System_UInt16_CONSTRUCTOR__0(System_UInt16* this);
-System_UInt32* System_UInt32_CONSTRUCTOR__0(System_UInt32* this);
-System_UInt64* System_UInt64_CONSTRUCTOR__0(System_UInt64* this);
-System_UIntPtr* System_UIntPtr_CONSTRUCTOR__0(System_UIntPtr* this);
-System_Void* System_Void_CONSTRUCTOR__0(System_Void* this);
-System_Collections_DictionaryEntry* System_Collections_DictionaryEntry_CONSTRUCTOR__0(System_Collections_DictionaryEntry* this, System_Object* key, System_Object* value);
-System_Collections_DictionaryEntry* System_Collections_DictionaryEntry_CONSTRUCTOR__1(System_Collections_DictionaryEntry* this);
-System_Attribute* System_Attribute_CONSTRUCTOR__0(System_Attribute* this);
-System_AttributeUsageAttribute* System_AttributeUsageAttribute_CONSTRUCTOR__0(System_AttributeUsageAttribute* this, System_Int32 validOn);
-System_CLSCompliantAttribute* System_CLSCompliantAttribute_CONSTRUCTOR__0(System_CLSCompliantAttribute* this, System_Boolean isCompliant);
+System_Boolean System_Boolean_CONSTRUCTOR__0();
+System_Byte System_Byte_CONSTRUCTOR__0();
+System_Char System_Char_CONSTRUCTOR__0();
+System_Double System_Double_CONSTRUCTOR__0();
+System_Int16 System_Int16_CONSTRUCTOR__0();
+System_Int32 System_Int32_CONSTRUCTOR__0();
+System_Int64 System_Int64_CONSTRUCTOR__0();
+System_IntPtr System_IntPtr_CONSTRUCTOR__0();
+System_RuntimeFieldHandle System_RuntimeFieldHandle_CONSTRUCTOR__0();
+System_RuntimeTypeHandle System_RuntimeTypeHandle_CONSTRUCTOR__0();
+System_SByte System_SByte_CONSTRUCTOR__0();
+System_Single System_Single_CONSTRUCTOR__0();
+System_UInt16 System_UInt16_CONSTRUCTOR__0();
+System_UInt32 System_UInt32_CONSTRUCTOR__0();
+System_UInt64 System_UInt64_CONSTRUCTOR__0();
+System_UIntPtr System_UIntPtr_CONSTRUCTOR__0();
+System_Collections_DictionaryEntry System_Collections_DictionaryEntry_CONSTRUCTOR__0(System_Object* key, System_Object* value);
+System_Collections_DictionaryEntry System_Collections_DictionaryEntry_CONSTRUCTOR__1();
+System_Attribute* System_Attribute_CONSTRUCTOR__0();
+System_AttributeUsageAttribute* System_AttributeUsageAttribute_CONSTRUCTOR__0(System_Int32 validOn);
+System_CLSCompliantAttribute* System_CLSCompliantAttribute_CONSTRUCTOR__0(System_Boolean isCompliant);
 System_Void System_Console_WriteLine__0(System_String* value);
-System_FlagsAttribute* System_FlagsAttribute_CONSTRUCTOR__0(System_FlagsAttribute* this);
+System_FlagsAttribute* System_FlagsAttribute_CONSTRUCTOR__0();
 System_Collections_IEnumerator* System_Array_GetEnumerator__0(System_Array* this);
-System_Array* System_Array_CONSTRUCTOR__0(System_Array* this);
-System_CancelEventArgs* System_CancelEventArgs_CONSTRUCTOR__0(System_CancelEventArgs* this);
-System_Delegate* System_Delegate_CONSTRUCTOR__0(System_Delegate* this);
-System_Enum* System_Enum_CONSTRUCTOR__0(System_Enum* this);
-System_EventArgs* System_EventArgs_CONSTRUCTOR__0(System_EventArgs* this);
-System_Exception* System_Exception_CONSTRUCTOR__0(System_Exception* this);
-System_Exception* System_Exception_CONSTRUCTOR__1(System_Exception* this, System_String* message);
-System_MulticastDelegate* System_MulticastDelegate_CONSTRUCTOR__0(System_MulticastDelegate* this);
+System_Array* System_Array_CONSTRUCTOR__0();
+System_CancelEventArgs* System_CancelEventArgs_CONSTRUCTOR__0();
+System_Delegate* System_Delegate_CONSTRUCTOR__0();
+System_Enum* System_Enum_CONSTRUCTOR__0();
+System_EventArgs* System_EventArgs_CONSTRUCTOR__0();
+System_Exception* System_Exception_CONSTRUCTOR__0();
+System_Exception* System_Exception_CONSTRUCTOR__1(System_String* message);
+System_MulticastDelegate* System_MulticastDelegate_CONSTRUCTOR__0();
 System_Type* System_Object_GetType__0(System_Object* this);
 System_String* System_Object_ToString__0(System_Object* this);
-System_Object* System_Object_CONSTRUCTOR__0(System_Object* this);
-System_ObsoleteAttribute* System_ObsoleteAttribute_CONSTRUCTOR__0(System_ObsoleteAttribute* this);
-System_ObsoleteAttribute* System_ObsoleteAttribute_CONSTRUCTOR__1(System_ObsoleteAttribute* this, System_String* message);
-System_ObsoleteAttribute* System_ObsoleteAttribute_CONSTRUCTOR__2(System_ObsoleteAttribute* this, System_String* message, System_Boolean error);
-System_ParamArrayAttribute* System_ParamArrayAttribute_CONSTRUCTOR__0(System_ParamArrayAttribute* this);
-System_String* System_String_CONSTRUCTOR__0(System_String* this, System_Char* value);
-System_StringBuilder* System_StringBuilder_CONSTRUCTOR__0(System_StringBuilder* this);
-System_Type* System_Type_CONSTRUCTOR__0(System_Type* this);
-System_ValueType* System_ValueType_CONSTRUCTOR__0(System_ValueType* this);
-System_CodeDom_Compiler_GeneratedCodeAttribute* System_CodeDom_Compiler_GeneratedCodeAttribute_CONSTRUCTOR__0(System_CodeDom_Compiler_GeneratedCodeAttribute* this, System_String* tool, System_String* version);
+System_Object* System_Object_CONSTRUCTOR__0();
+System_ObsoleteAttribute* System_ObsoleteAttribute_CONSTRUCTOR__0();
+System_ObsoleteAttribute* System_ObsoleteAttribute_CONSTRUCTOR__1(System_String* message);
+System_ObsoleteAttribute* System_ObsoleteAttribute_CONSTRUCTOR__2(System_String* message, System_Boolean error);
+System_ParamArrayAttribute* System_ParamArrayAttribute_CONSTRUCTOR__0();
+System_String* System_String_CONSTRUCTOR__0(System_Char* value);
+System_StringBuilder* System_StringBuilder_CONSTRUCTOR__0();
+System_Type* System_Type_CONSTRUCTOR__0();
+System_ValueType* System_ValueType_CONSTRUCTOR__0();
+System_CodeDom_Compiler_GeneratedCodeAttribute* System_CodeDom_Compiler_GeneratedCodeAttribute_CONSTRUCTOR__0(System_String* tool, System_String* version);
 System_Collections_IEnumerator* System_Collections_ArrayList_GetEnumerator__0(System_Collections_ArrayList* this);
-System_Collections_ArrayList* System_Collections_ArrayList_CONSTRUCTOR__0(System_Collections_ArrayList* this);
+System_Collections_ArrayList* System_Collections_ArrayList_CONSTRUCTOR__0();
 System_Collections_IEnumerator* System_Collections_Queue_GetEnumerator__0(System_Collections_Queue* this);
-System_Collections_Queue* System_Collections_Queue_CONSTRUCTOR__0(System_Collections_Queue* this);
+System_Collections_Queue* System_Collections_Queue_CONSTRUCTOR__0();
 System_Collections_IEnumerator* System_Collections_Stack_GetEnumerator__0(System_Collections_Stack* this);
-System_Collections_Stack* System_Collections_Stack_CONSTRUCTOR__0(System_Collections_Stack* this);
-System_ComponentModel_BrowsableAttribute* System_ComponentModel_BrowsableAttribute_CONSTRUCTOR__0(System_ComponentModel_BrowsableAttribute* this);
-System_ComponentModel_DependencyAttribute* System_ComponentModel_DependencyAttribute_CONSTRUCTOR__0(System_ComponentModel_DependencyAttribute* this);
-System_ComponentModel_EditorBrowsableAttribute* System_ComponentModel_EditorBrowsableAttribute_CONSTRUCTOR__0(System_ComponentModel_EditorBrowsableAttribute* this, System_Int32 state);
-System_CS2X_NativeNameAttribute* System_CS2X_NativeNameAttribute_CONSTRUCTOR__0(System_CS2X_NativeNameAttribute* this, System_Int32 target, System_String* value);
-System_Diagnostics_ConditionalAttribute* System_Diagnostics_ConditionalAttribute_CONSTRUCTOR__0(System_Diagnostics_ConditionalAttribute* this, System_String* conditionString);
-System_Diagnostics_Debug* System_Diagnostics_Debug_CONSTRUCTOR__0(System_Diagnostics_Debug* this);
-System_Diagnostics_CodeAnalysis_SuppressMessageAttribute* System_Diagnostics_CodeAnalysis_SuppressMessageAttribute_CONSTRUCTOR__0(System_Diagnostics_CodeAnalysis_SuppressMessageAttribute* this);
-System_Globalization_CultureInfo* System_Globalization_CultureInfo_CONSTRUCTOR__0(System_Globalization_CultureInfo* this);
-System_Globalization_NumberFormatInfo* System_Globalization_NumberFormatInfo_CONSTRUCTOR__0(System_Globalization_NumberFormatInfo* this);
-System_Reflection_AssemblyCompanyAttribute* System_Reflection_AssemblyCompanyAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyCompanyAttribute* this, System_String* company);
-System_Reflection_AssemblyConfigurationAttribute* System_Reflection_AssemblyConfigurationAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyConfigurationAttribute* this, System_String* configuration);
-System_Reflection_AssemblyCopyrightAttribute* System_Reflection_AssemblyCopyrightAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyCopyrightAttribute* this, System_String* copyright);
-System_Reflection_AssemblyCultureAttribute* System_Reflection_AssemblyCultureAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyCultureAttribute* this, System_String* culture);
-System_Reflection_AssemblyDelaySignAttribute* System_Reflection_AssemblyDelaySignAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyDelaySignAttribute* this, System_Boolean delaySign);
-System_Reflection_AssemblyDescriptionAttribute* System_Reflection_AssemblyDescriptionAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyDescriptionAttribute* this, System_String* description);
-System_Reflection_AssemblyFileVersionAttribute* System_Reflection_AssemblyFileVersionAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyFileVersionAttribute* this, System_String* version);
-System_Reflection_AssemblyInformationalVersionAttribute* System_Reflection_AssemblyInformationalVersionAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyInformationalVersionAttribute* this, System_String* informationalVersion);
-System_Reflection_AssemblyKeyFileAttribute* System_Reflection_AssemblyKeyFileAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyKeyFileAttribute* this, System_String* keyFile);
-System_Reflection_AssemblyProductAttribute* System_Reflection_AssemblyProductAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyProductAttribute* this, System_String* product);
-System_Reflection_AssemblyTitleAttribute* System_Reflection_AssemblyTitleAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyTitleAttribute* this, System_String* title);
-System_Reflection_AssemblyTrademarkAttribute* System_Reflection_AssemblyTrademarkAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyTrademarkAttribute* this, System_String* trademark);
-System_Reflection_AssemblyVersionAttribute* System_Reflection_AssemblyVersionAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyVersionAttribute* this, System_String* version);
-System_Reflection_DefaultMemberAttribute* System_Reflection_DefaultMemberAttribute_CONSTRUCTOR__0(System_Reflection_DefaultMemberAttribute* this, System_String* memberName);
-System_Runtime_CompilerServices_CompilerGeneratedAttribute* System_Runtime_CompilerServices_CompilerGeneratedAttribute_CONSTRUCTOR__0(System_Runtime_CompilerServices_CompilerGeneratedAttribute* this);
-System_Runtime_InteropServices_OutAttribute* System_Runtime_InteropServices_OutAttribute_CONSTRUCTOR__0(System_Runtime_InteropServices_OutAttribute* this);
+System_Collections_Stack* System_Collections_Stack_CONSTRUCTOR__0();
+System_ComponentModel_BrowsableAttribute* System_ComponentModel_BrowsableAttribute_CONSTRUCTOR__0();
+System_ComponentModel_DependencyAttribute* System_ComponentModel_DependencyAttribute_CONSTRUCTOR__0();
+System_ComponentModel_EditorBrowsableAttribute* System_ComponentModel_EditorBrowsableAttribute_CONSTRUCTOR__0(System_Int32 state);
+System_CS2X_NativeNameAttribute* System_CS2X_NativeNameAttribute_CONSTRUCTOR__0(System_Int32 target, System_String* value);
+System_Diagnostics_ConditionalAttribute* System_Diagnostics_ConditionalAttribute_CONSTRUCTOR__0(System_String* conditionString);
+System_Diagnostics_Debug* System_Diagnostics_Debug_CONSTRUCTOR__0();
+System_Diagnostics_CodeAnalysis_SuppressMessageAttribute* System_Diagnostics_CodeAnalysis_SuppressMessageAttribute_CONSTRUCTOR__0();
+System_Globalization_CultureInfo* System_Globalization_CultureInfo_CONSTRUCTOR__0();
+System_Globalization_NumberFormatInfo* System_Globalization_NumberFormatInfo_CONSTRUCTOR__0();
+System_Reflection_AssemblyCompanyAttribute* System_Reflection_AssemblyCompanyAttribute_CONSTRUCTOR__0(System_String* company);
+System_Reflection_AssemblyConfigurationAttribute* System_Reflection_AssemblyConfigurationAttribute_CONSTRUCTOR__0(System_String* configuration);
+System_Reflection_AssemblyCopyrightAttribute* System_Reflection_AssemblyCopyrightAttribute_CONSTRUCTOR__0(System_String* copyright);
+System_Reflection_AssemblyCultureAttribute* System_Reflection_AssemblyCultureAttribute_CONSTRUCTOR__0(System_String* culture);
+System_Reflection_AssemblyDelaySignAttribute* System_Reflection_AssemblyDelaySignAttribute_CONSTRUCTOR__0(System_Boolean delaySign);
+System_Reflection_AssemblyDescriptionAttribute* System_Reflection_AssemblyDescriptionAttribute_CONSTRUCTOR__0(System_String* description);
+System_Reflection_AssemblyFileVersionAttribute* System_Reflection_AssemblyFileVersionAttribute_CONSTRUCTOR__0(System_String* version);
+System_Reflection_AssemblyInformationalVersionAttribute* System_Reflection_AssemblyInformationalVersionAttribute_CONSTRUCTOR__0(System_String* informationalVersion);
+System_Reflection_AssemblyKeyFileAttribute* System_Reflection_AssemblyKeyFileAttribute_CONSTRUCTOR__0(System_String* keyFile);
+System_Reflection_AssemblyProductAttribute* System_Reflection_AssemblyProductAttribute_CONSTRUCTOR__0(System_String* product);
+System_Reflection_AssemblyTitleAttribute* System_Reflection_AssemblyTitleAttribute_CONSTRUCTOR__0(System_String* title);
+System_Reflection_AssemblyTrademarkAttribute* System_Reflection_AssemblyTrademarkAttribute_CONSTRUCTOR__0(System_String* trademark);
+System_Reflection_AssemblyVersionAttribute* System_Reflection_AssemblyVersionAttribute_CONSTRUCTOR__0(System_String* version);
+System_Reflection_DefaultMemberAttribute* System_Reflection_DefaultMemberAttribute_CONSTRUCTOR__0(System_String* memberName);
+System_Runtime_CompilerServices_CompilerGeneratedAttribute* System_Runtime_CompilerServices_CompilerGeneratedAttribute_CONSTRUCTOR__0();
+System_Runtime_InteropServices_OutAttribute* System_Runtime_InteropServices_OutAttribute_CONSTRUCTOR__0();
 
 // =============
 // Properties
@@ -514,118 +513,151 @@ System_String* System_Reflection_DefaultMemberAttribute_get_MemberName(System_Re
 // =============
 // Methods
 // =============
-System_Boolean* System_Boolean_CONSTRUCTOR__0(System_Boolean* this)
+System_Boolean System_Boolean_CONSTRUCTOR__0()
 {
+	System_Boolean this;
+	memset(&this, 0, sizeof(System_Boolean));
 	return this;
 }
 
-System_Byte* System_Byte_CONSTRUCTOR__0(System_Byte* this)
+System_Byte System_Byte_CONSTRUCTOR__0()
 {
+	System_Byte this;
+	memset(&this, 0, sizeof(System_Byte));
 	return this;
 }
 
-System_Char* System_Char_CONSTRUCTOR__0(System_Char* this)
+System_Char System_Char_CONSTRUCTOR__0()
 {
+	System_Char this;
+	memset(&this, 0, sizeof(System_Char));
 	return this;
 }
 
-System_Double* System_Double_CONSTRUCTOR__0(System_Double* this)
+System_Double System_Double_CONSTRUCTOR__0()
 {
+	System_Double this;
+	memset(&this, 0, sizeof(System_Double));
 	return this;
 }
 
-System_Int16* System_Int16_CONSTRUCTOR__0(System_Int16* this)
+System_Int16 System_Int16_CONSTRUCTOR__0()
 {
+	System_Int16 this;
+	memset(&this, 0, sizeof(System_Int16));
 	return this;
 }
 
-System_Int32* System_Int32_CONSTRUCTOR__0(System_Int32* this)
+System_Int32 System_Int32_CONSTRUCTOR__0()
 {
+	System_Int32 this;
+	memset(&this, 0, sizeof(System_Int32));
 	return this;
 }
 
-System_Int64* System_Int64_CONSTRUCTOR__0(System_Int64* this)
+System_Int64 System_Int64_CONSTRUCTOR__0()
 {
+	System_Int64 this;
+	memset(&this, 0, sizeof(System_Int64));
 	return this;
 }
 
-System_IntPtr* System_IntPtr_CONSTRUCTOR__0(System_IntPtr* this)
+System_IntPtr System_IntPtr_CONSTRUCTOR__0()
 {
+	System_IntPtr this;
+	memset(&this, 0, sizeof(System_IntPtr));
 	return this;
 }
 
-System_RuntimeFieldHandle* System_RuntimeFieldHandle_CONSTRUCTOR__0(System_RuntimeFieldHandle* this)
+System_RuntimeFieldHandle System_RuntimeFieldHandle_CONSTRUCTOR__0()
 {
+	System_RuntimeFieldHandle this;
+	memset(&this, 0, sizeof(System_RuntimeFieldHandle));
 	return this;
 }
 
-System_RuntimeTypeHandle* System_RuntimeTypeHandle_CONSTRUCTOR__0(System_RuntimeTypeHandle* this)
+System_RuntimeTypeHandle System_RuntimeTypeHandle_CONSTRUCTOR__0()
 {
+	System_RuntimeTypeHandle this;
+	memset(&this, 0, sizeof(System_RuntimeTypeHandle));
 	return this;
 }
 
-System_SByte* System_SByte_CONSTRUCTOR__0(System_SByte* this)
+System_SByte System_SByte_CONSTRUCTOR__0()
 {
+	System_SByte this;
+	memset(&this, 0, sizeof(System_SByte));
 	return this;
 }
 
-System_Single* System_Single_CONSTRUCTOR__0(System_Single* this)
+System_Single System_Single_CONSTRUCTOR__0()
 {
+	System_Single this;
+	memset(&this, 0, sizeof(System_Single));
 	return this;
 }
 
-System_UInt16* System_UInt16_CONSTRUCTOR__0(System_UInt16* this)
+System_UInt16 System_UInt16_CONSTRUCTOR__0()
 {
+	System_UInt16 this;
+	memset(&this, 0, sizeof(System_UInt16));
 	return this;
 }
 
-System_UInt32* System_UInt32_CONSTRUCTOR__0(System_UInt32* this)
+System_UInt32 System_UInt32_CONSTRUCTOR__0()
 {
+	System_UInt32 this;
+	memset(&this, 0, sizeof(System_UInt32));
 	return this;
 }
 
-System_UInt64* System_UInt64_CONSTRUCTOR__0(System_UInt64* this)
+System_UInt64 System_UInt64_CONSTRUCTOR__0()
 {
+	System_UInt64 this;
+	memset(&this, 0, sizeof(System_UInt64));
 	return this;
 }
 
-System_UIntPtr* System_UIntPtr_CONSTRUCTOR__0(System_UIntPtr* this)
+System_UIntPtr System_UIntPtr_CONSTRUCTOR__0()
 {
+	System_UIntPtr this;
+	memset(&this, 0, sizeof(System_UIntPtr));
 	return this;
 }
 
-System_Void* System_Void_CONSTRUCTOR__0(System_Void* this)
+System_Collections_DictionaryEntry System_Collections_DictionaryEntry_CONSTRUCTOR__0(System_Object* key, System_Object* value)
 {
+	System_Collections_DictionaryEntry this;
+	this.Key = key;
+	this.Value = value;
 	return this;
 }
 
-System_Collections_DictionaryEntry* System_Collections_DictionaryEntry_CONSTRUCTOR__0(System_Collections_DictionaryEntry* this, System_Object* key, System_Object* value)
+System_Collections_DictionaryEntry System_Collections_DictionaryEntry_CONSTRUCTOR__1()
 {
-	this->Key = key;
-	this->Value = value;
+	System_Collections_DictionaryEntry this;
+	memset(&this, 0, sizeof(System_Collections_DictionaryEntry));
 	return this;
 }
 
-System_Collections_DictionaryEntry* System_Collections_DictionaryEntry_CONSTRUCTOR__1(System_Collections_DictionaryEntry* this)
+System_Attribute* System_Attribute_CONSTRUCTOR__0()
 {
-	return this;
-}
-
-System_Attribute* System_Attribute_CONSTRUCTOR__0(System_Attribute* this)
-{
+	System_Attribute* this = CS2X_GC_New(sizeof(System_Attribute));
 	memset(this, 0, sizeof(System_Attribute));
 	return this;
 }
 
-System_AttributeUsageAttribute* System_AttributeUsageAttribute_CONSTRUCTOR__0(System_AttributeUsageAttribute* this, System_Int32 validOn)
+System_AttributeUsageAttribute* System_AttributeUsageAttribute_CONSTRUCTOR__0(System_Int32 validOn)
 {
+	System_AttributeUsageAttribute* this = CS2X_GC_New(sizeof(System_AttributeUsageAttribute));
 	memset(this, 0, sizeof(System_AttributeUsageAttribute));
 	this->_attributeTarget = validOn;
 	return this;
 }
 
-System_CLSCompliantAttribute* System_CLSCompliantAttribute_CONSTRUCTOR__0(System_CLSCompliantAttribute* this, System_Boolean isCompliant)
+System_CLSCompliantAttribute* System_CLSCompliantAttribute_CONSTRUCTOR__0(System_Boolean isCompliant)
 {
+	System_CLSCompliantAttribute* this = CS2X_GC_New(sizeof(System_CLSCompliantAttribute));
 	memset(this, 0, sizeof(System_CLSCompliantAttribute));
 	this->_isCompliant = isCompliant;
 	return this;
@@ -636,8 +668,9 @@ System_Void System_Console_WriteLine__0(System_String* value)
 	wprintf(value->buffer);
 }
 
-System_FlagsAttribute* System_FlagsAttribute_CONSTRUCTOR__0(System_FlagsAttribute* this)
+System_FlagsAttribute* System_FlagsAttribute_CONSTRUCTOR__0()
 {
+	System_FlagsAttribute* this = CS2X_GC_New(sizeof(System_FlagsAttribute));
 	memset(this, 0, sizeof(System_FlagsAttribute));
 	return this;
 }
@@ -647,50 +680,58 @@ System_Collections_IEnumerator* System_Array_GetEnumerator__0(System_Array* this
 	return null;
 }
 
-System_Array* System_Array_CONSTRUCTOR__0(System_Array* this)
+System_Array* System_Array_CONSTRUCTOR__0()
 {
+	System_Array* this = CS2X_GC_New(sizeof(System_Array));
 	memset(this, 0, sizeof(System_Array));
 	return this;
 }
 
-System_CancelEventArgs* System_CancelEventArgs_CONSTRUCTOR__0(System_CancelEventArgs* this)
+System_CancelEventArgs* System_CancelEventArgs_CONSTRUCTOR__0()
 {
+	System_CancelEventArgs* this = CS2X_GC_New(sizeof(System_CancelEventArgs));
 	memset(this, 0, sizeof(System_CancelEventArgs));
 	return this;
 }
 
-System_Delegate* System_Delegate_CONSTRUCTOR__0(System_Delegate* this)
+System_Delegate* System_Delegate_CONSTRUCTOR__0()
 {
+	System_Delegate* this = CS2X_GC_New(sizeof(System_Delegate));
 	memset(this, 0, sizeof(System_Delegate));
 	return this;
 }
 
-System_Enum* System_Enum_CONSTRUCTOR__0(System_Enum* this)
+System_Enum* System_Enum_CONSTRUCTOR__0()
 {
+	System_Enum* this = CS2X_GC_New(sizeof(System_Enum));
 	memset(this, 0, sizeof(System_Enum));
 	return this;
 }
 
-System_EventArgs* System_EventArgs_CONSTRUCTOR__0(System_EventArgs* this)
+System_EventArgs* System_EventArgs_CONSTRUCTOR__0()
 {
+	System_EventArgs* this = CS2X_GC_New(sizeof(System_EventArgs));
 	memset(this, 0, sizeof(System_EventArgs));
 	return this;
 }
 
-System_Exception* System_Exception_CONSTRUCTOR__0(System_Exception* this)
+System_Exception* System_Exception_CONSTRUCTOR__0()
 {
+	System_Exception* this = CS2X_GC_New(sizeof(System_Exception));
 	memset(this, 0, sizeof(System_Exception));
 	return this;
 }
 
-System_Exception* System_Exception_CONSTRUCTOR__1(System_Exception* this, System_String* message)
+System_Exception* System_Exception_CONSTRUCTOR__1(System_String* message)
 {
+	System_Exception* this = CS2X_GC_New(sizeof(System_Exception));
 	memset(this, 0, sizeof(System_Exception));
 	return this;
 }
 
-System_MulticastDelegate* System_MulticastDelegate_CONSTRUCTOR__0(System_MulticastDelegate* this)
+System_MulticastDelegate* System_MulticastDelegate_CONSTRUCTOR__0()
 {
+	System_MulticastDelegate* this = CS2X_GC_New(sizeof(System_MulticastDelegate));
 	memset(this, 0, sizeof(System_MulticastDelegate));
 	return this;
 }
@@ -705,66 +746,76 @@ System_String* System_Object_ToString__0(System_Object* this)
 	return null;
 }
 
-System_Object* System_Object_CONSTRUCTOR__0(System_Object* this)
+System_Object* System_Object_CONSTRUCTOR__0()
 {
+	System_Object* this = CS2X_GC_New(sizeof(System_Object));
 	memset(this, 0, sizeof(System_Object));
 	return this;
 }
 
-System_ObsoleteAttribute* System_ObsoleteAttribute_CONSTRUCTOR__0(System_ObsoleteAttribute* this)
+System_ObsoleteAttribute* System_ObsoleteAttribute_CONSTRUCTOR__0()
 {
+	System_ObsoleteAttribute* this = CS2X_GC_New(sizeof(System_ObsoleteAttribute));
 	memset(this, 0, sizeof(System_ObsoleteAttribute));
 	return this;
 }
 
-System_ObsoleteAttribute* System_ObsoleteAttribute_CONSTRUCTOR__1(System_ObsoleteAttribute* this, System_String* message)
+System_ObsoleteAttribute* System_ObsoleteAttribute_CONSTRUCTOR__1(System_String* message)
 {
+	System_ObsoleteAttribute* this = CS2X_GC_New(sizeof(System_ObsoleteAttribute));
 	memset(this, 0, sizeof(System_ObsoleteAttribute));
 	this->_message = message;
 	return this;
 }
 
-System_ObsoleteAttribute* System_ObsoleteAttribute_CONSTRUCTOR__2(System_ObsoleteAttribute* this, System_String* message, System_Boolean error)
+System_ObsoleteAttribute* System_ObsoleteAttribute_CONSTRUCTOR__2(System_String* message, System_Boolean error)
 {
+	System_ObsoleteAttribute* this = CS2X_GC_New(sizeof(System_ObsoleteAttribute));
 	memset(this, 0, sizeof(System_ObsoleteAttribute));
 	this->_message = message;
 	this->_error = error;
 	return this;
 }
 
-System_ParamArrayAttribute* System_ParamArrayAttribute_CONSTRUCTOR__0(System_ParamArrayAttribute* this)
+System_ParamArrayAttribute* System_ParamArrayAttribute_CONSTRUCTOR__0()
 {
+	System_ParamArrayAttribute* this = CS2X_GC_New(sizeof(System_ParamArrayAttribute));
 	memset(this, 0, sizeof(System_ParamArrayAttribute));
 	return this;
 }
 
-System_String* System_String_CONSTRUCTOR__0(System_String* this, System_Char* value)
+System_String* System_String_CONSTRUCTOR__0(System_Char* value)
 {
+	System_String* this = CS2X_GC_New(sizeof(System_String));
 	memset(this, 0, sizeof(System_String));
 	this->buffer = value;
 	return this;
 }
 
-System_StringBuilder* System_StringBuilder_CONSTRUCTOR__0(System_StringBuilder* this)
+System_StringBuilder* System_StringBuilder_CONSTRUCTOR__0()
 {
+	System_StringBuilder* this = CS2X_GC_New(sizeof(System_StringBuilder));
 	memset(this, 0, sizeof(System_StringBuilder));
 	return this;
 }
 
-System_Type* System_Type_CONSTRUCTOR__0(System_Type* this)
+System_Type* System_Type_CONSTRUCTOR__0()
 {
+	System_Type* this = CS2X_GC_New(sizeof(System_Type));
 	memset(this, 0, sizeof(System_Type));
 	return this;
 }
 
-System_ValueType* System_ValueType_CONSTRUCTOR__0(System_ValueType* this)
+System_ValueType* System_ValueType_CONSTRUCTOR__0()
 {
+	System_ValueType* this = CS2X_GC_New(sizeof(System_ValueType));
 	memset(this, 0, sizeof(System_ValueType));
 	return this;
 }
 
-System_CodeDom_Compiler_GeneratedCodeAttribute* System_CodeDom_Compiler_GeneratedCodeAttribute_CONSTRUCTOR__0(System_CodeDom_Compiler_GeneratedCodeAttribute* this, System_String* tool, System_String* version)
+System_CodeDom_Compiler_GeneratedCodeAttribute* System_CodeDom_Compiler_GeneratedCodeAttribute_CONSTRUCTOR__0(System_String* tool, System_String* version)
 {
+	System_CodeDom_Compiler_GeneratedCodeAttribute* this = CS2X_GC_New(sizeof(System_CodeDom_Compiler_GeneratedCodeAttribute));
 	memset(this, 0, sizeof(System_CodeDom_Compiler_GeneratedCodeAttribute));
 	this->_tool = tool;
 	this->_version = version;
@@ -776,8 +827,9 @@ System_Collections_IEnumerator* System_Collections_ArrayList_GetEnumerator__0(Sy
 	return null;
 }
 
-System_Collections_ArrayList* System_Collections_ArrayList_CONSTRUCTOR__0(System_Collections_ArrayList* this)
+System_Collections_ArrayList* System_Collections_ArrayList_CONSTRUCTOR__0()
 {
+	System_Collections_ArrayList* this = CS2X_GC_New(sizeof(System_Collections_ArrayList));
 	memset(this, 0, sizeof(System_Collections_ArrayList));
 	return this;
 }
@@ -787,8 +839,9 @@ System_Collections_IEnumerator* System_Collections_Queue_GetEnumerator__0(System
 	return null;
 }
 
-System_Collections_Queue* System_Collections_Queue_CONSTRUCTOR__0(System_Collections_Queue* this)
+System_Collections_Queue* System_Collections_Queue_CONSTRUCTOR__0()
 {
+	System_Collections_Queue* this = CS2X_GC_New(sizeof(System_Collections_Queue));
 	memset(this, 0, sizeof(System_Collections_Queue));
 	return this;
 }
@@ -798,176 +851,202 @@ System_Collections_IEnumerator* System_Collections_Stack_GetEnumerator__0(System
 	return null;
 }
 
-System_Collections_Stack* System_Collections_Stack_CONSTRUCTOR__0(System_Collections_Stack* this)
+System_Collections_Stack* System_Collections_Stack_CONSTRUCTOR__0()
 {
+	System_Collections_Stack* this = CS2X_GC_New(sizeof(System_Collections_Stack));
 	memset(this, 0, sizeof(System_Collections_Stack));
 	return this;
 }
 
-System_ComponentModel_BrowsableAttribute* System_ComponentModel_BrowsableAttribute_CONSTRUCTOR__0(System_ComponentModel_BrowsableAttribute* this)
+System_ComponentModel_BrowsableAttribute* System_ComponentModel_BrowsableAttribute_CONSTRUCTOR__0()
 {
+	System_ComponentModel_BrowsableAttribute* this = CS2X_GC_New(sizeof(System_ComponentModel_BrowsableAttribute));
 	memset(this, 0, sizeof(System_ComponentModel_BrowsableAttribute));
 	return this;
 }
 
-System_ComponentModel_DependencyAttribute* System_ComponentModel_DependencyAttribute_CONSTRUCTOR__0(System_ComponentModel_DependencyAttribute* this)
+System_ComponentModel_DependencyAttribute* System_ComponentModel_DependencyAttribute_CONSTRUCTOR__0()
 {
+	System_ComponentModel_DependencyAttribute* this = CS2X_GC_New(sizeof(System_ComponentModel_DependencyAttribute));
 	memset(this, 0, sizeof(System_ComponentModel_DependencyAttribute));
 	return this;
 }
 
-System_ComponentModel_EditorBrowsableAttribute* System_ComponentModel_EditorBrowsableAttribute_CONSTRUCTOR__0(System_ComponentModel_EditorBrowsableAttribute* this, System_Int32 state)
+System_ComponentModel_EditorBrowsableAttribute* System_ComponentModel_EditorBrowsableAttribute_CONSTRUCTOR__0(System_Int32 state)
 {
+	System_ComponentModel_EditorBrowsableAttribute* this = CS2X_GC_New(sizeof(System_ComponentModel_EditorBrowsableAttribute));
 	memset(this, 0, sizeof(System_ComponentModel_EditorBrowsableAttribute));
 	this->_browsableState = state;
 	return this;
 }
 
-System_CS2X_NativeNameAttribute* System_CS2X_NativeNameAttribute_CONSTRUCTOR__0(System_CS2X_NativeNameAttribute* this, System_Int32 target, System_String* value)
+System_CS2X_NativeNameAttribute* System_CS2X_NativeNameAttribute_CONSTRUCTOR__0(System_Int32 target, System_String* value)
 {
+	System_CS2X_NativeNameAttribute* this = CS2X_GC_New(sizeof(System_CS2X_NativeNameAttribute));
 	memset(this, 0, sizeof(System_CS2X_NativeNameAttribute));
 	this->Target = target;
 	this->Value = value;
 	return this;
 }
 
-System_Diagnostics_ConditionalAttribute* System_Diagnostics_ConditionalAttribute_CONSTRUCTOR__0(System_Diagnostics_ConditionalAttribute* this, System_String* conditionString)
+System_Diagnostics_ConditionalAttribute* System_Diagnostics_ConditionalAttribute_CONSTRUCTOR__0(System_String* conditionString)
 {
+	System_Diagnostics_ConditionalAttribute* this = CS2X_GC_New(sizeof(System_Diagnostics_ConditionalAttribute));
 	memset(this, 0, sizeof(System_Diagnostics_ConditionalAttribute));
 	this->_conditionString = conditionString;
 	return this;
 }
 
-System_Diagnostics_Debug* System_Diagnostics_Debug_CONSTRUCTOR__0(System_Diagnostics_Debug* this)
+System_Diagnostics_Debug* System_Diagnostics_Debug_CONSTRUCTOR__0()
 {
+	System_Diagnostics_Debug* this = CS2X_GC_New(sizeof(System_Diagnostics_Debug));
 	memset(this, 0, sizeof(System_Diagnostics_Debug));
 	return this;
 }
 
-System_Diagnostics_CodeAnalysis_SuppressMessageAttribute* System_Diagnostics_CodeAnalysis_SuppressMessageAttribute_CONSTRUCTOR__0(System_Diagnostics_CodeAnalysis_SuppressMessageAttribute* this)
+System_Diagnostics_CodeAnalysis_SuppressMessageAttribute* System_Diagnostics_CodeAnalysis_SuppressMessageAttribute_CONSTRUCTOR__0()
 {
+	System_Diagnostics_CodeAnalysis_SuppressMessageAttribute* this = CS2X_GC_New(sizeof(System_Diagnostics_CodeAnalysis_SuppressMessageAttribute));
 	memset(this, 0, sizeof(System_Diagnostics_CodeAnalysis_SuppressMessageAttribute));
 	return this;
 }
 
-System_Globalization_CultureInfo* System_Globalization_CultureInfo_CONSTRUCTOR__0(System_Globalization_CultureInfo* this)
+System_Globalization_CultureInfo* System_Globalization_CultureInfo_CONSTRUCTOR__0()
 {
+	System_Globalization_CultureInfo* this = CS2X_GC_New(sizeof(System_Globalization_CultureInfo));
 	memset(this, 0, sizeof(System_Globalization_CultureInfo));
 	return this;
 }
 
-System_Globalization_NumberFormatInfo* System_Globalization_NumberFormatInfo_CONSTRUCTOR__0(System_Globalization_NumberFormatInfo* this)
+System_Globalization_NumberFormatInfo* System_Globalization_NumberFormatInfo_CONSTRUCTOR__0()
 {
+	System_Globalization_NumberFormatInfo* this = CS2X_GC_New(sizeof(System_Globalization_NumberFormatInfo));
 	memset(this, 0, sizeof(System_Globalization_NumberFormatInfo));
 	return this;
 }
 
-System_Reflection_AssemblyCompanyAttribute* System_Reflection_AssemblyCompanyAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyCompanyAttribute* this, System_String* company)
+System_Reflection_AssemblyCompanyAttribute* System_Reflection_AssemblyCompanyAttribute_CONSTRUCTOR__0(System_String* company)
 {
+	System_Reflection_AssemblyCompanyAttribute* this = CS2X_GC_New(sizeof(System_Reflection_AssemblyCompanyAttribute));
 	memset(this, 0, sizeof(System_Reflection_AssemblyCompanyAttribute));
 	this->_company = company;
 	return this;
 }
 
-System_Reflection_AssemblyConfigurationAttribute* System_Reflection_AssemblyConfigurationAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyConfigurationAttribute* this, System_String* configuration)
+System_Reflection_AssemblyConfigurationAttribute* System_Reflection_AssemblyConfigurationAttribute_CONSTRUCTOR__0(System_String* configuration)
 {
+	System_Reflection_AssemblyConfigurationAttribute* this = CS2X_GC_New(sizeof(System_Reflection_AssemblyConfigurationAttribute));
 	memset(this, 0, sizeof(System_Reflection_AssemblyConfigurationAttribute));
 	this->_configuration = configuration;
 	return this;
 }
 
-System_Reflection_AssemblyCopyrightAttribute* System_Reflection_AssemblyCopyrightAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyCopyrightAttribute* this, System_String* copyright)
+System_Reflection_AssemblyCopyrightAttribute* System_Reflection_AssemblyCopyrightAttribute_CONSTRUCTOR__0(System_String* copyright)
 {
+	System_Reflection_AssemblyCopyrightAttribute* this = CS2X_GC_New(sizeof(System_Reflection_AssemblyCopyrightAttribute));
 	memset(this, 0, sizeof(System_Reflection_AssemblyCopyrightAttribute));
 	this->_copyright = copyright;
 	return this;
 }
 
-System_Reflection_AssemblyCultureAttribute* System_Reflection_AssemblyCultureAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyCultureAttribute* this, System_String* culture)
+System_Reflection_AssemblyCultureAttribute* System_Reflection_AssemblyCultureAttribute_CONSTRUCTOR__0(System_String* culture)
 {
+	System_Reflection_AssemblyCultureAttribute* this = CS2X_GC_New(sizeof(System_Reflection_AssemblyCultureAttribute));
 	memset(this, 0, sizeof(System_Reflection_AssemblyCultureAttribute));
 	this->_culture = culture;
 	return this;
 }
 
-System_Reflection_AssemblyDelaySignAttribute* System_Reflection_AssemblyDelaySignAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyDelaySignAttribute* this, System_Boolean delaySign)
+System_Reflection_AssemblyDelaySignAttribute* System_Reflection_AssemblyDelaySignAttribute_CONSTRUCTOR__0(System_Boolean delaySign)
 {
+	System_Reflection_AssemblyDelaySignAttribute* this = CS2X_GC_New(sizeof(System_Reflection_AssemblyDelaySignAttribute));
 	memset(this, 0, sizeof(System_Reflection_AssemblyDelaySignAttribute));
 	this->_delaySign = delaySign;
 	return this;
 }
 
-System_Reflection_AssemblyDescriptionAttribute* System_Reflection_AssemblyDescriptionAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyDescriptionAttribute* this, System_String* description)
+System_Reflection_AssemblyDescriptionAttribute* System_Reflection_AssemblyDescriptionAttribute_CONSTRUCTOR__0(System_String* description)
 {
+	System_Reflection_AssemblyDescriptionAttribute* this = CS2X_GC_New(sizeof(System_Reflection_AssemblyDescriptionAttribute));
 	memset(this, 0, sizeof(System_Reflection_AssemblyDescriptionAttribute));
 	this->_description = description;
 	return this;
 }
 
-System_Reflection_AssemblyFileVersionAttribute* System_Reflection_AssemblyFileVersionAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyFileVersionAttribute* this, System_String* version)
+System_Reflection_AssemblyFileVersionAttribute* System_Reflection_AssemblyFileVersionAttribute_CONSTRUCTOR__0(System_String* version)
 {
+	System_Reflection_AssemblyFileVersionAttribute* this = CS2X_GC_New(sizeof(System_Reflection_AssemblyFileVersionAttribute));
 	memset(this, 0, sizeof(System_Reflection_AssemblyFileVersionAttribute));
 	this->_version = version;
 	return this;
 }
 
-System_Reflection_AssemblyInformationalVersionAttribute* System_Reflection_AssemblyInformationalVersionAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyInformationalVersionAttribute* this, System_String* informationalVersion)
+System_Reflection_AssemblyInformationalVersionAttribute* System_Reflection_AssemblyInformationalVersionAttribute_CONSTRUCTOR__0(System_String* informationalVersion)
 {
+	System_Reflection_AssemblyInformationalVersionAttribute* this = CS2X_GC_New(sizeof(System_Reflection_AssemblyInformationalVersionAttribute));
 	memset(this, 0, sizeof(System_Reflection_AssemblyInformationalVersionAttribute));
 	this->_informationalVersion = informationalVersion;
 	return this;
 }
 
-System_Reflection_AssemblyKeyFileAttribute* System_Reflection_AssemblyKeyFileAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyKeyFileAttribute* this, System_String* keyFile)
+System_Reflection_AssemblyKeyFileAttribute* System_Reflection_AssemblyKeyFileAttribute_CONSTRUCTOR__0(System_String* keyFile)
 {
+	System_Reflection_AssemblyKeyFileAttribute* this = CS2X_GC_New(sizeof(System_Reflection_AssemblyKeyFileAttribute));
 	memset(this, 0, sizeof(System_Reflection_AssemblyKeyFileAttribute));
 	this->_keyFile = keyFile;
 	return this;
 }
 
-System_Reflection_AssemblyProductAttribute* System_Reflection_AssemblyProductAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyProductAttribute* this, System_String* product)
+System_Reflection_AssemblyProductAttribute* System_Reflection_AssemblyProductAttribute_CONSTRUCTOR__0(System_String* product)
 {
+	System_Reflection_AssemblyProductAttribute* this = CS2X_GC_New(sizeof(System_Reflection_AssemblyProductAttribute));
 	memset(this, 0, sizeof(System_Reflection_AssemblyProductAttribute));
 	this->_product = product;
 	return this;
 }
 
-System_Reflection_AssemblyTitleAttribute* System_Reflection_AssemblyTitleAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyTitleAttribute* this, System_String* title)
+System_Reflection_AssemblyTitleAttribute* System_Reflection_AssemblyTitleAttribute_CONSTRUCTOR__0(System_String* title)
 {
+	System_Reflection_AssemblyTitleAttribute* this = CS2X_GC_New(sizeof(System_Reflection_AssemblyTitleAttribute));
 	memset(this, 0, sizeof(System_Reflection_AssemblyTitleAttribute));
 	this->_title = title;
 	return this;
 }
 
-System_Reflection_AssemblyTrademarkAttribute* System_Reflection_AssemblyTrademarkAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyTrademarkAttribute* this, System_String* trademark)
+System_Reflection_AssemblyTrademarkAttribute* System_Reflection_AssemblyTrademarkAttribute_CONSTRUCTOR__0(System_String* trademark)
 {
+	System_Reflection_AssemblyTrademarkAttribute* this = CS2X_GC_New(sizeof(System_Reflection_AssemblyTrademarkAttribute));
 	memset(this, 0, sizeof(System_Reflection_AssemblyTrademarkAttribute));
 	this->_trademark = trademark;
 	return this;
 }
 
-System_Reflection_AssemblyVersionAttribute* System_Reflection_AssemblyVersionAttribute_CONSTRUCTOR__0(System_Reflection_AssemblyVersionAttribute* this, System_String* version)
+System_Reflection_AssemblyVersionAttribute* System_Reflection_AssemblyVersionAttribute_CONSTRUCTOR__0(System_String* version)
 {
+	System_Reflection_AssemblyVersionAttribute* this = CS2X_GC_New(sizeof(System_Reflection_AssemblyVersionAttribute));
 	memset(this, 0, sizeof(System_Reflection_AssemblyVersionAttribute));
 	this->_version = version;
 	return this;
 }
 
-System_Reflection_DefaultMemberAttribute* System_Reflection_DefaultMemberAttribute_CONSTRUCTOR__0(System_Reflection_DefaultMemberAttribute* this, System_String* memberName)
+System_Reflection_DefaultMemberAttribute* System_Reflection_DefaultMemberAttribute_CONSTRUCTOR__0(System_String* memberName)
 {
+	System_Reflection_DefaultMemberAttribute* this = CS2X_GC_New(sizeof(System_Reflection_DefaultMemberAttribute));
 	memset(this, 0, sizeof(System_Reflection_DefaultMemberAttribute));
 	this->_memberName = memberName;
 	return this;
 }
 
-System_Runtime_CompilerServices_CompilerGeneratedAttribute* System_Runtime_CompilerServices_CompilerGeneratedAttribute_CONSTRUCTOR__0(System_Runtime_CompilerServices_CompilerGeneratedAttribute* this)
+System_Runtime_CompilerServices_CompilerGeneratedAttribute* System_Runtime_CompilerServices_CompilerGeneratedAttribute_CONSTRUCTOR__0()
 {
+	System_Runtime_CompilerServices_CompilerGeneratedAttribute* this = CS2X_GC_New(sizeof(System_Runtime_CompilerServices_CompilerGeneratedAttribute));
 	memset(this, 0, sizeof(System_Runtime_CompilerServices_CompilerGeneratedAttribute));
 	return this;
 }
 
-System_Runtime_InteropServices_OutAttribute* System_Runtime_InteropServices_OutAttribute_CONSTRUCTOR__0(System_Runtime_InteropServices_OutAttribute* this)
+System_Runtime_InteropServices_OutAttribute* System_Runtime_InteropServices_OutAttribute_CONSTRUCTOR__0()
 {
+	System_Runtime_InteropServices_OutAttribute* this = CS2X_GC_New(sizeof(System_Runtime_InteropServices_OutAttribute));
 	memset(this, 0, sizeof(System_Runtime_InteropServices_OutAttribute));
 	return this;
 }

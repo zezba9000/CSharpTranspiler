@@ -6,9 +6,10 @@ struct TestStruct
 {
 	public double x;
 
-	public TestStruct(double x)
+	public TestStruct(double y)
 	{
-		this.x = x;
+		this.x = y;
+		x = y;
 	}
 
 	public TestStruct NewMe()

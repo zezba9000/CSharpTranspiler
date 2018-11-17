@@ -382,18 +382,20 @@ namespace CS2X.Core.Emitters
 			string methodOverloadValue = (methodOverload != null) ? ("__" + methodOverload.Value) : "";
 			if (method.MethodKind == MethodKind.Constructor)
 			{
-				writer.Write($"{GetFullNameFlat(method.ContainingType)}* {GetFullNameFlat(method).Replace(".ctor", "CONSTRUCTOR")}{methodOverloadValue}(");
+				string typeName = GetFullNameFlat(method.ContainingType);
+				string ptr = method.ContainingType.IsValueType ? "" : "*";
+				writer.Write($"{typeName}{ptr} {typeName}_CONSTRUCTOR{methodOverloadValue}(");
 			}
 			else
 			{
 				writer.Write($"{GetNativeCTypeInstance(method.ReturnType)} {GetFullNameFlat(method)}{methodOverloadValue}(");
-			}
 
-			// if method and object are not static pass 'this' ref
-			if (!method.IsStatic && !method.ContainingType.IsStatic)
-			{
-				string paramEnd = (method.Parameters != null && method.Parameters.Length != 0) ? ", " : "";
-				writer.Write(string.Format("{0}* {1}{2}", GetFullNameFlat(method.ContainingType), thisKeyword, paramEnd));
+				// if method and object are not static pass 'this' ref
+				if (!method.IsStatic && !method.ContainingType.IsStatic)
+				{
+					string paramEnd = (method.Parameters != null && method.Parameters.Length != 0) ? ", " : "";
+					writer.Write(string.Format("{0}* {1}{2}", GetFullNameFlat(method.ContainingType), thisKeyword, paramEnd));
+				}
 			}
 
 			// write parameters
@@ -471,6 +473,7 @@ namespace CS2X.Core.Emitters
 				{
 					if (method.MethodKind == MethodKind.Constructor) isDefaultConstructor = true;
 					else continue;
+					if (isDefaultConstructor && obj.SpecialType == SpecialType.System_Void) continue;// don't generate void constructor
 				}
 
 				// get overload
@@ -488,7 +491,20 @@ namespace CS2X.Core.Emitters
 				if (writeBody)
 				{
 					writer.WriteLine(Environment.NewLine + '{');
-					if (method.MethodKind == MethodKind.Constructor && obj.TypeKind != TypeKind.Struct) writer.WriteLine($"\tmemset({thisKeyword}, 0, sizeof({GetFullNameFlat(obj)}));");
+					if (method.MethodKind == MethodKind.Constructor)
+					{
+						string typeName = GetFullNameFlat(obj);
+						if (obj.TypeKind == TypeKind.Struct)
+						{
+							writer.WriteLine($"\t{typeName} {thisKeyword};");
+							if (isDefaultConstructor) writer.WriteLine($"\tmemset(&{thisKeyword}, 0, sizeof({typeName}));");
+						}
+						else
+						{
+							writer.WriteLine($"\t{typeName}* {thisKeyword} = CS2X_GC_New(sizeof({typeName}));");
+							writer.WriteLine($"\tmemset({thisKeyword}, 0, sizeof({typeName}));");
+						}
+					}
 					if (!isDefaultConstructor) WriteMethodBody(method);
 					if (method.MethodKind == MethodKind.Constructor) writer.WriteLine("\treturn this;");// if constructor return allocated this ref
 					writer.WriteLine('}' + Environment.NewLine);
@@ -686,7 +702,8 @@ namespace CS2X.Core.Emitters
 			// write 'this' access if non static field
 			if (!isProperty && !symbolInfo.Symbol.IsStatic && !(symbolInfo.Symbol is ILocalSymbol || symbolInfo.Symbol is IParameterSymbol || symbolInfo.Symbol is IMethodSymbol))
 			{
-				writer.Write($"{thisKeyword}->");
+				if (activeMethod.MethodKind == MethodKind.Constructor && activeMethod.ContainingType.IsValueType) writer.Write($"{thisKeyword}.");
+				else writer.Write($"{thisKeyword}->");
 			}
 
 			// write symbol
@@ -729,8 +746,19 @@ namespace CS2X.Core.Emitters
 
 			// check caller access type
 			var symbolInfoAccessor = semanticModel.GetSymbolInfo(expression.Expression);
-			if (expression.Expression.GetType() != typeof(ThisExpressionSyntax) && IsResultValueType(symbolInfoAccessor.Symbol)) writer.Write('.');
-			else writer.Write("->");
+			if (expression.Expression.GetType() == typeof(ThisExpressionSyntax))
+			{
+				if (activeMethod.MethodKind == MethodKind.Constructor && activeMethod.ContainingType.IsValueType) writer.Write('.');
+				else writer.Write("->");
+			}
+			else if (IsResultValueType(symbolInfoAccessor.Symbol))
+			{
+				writer.Write('.');
+			}
+			else
+			{
+				writer.Write("->");
+			}
 
 			// write final symbol
 			WriteSymbolAccess(symbolInfo.Symbol);
@@ -810,11 +838,10 @@ namespace CS2X.Core.Emitters
 			int overloadIndex = GetMethodOverloadIndex((IMethodSymbol)symbolInfo.Symbol);
 			var typeSymbolInfo = semanticModel.GetSymbolInfo(expression.Type);
 			var typeSymbol = (ITypeSymbol)typeSymbolInfo.Symbol;
-			if (typeSymbol.IsValueType) writer.Write($"*{GetFullNameFlat(typeSymbol)}_CONSTRUCTOR__{overloadIndex}(&({GetFullNameFlat(typeSymbol)}){{0}}");
-			else writer.Write($"{GetFullNameFlat(typeSymbol)}_CONSTRUCTOR__{overloadIndex}(CS2X_GC_New(sizeof({GetFullNameFlat(typeSymbol)}))");
-			if (expression.ArgumentList.Arguments.Count != 0) writer.Write(", ");
+			writer.Write($"{GetFullNameFlat(typeSymbol)}_CONSTRUCTOR__{overloadIndex}");
 
 			// write arguments
+			writer.Write('(');
 			if (expression.ArgumentList != null) WriteArguments(expression.ArgumentList);
 			writer.Write(')');
 		}

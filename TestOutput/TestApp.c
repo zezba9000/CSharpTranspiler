@@ -86,23 +86,23 @@ System_Void TestApp_C_Program_set_i7(TestApp_C_Program* this, System_Single valu
 // =============
 // Method forward declares
 // =============
-TestStruct* TestStruct_CONSTRUCTOR__0(TestStruct* this, System_Double x);
+TestStruct TestStruct_CONSTRUCTOR__0(System_Double y);
 TestStruct TestStruct_NewMe__0(TestStruct* this);
-TestStruct* TestStruct_CONSTRUCTOR__1(TestStruct* this);
-TestClassE* TestClassE_CONSTRUCTOR__0(TestClassE* this, System_Int32 key, TestIn* testIn);
+TestStruct TestStruct_CONSTRUCTOR__1();
+TestClassE* TestClassE_CONSTRUCTOR__0(System_Int32 key, TestIn* testIn);
 System_Int32 TestClassE_Add__0(TestClassE* this, System_Int32 key);
 System_Int32 TestClassE_AddStatic__0(System_Int32 key);
 TestClassE* TestClassE_Get__0(TestClassE* this);
 System_Int32 TestIn_Add__0(TestIn* this, System_Int32 key);
 System_Void TestIn_SetMe__0(TestIn* this, TestClassE* s);
 TestClassE* TestIn_GetObj__0(TestIn* this);
-TestIn* TestIn_CONSTRUCTOR__0(TestIn* this);
+TestIn* TestIn_CONSTRUCTOR__0();
 System_Void MyPartial_Foo__0(MyPartial* this);
-MyPartial* MyPartial_CONSTRUCTOR__0(MyPartial* this);
-TestApp_Blaa_A2* TestApp_Blaa_A2_CONSTRUCTOR__0(TestApp_Blaa_A2* this);
-TestApp_C_MyBase* TestApp_C_MyBase_CONSTRUCTOR__0(TestApp_C_MyBase* this);
-TestApp_C_B* TestApp_C_B_CONSTRUCTOR__0(TestApp_C_B* this);
-TestApp_C_Program* TestApp_C_Program_CONSTRUCTOR__0(TestApp_C_Program* this);
+MyPartial* MyPartial_CONSTRUCTOR__0();
+TestApp_Blaa_A2* TestApp_Blaa_A2_CONSTRUCTOR__0();
+TestApp_C_MyBase* TestApp_C_MyBase_CONSTRUCTOR__0();
+TestApp_C_B* TestApp_C_B_CONSTRUCTOR__0();
+TestApp_C_Program* TestApp_C_Program_CONSTRUCTOR__0();
 TestApp_Blaa_A2* TestApp_C_Program_Foo__0();
 System_Void TestApp_C_Program_Main__0();
 TestApp_Blaa_A2* TestApp_C_Program_Foo__1(TestApp_C_Program* this, System_Int32 hi, System_String* by, System_String* by2);
@@ -150,24 +150,29 @@ System_Void TestApp_C_Program_set_i7(TestApp_C_Program* this, System_Single valu
 // =============
 // Methods
 // =============
-TestStruct* TestStruct_CONSTRUCTOR__0(TestStruct* this, System_Double x)
+TestStruct TestStruct_CONSTRUCTOR__0(System_Double y)
 {
-	this->x = x;
+	TestStruct this;
+	this.x = y;
+	this.x = y;
 	return this;
 }
 
 TestStruct TestStruct_NewMe__0(TestStruct* this)
 {
-	return *TestStruct_CONSTRUCTOR__1(&(TestStruct){0});
+	return TestStruct_CONSTRUCTOR__1();
 }
 
-TestStruct* TestStruct_CONSTRUCTOR__1(TestStruct* this)
+TestStruct TestStruct_CONSTRUCTOR__1()
 {
+	TestStruct this;
+	memset(&this, 0, sizeof(TestStruct));
 	return this;
 }
 
-TestClassE* TestClassE_CONSTRUCTOR__0(TestClassE* this, System_Int32 key, TestIn* testIn)
+TestClassE* TestClassE_CONSTRUCTOR__0(System_Int32 key, TestIn* testIn)
 {
+	TestClassE* this = CS2X_GC_New(sizeof(TestClassE));
 	memset(this, 0, sizeof(TestClassE));
 	TestClassE_Get__0(TestIn_GetObj__0(TestIn_singleton))->key = 123;
 	TestIn_set_GetObjProp(TestIn_singleton, null);
@@ -193,7 +198,7 @@ System_Int32 TestClassE_AddStatic__0(System_Int32 key)
 TestClassE* TestClassE_Get__0(TestClassE* this)
 {
 	return this;
-	return TestClassE_CONSTRUCTOR__0(CS2X_GC_New(sizeof(TestClassE)), 0, TestIn_CONSTRUCTOR__0(CS2X_GC_New(sizeof(TestIn))));
+	return TestClassE_CONSTRUCTOR__0(0, TestIn_CONSTRUCTOR__0());
 }
 
 System_Int32 TestIn_Add__0(TestIn* this, System_Int32 key)
@@ -210,8 +215,9 @@ TestClassE* TestIn_GetObj__0(TestIn* this)
 	return this->obj;
 }
 
-TestIn* TestIn_CONSTRUCTOR__0(TestIn* this)
+TestIn* TestIn_CONSTRUCTOR__0()
 {
+	TestIn* this = CS2X_GC_New(sizeof(TestIn));
 	memset(this, 0, sizeof(TestIn));
 	return this;
 }
@@ -221,32 +227,37 @@ System_Void MyPartial_Foo__0(MyPartial* this)
 	System_Int32 i = 0;
 }
 
-MyPartial* MyPartial_CONSTRUCTOR__0(MyPartial* this)
+MyPartial* MyPartial_CONSTRUCTOR__0()
 {
+	MyPartial* this = CS2X_GC_New(sizeof(MyPartial));
 	memset(this, 0, sizeof(MyPartial));
 	return this;
 }
 
-TestApp_Blaa_A2* TestApp_Blaa_A2_CONSTRUCTOR__0(TestApp_Blaa_A2* this)
+TestApp_Blaa_A2* TestApp_Blaa_A2_CONSTRUCTOR__0()
 {
+	TestApp_Blaa_A2* this = CS2X_GC_New(sizeof(TestApp_Blaa_A2));
 	memset(this, 0, sizeof(TestApp_Blaa_A2));
 	return this;
 }
 
-TestApp_C_MyBase* TestApp_C_MyBase_CONSTRUCTOR__0(TestApp_C_MyBase* this)
+TestApp_C_MyBase* TestApp_C_MyBase_CONSTRUCTOR__0()
 {
+	TestApp_C_MyBase* this = CS2X_GC_New(sizeof(TestApp_C_MyBase));
 	memset(this, 0, sizeof(TestApp_C_MyBase));
 	return this;
 }
 
-TestApp_C_B* TestApp_C_B_CONSTRUCTOR__0(TestApp_C_B* this)
+TestApp_C_B* TestApp_C_B_CONSTRUCTOR__0()
 {
+	TestApp_C_B* this = CS2X_GC_New(sizeof(TestApp_C_B));
 	memset(this, 0, sizeof(TestApp_C_B));
 	return this;
 }
 
-TestApp_C_Program* TestApp_C_Program_CONSTRUCTOR__0(TestApp_C_Program* this)
+TestApp_C_Program* TestApp_C_Program_CONSTRUCTOR__0()
 {
+	TestApp_C_Program* this = CS2X_GC_New(sizeof(TestApp_C_Program));
 	memset(this, 0, sizeof(TestApp_C_Program));
 	this->b += 1;
 	return this;
