@@ -59,26 +59,7 @@ void main()
 }
 
 ==============================================================
-Implement Beohm GC
+Implement FixedPoint math for devices that don't support float or have floating point hardware.
 
-char* ptr = 0;
-char* ptr2 = 0;
-void main()
-{
-	CS2X_GC_Init();
-	TestApp_C_Program_Main__0();
-	ptr = CS2X_GC_New(sizeof(char) * 1024 * 1024 * 1024);
-	ptr2 = CS2X_GC_New(sizeof(char) * 1024 * 1024 * 6);
-	memset(ptr, 0, sizeof(char) * 1024 * 1024 * 1024);
-	memset(ptr2, 0, sizeof(char) * 1024 * 1024 * 6);
-	size_t size = GC_get_free_bytes();
-	ptr = 0;
-	ptr2 = 0;
-	CS2X_GC_Collect();
-	size_t size2 = GC_get_free_bytes();
-	if (size == size2)
-	{
-		printf("Didn't remove memory");
-		return;
-	}
-}
+https://github.com/asik/FixedMath.Net/blob/master/src/Fix64.cs
+https://github.com/PetteriAimonen/libfixmath/blob/master/libfixmath/fix16_trig.c

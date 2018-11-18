@@ -57,7 +57,7 @@ namespace CS2X.Core.Emitters
 			/// <summary>
 			/// A freeware C compiler for 6502 based systems (https://www.cc65.org/)
 			/// </summary>
-			cc68
+			cc65
 		}
 
 		public enum PlatformTypes
@@ -149,9 +149,11 @@ namespace CS2X.Core.Emitters
 			this.gc = gc;
 
 			// validate compiler option compatibility
+			if (target == CompilerTargets.cc65) throw new NotImplementedException("cc65 compiler requires float to FixedPoint convertion. TODO");
+
 			if (cVersion == CVersions.c99)
 			{
-				if (target == CompilerTargets.cc68) throw new Exception("cc65 isn't fully c99 compliant and thus must be used with c89");
+				if (target == CompilerTargets.cc65) throw new Exception("cc65 isn't fully c99 compliant and thus must be used with c89");
 			}
 
 			if (platform == PlatformTypes.EmbeddedCpp)
