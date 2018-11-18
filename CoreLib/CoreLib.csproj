@@ -37,6 +37,7 @@
     <Compile Include="Attribute.cs" />
     <Compile Include="AttributeTargets.cs" />
     <Compile Include="AttributeUsageAttribute.cs" />
+    <Compile Include="Buffer.cs" />
     <Compile Include="CLSCompliantAttribute.cs" />
     <Compile Include="CodeDom\Compiler\GeneratedCodeAttribute.cs" />
     <Compile Include="Collections\ArrayList.cs" />
@@ -65,6 +66,7 @@
     <Compile Include="Diagnostics\Debug.cs" />
     <Compile Include="Diagnostics\SuppressMessageAttribute.cs" />
     <Compile Include="FlagsAttribute.cs" />
+    <Compile Include="GC.cs" />
     <Compile Include="Globalization\CultureInfo.cs" />
     <Compile Include="Globalization\NumberFormatInfo.cs" />
     <Compile Include="Action.cs" />

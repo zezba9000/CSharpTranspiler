@@ -602,6 +602,10 @@ namespace CS2X.Core.Emitters
 				var syntax = (ConstructorDeclarationSyntax)syntaxDeclaration;
 				body = syntax.Body;
 			}
+			else if (syntaxDeclaration is ConversionOperatorDeclarationSyntax)
+			{
+				// TODO
+			}
 			else
 			{
 				throw new Exception("Unsupported method syntax type: " + syntaxDeclaration.GetType());
@@ -719,6 +723,7 @@ namespace CS2X.Core.Emitters
 			else if (expression is ParenthesizedExpressionSyntax) WriteParenthesizedExpression((ParenthesizedExpressionSyntax)expression);
 			else if (expression is InvocationExpressionSyntax) WriteInvocationExpression((InvocationExpressionSyntax)expression);
 			else if (expression is ObjectCreationExpressionSyntax) WriteObjectCreationExpression((ObjectCreationExpressionSyntax)expression);
+			else if (expression is SizeOfExpressionSyntax) WriteSizeOfExpression((SizeOfExpressionSyntax)expression);
 			else throw new NotImplementedException("Unsuported expression type: " + expression.GetType());
 		}
 
@@ -849,7 +854,6 @@ namespace CS2X.Core.Emitters
 				WriteSymbolAccess(symbolInfo.Symbol);
 				return;
 			}
-			
 
 			// write caller expression
 			WriteExperesion(expression.Expression);
@@ -890,8 +894,16 @@ namespace CS2X.Core.Emitters
 				}
 				else
 				{
-					if (value.Value is string) writer.Write($"L\"{value.Value}\"");
-					else writer.Write(value.Value);
+					if (value.Value is string)
+					{
+						int index = GetMethodOverloadIndex(project.compilation.GetSpecialType(SpecialType.System_String), "char*");
+						writer.Write($"System_String_CONSTRUCTOR__{index}(L\"{value.Value}\")");
+					}
+					else
+					{
+						writer.Write(value.Value);
+					}
+
 					if (value.Value is float) writer.Write('f');
 				}
 			}
@@ -904,7 +916,7 @@ namespace CS2X.Core.Emitters
 		private void WriteCastExpression(CastExpressionSyntax expression)
 		{
 			var symbolInfo = semanticModel.GetSymbolInfo(expression.Type);
-			writer.Write($"({GetFullNameFlat(symbolInfo.Symbol)})");
+			writer.Write($"({GetNativeCTypeInstance((ITypeSymbol)symbolInfo.Symbol)})");
 			WriteExperesion(expression.Expression);
 		}
 
@@ -959,6 +971,12 @@ namespace CS2X.Core.Emitters
 			writer.Write('(');
 			if (expression.ArgumentList != null) WriteArguments(expression.ArgumentList);
 			writer.Write(')');
+		}
+
+		private void WriteSizeOfExpression(SizeOfExpressionSyntax expression)
+		{
+			var symbolInfo = semanticModel.GetSymbolInfo(expression.Type);
+			writer.Write($"sizeof({GetFullNameFlat(symbolInfo.Symbol)})");
 		}
 		#endregion
 	}

@@ -136,13 +136,14 @@ namespace TestApp.C
 			static A2 Foo()
 			{
 				int[] boo;
-				string myString = "Hello World!";
+				string myString = "Blaa!";
 				Console.WriteLine(myString);
 				return a;
 			}
 
 			static void Main()
 			{
+				Console.WriteLine("Hello World!");
 				C.B.Program.i = 888;
 				Program.i = 999;
 				i = 22;

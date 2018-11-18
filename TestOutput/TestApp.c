@@ -154,19 +154,16 @@ System_Void TestApp_C_Program_set_i7(TestApp_C_Program* this, System_Single valu
 TestStruct TestStruct_CONSTRUCTOR__0(System_Double y)
 {
 	TestStruct this = {0};
-	System_Int32 i;
 	this.x = y;
-	i = 1;
+	System_Int32 i = 1;
 	if (y == 0) ;
 	else if (y == 1) this.x = y;
 	else if (y == 2)
 	{
 		if (true)
 		{
-			System_Int32 i3;
-			System_Int32 i2;
-			i3 = TestStruct_Foo__0(&this);
-			i2 = 1;
+			System_Int32 i3 = TestStruct_Foo__0(&this);
+			System_Int32 i2 = 1;
 			this.x = y + i + i2;
 		}
 	}
@@ -241,8 +238,7 @@ TestIn* TestIn_CONSTRUCTOR__0()
 
 System_Void MyPartial_Foo__0(MyPartial* this)
 {
-	System_Int32 i;
-	i = 0;
+	System_Int32 i = 0;
 }
 
 MyPartial* MyPartial_CONSTRUCTOR__0()
@@ -279,29 +275,26 @@ TestApp_C_Program* TestApp_C_Program_CONSTRUCTOR__0()
 TestApp_Blaa_A2* TestApp_C_Program_Foo__0()
 {
 	System_Array* boo;
-	System_String* myString;
-	boo;
-	myString = L"Hello World!";
+	System_String* myString = System_String_CONSTRUCTOR__0(L"Blaa!");
 	System_Console_WriteLine__0(myString);
 	return TestApp_C_Program_a;
 }
 
 System_Void TestApp_C_Program_Main__0()
 {
-	System_Int32 abc;
+	System_Console_WriteLine__0(System_String_CONSTRUCTOR__0(L"Hello World!"));
 	TestApp_C_Program_i = 888;
 	TestApp_C_Program_i = 999;
 	TestApp_C_Program_i = 22;
 	TestApp_C_Program_set_i2(0);
 	TestApp_C_Program_set_i2(1);
-	abc = 44;
+	System_Int32 abc = 44;
 	abc = 33;
 }
 
 TestApp_Blaa_A2* TestApp_C_Program_Foo__1(TestApp_C_Program* this, System_Int32 hi, System_String* by, System_String* by2)
 {
-	System_Int32 foo2;
-	foo2 = hi + this->baseInt;
+	System_Int32 foo2 = hi + this->baseInt;
 	foo2 = hi;
 	foo2 = this->baseInt;
 	return TestApp_C_Program_a;
@@ -309,8 +302,7 @@ TestApp_Blaa_A2* TestApp_C_Program_Foo__1(TestApp_C_Program* this, System_Int32 
 
 System_Void TestApp_C_Program_Yahoo__0(TestApp_C_Program* this, TestApp_C_Program* p)
 {
-	System_Single val;
-	val = TestApp_C_Program_get_i6(this);
+	System_Single val = TestApp_C_Program_get_i6(this);
 }
 
 // =============

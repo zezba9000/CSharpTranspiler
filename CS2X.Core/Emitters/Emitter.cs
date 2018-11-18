@@ -119,17 +119,25 @@ namespace CS2X.Core.Emitters
 			return false;
 		}
 
-		protected string GetNativeName(ISymbol obj, string defaultValue)
+		protected AttributeData GetAttribute(ISymbol obj, string attributeName)
 		{
 			foreach (var attribute in obj.GetAttributes())
 			{
-				if (attribute.AttributeClass.Name != "NativeNameAttribute") continue;
-				var args = attribute.ConstructorArguments;
-				if (args != null && args.Length == 2 && (NativeTargets)args[0].Value == target)
-				{
-					defaultValue = (string)args[1].Value;
-					break;
-				}
+				if (attribute.AttributeClass.Name != attributeName) continue;
+				return attribute;
+			}
+
+			return null;
+		}
+
+		protected string GetNativeName(ISymbol obj, string defaultValue)
+		{
+			var attribute = GetAttribute(obj, "NativeNameAttribute");
+			if (attribute == null) return defaultValue;
+			var args = attribute.ConstructorArguments;
+			if (args != null && args.Length == 2 && (NativeTargets)args[0].Value == target)
+			{
+				return (string)args[1].Value;
 			}
 
 			return defaultValue;
@@ -182,7 +190,42 @@ namespace CS2X.Core.Emitters
 
 			return overload;
 		}
-		
+
+		protected int GetMethodOverloadIndex(INamedTypeSymbol obj, params string[] methodParameterTypes)
+		{
+			var method = FindMethodWithParameters(obj, methodParameterTypes);
+			if (method == null) return 0;
+			return GetMethodOverloadIndex(method);
+		}
+
+		protected IMethodSymbol FindMethodWithParameters(INamedTypeSymbol obj, params string[] methodParameterTypes)
+		{
+			foreach (var member in obj.GetMembers())
+			{
+				if (member.Kind != SymbolKind.Method) continue;
+				var method = (IMethodSymbol)member;
+				var parms = method.Parameters;
+				if (parms.Length == methodParameterTypes.Length)
+				{
+					bool found = true;
+					for (int i = 0; i != methodParameterTypes.Length; ++i)
+					{
+						string pType = methodParameterTypes[i];
+						var parm = parms[i].Type.ToString();
+						if (parm != pType)
+						{
+							found = false;
+							break;
+						}
+					}
+
+					if (found) return method;
+				}
+			}
+
+			return null;
+		}
+
 		protected List<LocalDeclarationStatementSyntax> GetStackVariables(BlockSyntax body)
 		{
 			var nodes = new List<LocalDeclarationStatementSyntax>();

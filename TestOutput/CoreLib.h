@@ -25,7 +25,7 @@ typedef double System_Double;
 typedef __int16 System_Int16;
 typedef __int32 System_Int32;
 typedef __int64 System_Int64;
-typedef size_t System_IntPtr;
+typedef struct System_IntPtr System_IntPtr;
 typedef EMPTY_OBJECT System_RuntimeFieldHandle;
 typedef EMPTY_OBJECT System_RuntimeTypeHandle;
 typedef __int8 System_SByte;
@@ -33,14 +33,16 @@ typedef float System_Single;
 typedef unsigned __int16 System_UInt16;
 typedef unsigned __int32 System_UInt32;
 typedef unsigned __int64 System_UInt64;
-typedef size_t System_UIntPtr;
+typedef struct System_UIntPtr System_UIntPtr;
 typedef void System_Void;
 typedef struct System_Collections_DictionaryEntry System_Collections_DictionaryEntry;
 typedef EMPTY_OBJECT System_Attribute;
 typedef struct System_AttributeUsageAttribute System_AttributeUsageAttribute;
+typedef EMPTY_OBJECT System_Buffer;
 typedef struct System_CLSCompliantAttribute System_CLSCompliantAttribute;
 typedef EMPTY_OBJECT System_Console;
 typedef EMPTY_OBJECT System_FlagsAttribute;
+typedef EMPTY_OBJECT System_GC;
 typedef struct System_Array System_Array;
 typedef EMPTY_OBJECT System_CancelEventArgs;
 typedef EMPTY_OBJECT System_Delegate;
@@ -114,6 +116,16 @@ typedef EMPTY_OBJECT System_Runtime_InteropServices_OutAttribute;
 
 #define System_CS2X_NativeTargets_C 0
 
+struct System_IntPtr
+{
+	System_Void* ptr;
+};
+
+struct System_UIntPtr
+{
+	System_Void* ptr;
+};
+
 struct System_Collections_DictionaryEntry
 {
 	System_Object* Key;
@@ -145,6 +157,7 @@ struct System_ObsoleteAttribute
 
 struct System_String
 {
+	System_Int32 Length;
 	System_Char* buffer;
 };
 
@@ -285,7 +298,11 @@ System_Double System_Double_CONSTRUCTOR__0();
 System_Int16 System_Int16_CONSTRUCTOR__0();
 System_Int32 System_Int32_CONSTRUCTOR__0();
 System_Int64 System_Int64_CONSTRUCTOR__0();
-System_IntPtr System_IntPtr_CONSTRUCTOR__0();
+System_IntPtr System_IntPtr_CONSTRUCTOR__0(System_Int32 value);
+System_IntPtr System_IntPtr_op_Explicit__0(System_Int32 value);
+System_Int32 System_IntPtr_op_Explicit__1(System_IntPtr value);
+System_Int32 System_IntPtr_ToInt32__0(System_IntPtr* this);
+System_IntPtr System_IntPtr_CONSTRUCTOR__1();
 System_RuntimeFieldHandle System_RuntimeFieldHandle_CONSTRUCTOR__0();
 System_RuntimeTypeHandle System_RuntimeTypeHandle_CONSTRUCTOR__0();
 System_SByte System_SByte_CONSTRUCTOR__0();
@@ -293,11 +310,16 @@ System_Single System_Single_CONSTRUCTOR__0();
 System_UInt16 System_UInt16_CONSTRUCTOR__0();
 System_UInt32 System_UInt32_CONSTRUCTOR__0();
 System_UInt64 System_UInt64_CONSTRUCTOR__0();
-System_UIntPtr System_UIntPtr_CONSTRUCTOR__0();
+System_UIntPtr System_UIntPtr_CONSTRUCTOR__0(System_UInt32 value);
+System_UIntPtr System_UIntPtr_op_Explicit__0(System_UInt32 value);
+System_UInt32 System_UIntPtr_op_Explicit__1(System_UIntPtr value);
+System_UInt32 System_UIntPtr_ToUInt32__0(System_UIntPtr* this);
+System_UIntPtr System_UIntPtr_CONSTRUCTOR__1();
 System_Collections_DictionaryEntry System_Collections_DictionaryEntry_CONSTRUCTOR__0(System_Object* key, System_Object* value);
 System_Collections_DictionaryEntry System_Collections_DictionaryEntry_CONSTRUCTOR__1();
 System_Attribute* System_Attribute_CONSTRUCTOR__0();
 System_AttributeUsageAttribute* System_AttributeUsageAttribute_CONSTRUCTOR__0(System_Int32 validOn);
+System_Void System_Buffer_BlockCopy__0(System_Array* src, System_Int32 srcOffset, System_Array* dst, System_Int32 dstOffset, System_Int32 count);
 System_CLSCompliantAttribute* System_CLSCompliantAttribute_CONSTRUCTOR__0(System_Boolean isCompliant);
 System_Void System_Console_WriteLine__0(System_String* value);
 System_FlagsAttribute* System_FlagsAttribute_CONSTRUCTOR__0();
@@ -557,7 +579,27 @@ System_Int64 System_Int64_CONSTRUCTOR__0()
 	return this;
 }
 
-System_IntPtr System_IntPtr_CONSTRUCTOR__0()
+System_IntPtr System_IntPtr_CONSTRUCTOR__0(System_Int32 value)
+{
+	System_IntPtr this = {0};
+	this.ptr = (System_Void*)value;
+	return this;
+}
+
+System_IntPtr System_IntPtr_op_Explicit__0(System_Int32 value)
+{
+}
+
+System_Int32 System_IntPtr_op_Explicit__1(System_IntPtr value)
+{
+}
+
+System_Int32 System_IntPtr_ToInt32__0(System_IntPtr* this)
+{
+	return (System_Int32)this;
+}
+
+System_IntPtr System_IntPtr_CONSTRUCTOR__1()
 {
 	System_IntPtr this = {0};
 	return this;
@@ -605,7 +647,27 @@ System_UInt64 System_UInt64_CONSTRUCTOR__0()
 	return this;
 }
 
-System_UIntPtr System_UIntPtr_CONSTRUCTOR__0()
+System_UIntPtr System_UIntPtr_CONSTRUCTOR__0(System_UInt32 value)
+{
+	System_UIntPtr this = {0};
+	this.ptr = (System_Void*)value;
+	return this;
+}
+
+System_UIntPtr System_UIntPtr_op_Explicit__0(System_UInt32 value)
+{
+}
+
+System_UInt32 System_UIntPtr_op_Explicit__1(System_UIntPtr value)
+{
+}
+
+System_UInt32 System_UIntPtr_ToUInt32__0(System_UIntPtr* this)
+{
+	return (System_UInt32)this;
+}
+
+System_UIntPtr System_UIntPtr_CONSTRUCTOR__1()
 {
 	System_UIntPtr this = {0};
 	return this;
@@ -636,6 +698,10 @@ System_AttributeUsageAttribute* System_AttributeUsageAttribute_CONSTRUCTOR__0(Sy
 	System_AttributeUsageAttribute* this = CS2X_GC_New(sizeof(System_AttributeUsageAttribute));
 	this->_attributeTarget = validOn;
 	return this;
+}
+
+System_Void System_Buffer_BlockCopy__0(System_Array* src, System_Int32 srcOffset, System_Array* dst, System_Int32 dstOffset, System_Int32 count)
+{
 }
 
 System_CLSCompliantAttribute* System_CLSCompliantAttribute_CONSTRUCTOR__0(System_Boolean isCompliant)
@@ -755,7 +821,10 @@ System_ParamArrayAttribute* System_ParamArrayAttribute_CONSTRUCTOR__0()
 System_String* System_String_CONSTRUCTOR__0(System_Char* value)
 {
 	System_String* this = CS2X_GC_New(sizeof(System_String));
-	this->buffer = value;
+	this->Length = wcslen(value);
+	System_Void* size = (System_Void*)(this->Length * sizeof(System_Char));
+	this->buffer = (System_Char*)CS2X_GC_NewAtomic(size);
+	memcpy(this->buffer, value, size);
 	return this;
 }
 
