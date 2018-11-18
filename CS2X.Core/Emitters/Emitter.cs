@@ -182,35 +182,44 @@ namespace CS2X.Core.Emitters
 
 			return overload;
 		}
-
-		/*protected List<ISymbol> GetAllBodyStackAllocations(BlockSyntax body)
+		
+		protected List<LocalDeclarationStatementSyntax> GetStackVariables(BlockSyntax body)
 		{
-			var locals = new List<ISymbol>();
-			var walker = new BodySyntaxWalker();
-			walker.Visit(body);
-			return locals;
-		}*/
+			var nodes = new List<LocalDeclarationStatementSyntax>();
+			foreach (var member in body.Statements)
+			{
+				if (member is LocalDeclarationStatementSyntax) nodes.Add((LocalDeclarationStatementSyntax)member);
+			}
+			return nodes;
+		}
+
+		protected List<LocalDeclarationStatementSyntax> GetAllStackVariables(BlockSyntax body)
+		{
+			var bodyLocalDeclarationsSyntaxWalker = new BodyLocalDeclarationsSyntaxWalker();
+			bodyLocalDeclarationsSyntaxWalker.Visit(body);
+			return bodyLocalDeclarationsSyntaxWalker.nodes;
+		}
 	}
 
-	/*class BodySyntaxWalker : CSharpSyntaxWalker
+	class BodyLocalDeclarationsSyntaxWalker : CSharpSyntaxWalker
 	{
-		public List<CSharpSyntaxNode> stackAllocations;
+		public List<LocalDeclarationStatementSyntax> nodes;
 
-		public BodySyntaxWalker()
+		public BodyLocalDeclarationsSyntaxWalker()
 		{
-			stackAllocations = new List<CSharpSyntaxNode>();
+			nodes = new List<LocalDeclarationStatementSyntax>();
+		}
+
+		public override void Visit(SyntaxNode node)
+		{
+			nodes.Clear();
+			base.Visit(node);
 		}
 
 		public override void VisitLocalDeclarationStatement(LocalDeclarationStatementSyntax node)
 		{
-			stackAllocations.Add(node);
+			nodes.Add(node);
 			base.VisitLocalDeclarationStatement(node);
 		}
-
-		public override void VisitObjectCreationExpression(ObjectCreationExpressionSyntax node)
-		{
-			stackAllocations.Add(node);
-			base.VisitObjectCreationExpression(node);
-		}
-	}*/
+	}
 }

@@ -19,22 +19,45 @@ namespace CS2X.Core.Emitters
 	public class EmitterC : Emitter
 	{
 		#region Enums
+		public enum CVersions
+		{
+			/// <summary>
+			/// Should compile on almost any C compiler
+			/// </summary>
+			c89,
+
+			/// <summary>
+			/// Helps keeps objects more 1 to 1 with C# but doesn't compile on more obscure compilers
+			/// </summary>
+			c99
+		}
+
 		public enum CompilerTargets
 		{
 			/// <summary>
-			/// Visual C
+			/// Don't try handle any C compiler edge case (just output C)
+			/// </summary>
+			Unspecified,
+
+			/// <summary>
+			/// Visual C (https://visualstudio.microsoft.com/)
 			/// </summary>
 			VC,
 
 			/// <summary>
-			/// GNU Compiler Collection
+			/// GNU Compiler Collection (https://gcc.gnu.org/)
 			/// </summary>
 			GCC,
 
 			/// <summary>
-			/// C language family frontend for LLVM
+			/// C language family frontend for LLVM (https://clang.llvm.org/)
 			/// </summary>
-			Clang
+			Clang,
+
+			/// <summary>
+			/// A freeware C compiler for 6502 based systems (https://www.cc65.org/)
+			/// </summary>
+			cc68
 		}
 
 		public enum PlatformTypes
@@ -42,19 +65,25 @@ namespace CS2X.Core.Emitters
 			/// <summary>
 			/// Exe projects are output as .c files while dll projects as .h headers
 			/// </summary>
-			Desktop,
+			Standalone,
 
 			/// <summary>
-			/// Exe projects are output as .ino files in name-matched folders containing all dependancy headers
-			/// void Main' is output as 'void setup'
-			/// </summary>
-			Arduino,
-
-			/// <summary>
-			/// Exe projects are output as headers
+			/// Exe projects are output as headers to be compiled in a C compiler
 			/// 'void Main' is output as 'void ExeMain'
 			/// </summary>
-			Embedded
+			EmbeddedC,
+
+			/// <summary>
+			/// Exe projects are output as headers to be compiled in a C++ compiler
+			/// 'void Main' is output as 'void ExeMain'
+			/// </summary>
+			EmbeddedCpp,
+
+			/// <summary>
+			/// Exe projects are output as .ino files in name-matched folders while dll projects as .h headers
+			/// void Main' is output as 'void setup'
+			/// </summary>
+			Arduino
 		}
 
 		public enum GCTypes
@@ -84,10 +113,12 @@ namespace CS2X.Core.Emitters
 		}
 		#endregion
 
+		public readonly CVersions cVersion;
 		public readonly CompilerTargets target;
 		public readonly PlatformTypes platform;
 		public readonly GCTypes gc;
-		private readonly string thisKeyword = "this";
+		private readonly string thisKeyword, nullKeyword, trueKeyword, falseKeyword;
+		private readonly bool isCppEnviroment;
 
 		/// <summary>
 		/// Active project
@@ -109,13 +140,44 @@ namespace CS2X.Core.Emitters
 		/// </summary>
 		private SemanticModel semanticModel;
 
-		public EmitterC(CoreSolution solution, string outputPath, CompilerTargets target, PlatformTypes platform, GCTypes gc, string thisKeyword = "this")
+		public EmitterC(CoreSolution solution, string outputPath, CVersions cVersion, CompilerTargets target, PlatformTypes platform, GCTypes gc)
 		: base(solution, outputPath, NativeTargets.C)
 		{
+			this.cVersion = cVersion;
 			this.target = target;
 			this.platform = platform;
 			this.gc = gc;
-			this.thisKeyword = thisKeyword;
+
+			// validate compiler option compatibility
+			if (cVersion == CVersions.c99)
+			{
+				if (target == CompilerTargets.cc68) throw new Exception("cc65 isn't fully c99 compliant and thus must be used with c89");
+			}
+
+			if (platform == PlatformTypes.EmbeddedCpp)
+			{
+				isCppEnviroment = true;
+			}
+			else if (platform == PlatformTypes.Arduino)
+			{
+				isCppEnviroment = true;
+				if (gc != GCTypes.Micro) throw new Exception("Only 'micro' gc supported on Arduino platform");
+			}
+
+			thisKeyword = "this";
+			nullKeyword = "null";
+			trueKeyword = "true";
+			falseKeyword = "false";
+			if (isCppEnviroment)
+			{
+				PrefixCppKeyword(ref thisKeyword);
+				PrefixCppKeyword(ref nullKeyword);
+			}
+		}
+
+		private void PrefixCppKeyword(ref string keyword)
+		{
+			keyword = "__" + keyword;
 		}
 
 		public override void Emit(bool clean)
@@ -152,7 +214,12 @@ namespace CS2X.Core.Emitters
 							default: throw new Exception("Unsuported GC: " + gc);
 						}
 						
-						writer.WriteLine("#define null 0");
+						writer.WriteLine($"#define {nullKeyword} 0");
+						if (!isCppEnviroment)
+						{
+							writer.WriteLine($"#define {trueKeyword} 1");
+							writer.WriteLine($"#define {falseKeyword} 0");
+						}
 					}
 					writer.WriteLine("#define EMPTY_OBJECT void*");
 					writer.WriteLine();
@@ -200,7 +267,7 @@ namespace CS2X.Core.Emitters
 				foreach (var obj in project.classObjects) WriteObjectMethods(obj, true);
 
 				// write entry point
-				if (project.type == ProjectTypes.Exe && platform == PlatformTypes.Desktop)
+				if (project.type == ProjectTypes.Exe && platform == PlatformTypes.Standalone)
 				{
 					writer.WriteLine(string.Format("// ============={0}// Entry Point{0}// =============", Environment.NewLine));
 					var entryPointMethod = project.compilation.GetEntryPoint(CancellationToken.None);
@@ -494,19 +561,11 @@ namespace CS2X.Core.Emitters
 					if (method.MethodKind == MethodKind.Constructor)
 					{
 						string typeName = GetFullNameFlat(obj);
-						if (obj.TypeKind == TypeKind.Struct)
-						{
-							writer.WriteLine($"\t{typeName} {thisKeyword};");
-							if (isDefaultConstructor) writer.WriteLine($"\tmemset(&{thisKeyword}, 0, sizeof({typeName}));");
-						}
-						else
-						{
-							writer.WriteLine($"\t{typeName}* {thisKeyword} = CS2X_GC_New(sizeof({typeName}));");
-							writer.WriteLine($"\tmemset({thisKeyword}, 0, sizeof({typeName}));");
-						}
+						if (obj.TypeKind == TypeKind.Struct) writer.WriteLine($"\t{typeName} {thisKeyword} = {{0}};");
+						else writer.WriteLine($"\t{typeName}* {thisKeyword} = CS2X_GC_New(sizeof({typeName}));");
 					}
 					if (!isDefaultConstructor) WriteMethodBody(method);
-					if (method.MethodKind == MethodKind.Constructor) writer.WriteLine("\treturn this;");// if constructor return allocated this ref
+					if (method.MethodKind == MethodKind.Constructor) writer.WriteLine($"\treturn {thisKeyword};");// if constructor return allocated this ref
 					writer.WriteLine('}' + Environment.NewLine);
 				}
 				else
@@ -550,21 +609,37 @@ namespace CS2X.Core.Emitters
 			{
 				activeMethod = method;
 				semanticModel = project.compilation.GetSemanticModel(syntaxDeclaration.SyntaxTree);
-				WriteBlockSyntax(body);
+				WriteBlockSyntax(body, false);
 			}
 		}
 
-		private void WriteBlockSyntax(BlockSyntax body)
+		private void WriteBlockStartStackVariables(BlockSyntax block)
 		{
-			StreamWriterEx.prefix = "\t";
-			foreach (var statement in body.Statements)
+			foreach (var variable in GetStackVariables(block))
 			{
-				if (statement is ExpressionStatementSyntax) WriteExpressionStatement((ExpressionStatementSyntax)statement);
-				else if (statement is ReturnStatementSyntax) WriteReturnStatement((ReturnStatementSyntax)statement);
-				else if (statement is LocalDeclarationStatementSyntax) WriteLocalDeclarationStatement((LocalDeclarationStatementSyntax)statement);
-				else throw new NotImplementedException("Unsuported statement type: " + statement.GetType());
+				WriteLocalDeclarationStatement(variable, false);
 			}
-			StreamWriterEx.prefix = "";
+		}
+
+		private void WriteBlockSyntax(BlockSyntax block, bool writeBrackets)
+		{
+			if (writeBrackets) writer.WriteLinePrefix('{');
+			StreamWriterEx.Tab();
+			if (cVersion == CVersions.c89) WriteBlockStartStackVariables(block);
+			foreach (var statement in block.Statements) WriteStatementSyntax(statement);
+			StreamWriterEx.RemoveTab();
+			if (writeBrackets) writer.WriteLinePrefix('}');
+		}
+
+		private void WriteStatementSyntax(StatementSyntax statement)
+		{
+			if (statement is BlockSyntax) WriteBlockSyntax((BlockSyntax)statement, true);
+			else if (statement is ExpressionStatementSyntax) WriteExpressionStatement((ExpressionStatementSyntax)statement);
+			else if (statement is ReturnStatementSyntax) WriteReturnStatement((ReturnStatementSyntax)statement);
+			else if (statement is LocalDeclarationStatementSyntax) WriteLocalDeclarationStatement((LocalDeclarationStatementSyntax)statement, true);
+			else if (statement is IfStatementSyntax) WriteIfStatement((IfStatementSyntax)statement);
+			else if (statement is EmptyStatementSyntax) WriteEmptyStatement((EmptyStatementSyntax)statement);
+			else throw new NotImplementedException("Unsuported statement type: " + statement.GetType());
 		}
 
 		private void WriteExpressionStatement(ExpressionStatementSyntax statement)
@@ -581,21 +656,53 @@ namespace CS2X.Core.Emitters
 			writer.WriteLine(';');
 		}
 
-		private void WriteLocalDeclarationStatement(LocalDeclarationStatementSyntax statement)
+		private void WriteLocalDeclarationStatement(LocalDeclarationStatementSyntax statement, bool writeInitializer)
 		{
 			var typeInfo = semanticModel.GetTypeInfo(statement.Declaration.Type);
 			string typeName = GetNativeCTypeInstance(typeInfo.Type);
 			var variables = GetVariables(statement, semanticModel);
 			foreach (var variable in variables)
 			{
-				writer.WritePrefix($"{typeName} {variable.Identifier.ValueText}");
-				if (variable.Initializer != null && variable.Initializer.Value != null)
+				if (cVersion == CVersions.c89 && writeInitializer) writer.WritePrefix(variable.Identifier.ValueText);
+				else writer.WritePrefix($"{typeName} {variable.Identifier.ValueText}");
+				if (writeInitializer && variable.Initializer != null && variable.Initializer.Value != null)
 				{
 					writer.Write(" = ");
 					WriteExperesion(variable.Initializer.Value);
 				}
 				writer.WriteLine(';');
 			}
+		}
+
+		private void WriteIfStatement(IfStatementSyntax statement)
+		{
+			if (statement.Parent is ElseClauseSyntax) writer.Write("if (");
+			else writer.WritePrefix("if (");
+			WriteExperesion(statement.Condition);
+			if (statement.Statement is BlockSyntax)
+			{
+				writer.WriteLine(')');
+				WriteStatementSyntax(statement.Statement);
+			}
+			else
+			{
+				StreamWriterEx.RemoveTab();
+				writer.Write(") ");
+				WriteStatementSyntax(statement.Statement);
+				StreamWriterEx.Tab();
+			}
+
+			if (statement.Else != null)
+			{
+				if (statement.Else.Statement is BlockSyntax) writer.WriteLinePrefix("else");
+				else writer.WritePrefix("else ");
+				WriteStatementSyntax(statement.Else.Statement);
+			}
+		}
+
+		private void WriteEmptyStatement(EmptyStatementSyntax statement)
+		{
+			writer.WriteLine(';');
 		}
 
 		private void WriteExperesion(ExpressionSyntax expression)
@@ -626,6 +733,7 @@ namespace CS2X.Core.Emitters
 				if (symbolInfo.Symbol.ContainingType == activeMethod.ContainingType) expression = SyntaxFactory.ThisExpression();
 			}
 
+			if (expression.Kind() == SyntaxKind.ThisExpression && activeMethod.ContainingType.IsValueType && activeMethod.MethodKind == MethodKind.Constructor) writer.Write('&');
 			WriteExperesion(expression);
 		}
 
@@ -771,7 +879,12 @@ namespace CS2X.Core.Emitters
 			{
 				if (value.Value == null)
 				{
-					writer.Write("null");
+					writer.Write(nullKeyword);
+				}
+				else if (value.Value is bool)
+				{
+					bool boolValue = (bool)value.Value;
+					writer.Write(boolValue ? trueKeyword : falseKeyword);
 				}
 				else
 				{

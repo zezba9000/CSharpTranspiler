@@ -9,7 +9,23 @@ struct TestStruct
 	public TestStruct(double y)
 	{
 		this.x = y;
-		x = y;
+		int i = 1;
+		if (y == 0);
+		else if (y == 1) x = y;
+		else if (y == 2)
+		{
+			if (true)
+			{
+				int i3 = Foo();
+				int i2 = 1;
+				x = y + i + i2;
+			}
+		}
+	}
+
+	private int Foo()
+	{
+		return 4;
 	}
 
 	public TestStruct NewMe()
