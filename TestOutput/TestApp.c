@@ -312,4 +312,5 @@ void main()
 {
 	CS2X_GC_Init();
 	TestApp_C_Program_Main__0();
+	CS2X_GC_Collect();
 }

@@ -279,6 +279,7 @@ namespace CS2X.Core.Emitters
 						writer.WriteLine('{');
 						writer.WriteLine("\tCS2X_GC_Init();");
 						writer.WriteLine($"\t{GetFullNameFlat(entryPointMethod)}__0();");
+						writer.WriteLine("\tCS2X_GC_Collect();");// must force collection so deconstructors fire
 						writer.WriteLine('}');
 					}
 					else
@@ -526,6 +527,10 @@ namespace CS2X.Core.Emitters
 
 		private void WriteObjectMethods(INamedTypeSymbol obj, bool writeBody)
 		{
+			// get deconstructor method
+			IMethodSymbol deconstructorMethod = null;
+			if (!obj.IsValueType) deconstructorMethod = GetDeconstructorMethod(obj);
+
 			// generate normal methods
 			var members = obj.GetMembers();
 			var overloads = new List<MethodOverload>();
@@ -556,15 +561,29 @@ namespace CS2X.Core.Emitters
 
 				// write declaration
 				if (method.AssociatedSymbol != null && method.AssociatedSymbol is IPropertySymbol) WriteObjectMethodDeclare(method, null);
-				else WriteObjectMethodDeclare(method, overload.count);
+				else WriteObjectMethodDeclare(method, (method.MethodKind != MethodKind.Destructor) ? overload.count : (int?)null);
 				if (writeBody)
 				{
 					writer.WriteLine(Environment.NewLine + '{');
 					if (method.MethodKind == MethodKind.Constructor)
 					{
 						string typeName = GetFullNameFlat(obj);
-						if (obj.TypeKind == TypeKind.Struct) writer.WriteLine($"\t{typeName} {thisKeyword} = {{0}};");
-						else writer.WriteLine($"\t{typeName}* {thisKeyword} = CS2X_GC_New(sizeof({typeName}));");
+						if (obj.TypeKind == TypeKind.Struct)
+						{
+							writer.WriteLine($"\t{typeName} {thisKeyword} = {{0}};");
+						}
+						else
+						{
+							writer.WriteLine($"\t{typeName}* {thisKeyword} = CS2X_GC_New(sizeof({typeName}));");
+							if (deconstructorMethod != null)
+							{
+								switch (gc)
+								{
+									case GCTypes.Boehm: writer.WriteLine($"\tGC_register_finalizer({thisKeyword}, {GetFullNameFlat(deconstructorMethod)}, 0, 0, 0);"); break;
+									default: throw new Exception("TODO: Missing GC deconstructor method");
+								}
+							}
+						}
 					}
 					if (!isDefaultConstructor) WriteMethodBody(method);
 					if (method.MethodKind == MethodKind.Constructor) writer.WriteLine($"\treturn {thisKeyword};");// if constructor return allocated this ref
@@ -600,6 +619,11 @@ namespace CS2X.Core.Emitters
 			else if (syntaxDeclaration is ConstructorDeclarationSyntax)
 			{
 				var syntax = (ConstructorDeclarationSyntax)syntaxDeclaration;
+				body = syntax.Body;
+			}
+			else if (syntaxDeclaration is DestructorDeclarationSyntax)
+			{
+				var syntax = (DestructorDeclarationSyntax)syntaxDeclaration;
 				body = syntax.Body;
 			}
 			else if (syntaxDeclaration is ConversionOperatorDeclarationSyntax)

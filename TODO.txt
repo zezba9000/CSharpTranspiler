@@ -63,3 +63,4 @@ Implement FixedPoint math for devices that don't support float or have floating 
 
 https://github.com/asik/FixedMath.Net/blob/master/src/Fix64.cs
 https://github.com/PetteriAimonen/libfixmath/blob/master/libfixmath/fix16_trig.c
+cc65 compiler might also support this: https://github.com/mrdudz/cc65-floatlib

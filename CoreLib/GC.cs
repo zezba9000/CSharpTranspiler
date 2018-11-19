@@ -5,15 +5,42 @@ namespace System
 	public static class GC
 	{
 		[NativeName(NativeTargets.C, "CS2X_GC_New")]
-		public unsafe static void* CS2X_GC_New(void* size)
+		internal unsafe static void* CS2X_GC_New(void* size)
 		{
 			return null;
 		}
 
 		[NativeName(NativeTargets.C, "CS2X_GC_NewAtomic")]
-		public unsafe static void* CS2X_GC_NewAtomic(void* size)
+		internal unsafe static void* CS2X_GC_NewAtomic(void* size)
 		{
 			return null;
+		}
+
+		[NativeName(NativeTargets.C, "CS2X_GC_DisableAutoCollections")]
+		internal static void DisableAutoCollections()
+		{
+			
+		}
+
+		[NativeName(NativeTargets.C, "CS2X_GC_EnableAutoCollections")]
+		internal static void EnableAutoCollections()
+		{
+
+		}
+
+		// ======================================
+		// manual allocation methods(non-GC heap)
+		// ======================================
+		[NativeName(NativeTargets.C, "CS2X_Malloc")]
+		internal unsafe static void* CS2X_Malloc(void* size)
+		{
+			return null;
+		}
+
+		[NativeName(NativeTargets.C, "CS2X_Delete")]
+		internal unsafe static void CS2X_Delete(void* ptr)
+		{
+
 		}
 	}
 }

@@ -2,6 +2,7 @@ using System.CS2X;
 
 namespace System
 {
+	[NativeName(NativeTargets.C, "wchar_t*")]
 	public unsafe sealed class String
 	{
 		public int Length { get; private set; }
@@ -17,8 +18,14 @@ namespace System
 		{
 			Length = wcslen(value);
 			void* size = (void*)(Length * sizeof(char));
-			buffer = (char*)GC.CS2X_GC_NewAtomic(size);
+			buffer = (char*)GC.CS2X_Malloc(size);
 			Buffer.memcpy(buffer, value, size);
+		}
+
+		~String()
+		{
+			GC.CS2X_Delete(buffer);
+			buffer = null;
 		}
 	}
 }

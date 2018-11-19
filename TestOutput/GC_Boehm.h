@@ -37,3 +37,26 @@ void CS2X_GC_Delete(void* object)
 {
 	GC_free(object);
 }
+
+void CS2X_GC_DisableAutoCollections()
+{
+	/* boehm doesn't support this (do nothing...) */
+}
+
+void CS2X_GC_EnableAutoCollections()
+{
+	/* boehm doesn't support this (do nothing...) */
+}
+
+/* ====================================== */
+/* manual allocation methods(non-GC heap) */
+/* ====================================== */
+void* CS2X_Malloc(size_t size)
+{
+	return malloc(size);
+}
+
+void CS2X_Delete(void* ptr)
+{
+	return free(ptr);
+}

@@ -119,6 +119,18 @@ namespace CS2X.Core.Emitters
 			return false;
 		}
 
+		protected IMethodSymbol GetDeconstructorMethod(INamedTypeSymbol obj)
+		{
+			foreach (var member in obj.GetMembers())
+			{
+				if (member.Kind != SymbolKind.Method) continue;
+				var method = (IMethodSymbol)member;
+				if (!method.IsImplicitlyDeclared && method.MethodKind == MethodKind.Destructor) return method;
+			}
+
+			return null;
+		}
+
 		protected AttributeData GetAttribute(ISymbol obj, string attributeName)
 		{
 			foreach (var attribute in obj.GetAttributes())

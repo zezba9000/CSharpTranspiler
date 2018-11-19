@@ -340,6 +340,7 @@ System_ObsoleteAttribute* System_ObsoleteAttribute_CONSTRUCTOR__1(System_String*
 System_ObsoleteAttribute* System_ObsoleteAttribute_CONSTRUCTOR__2(System_String* message, System_Boolean error);
 System_ParamArrayAttribute* System_ParamArrayAttribute_CONSTRUCTOR__0();
 System_String* System_String_CONSTRUCTOR__0(System_Char* value);
+System_Void System_String_Finalize(System_String* this);
 System_StringBuilder* System_StringBuilder_CONSTRUCTOR__0();
 System_Type* System_Type_CONSTRUCTOR__0();
 System_ValueType* System_ValueType_CONSTRUCTOR__0();
@@ -821,11 +822,18 @@ System_ParamArrayAttribute* System_ParamArrayAttribute_CONSTRUCTOR__0()
 System_String* System_String_CONSTRUCTOR__0(System_Char* value)
 {
 	System_String* this = CS2X_GC_New(sizeof(System_String));
+	GC_register_finalizer(this, System_String_Finalize, 0, 0, 0);
 	this->Length = wcslen(value);
 	System_Void* size = (System_Void*)(this->Length * sizeof(System_Char));
-	this->buffer = (System_Char*)CS2X_GC_NewAtomic(size);
+	this->buffer = (System_Char*)CS2X_Malloc(size);
 	memcpy(this->buffer, value, size);
 	return this;
+}
+
+System_Void System_String_Finalize(System_String* this)
+{
+	CS2X_Delete(this->buffer);
+	this->buffer = null;
 }
 
 System_StringBuilder* System_StringBuilder_CONSTRUCTOR__0()
