@@ -119,6 +119,18 @@ namespace CS2X.Core.Emitters
 			return false;
 		}
 
+		protected bool IsAtomicObject(INamedTypeSymbol obj)
+		{
+			foreach (var member in obj.GetMembers())
+			{
+				if (member.Kind != SymbolKind.Field) continue;
+				var field = (IFieldSymbol)member;
+				if (!field.Type.IsValueType) return false;
+			}
+
+			return true;
+		}
+
 		protected IMethodSymbol GetDeconstructorMethod(INamedTypeSymbol obj)
 		{
 			foreach (var member in obj.GetMembers())

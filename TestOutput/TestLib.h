@@ -37,7 +37,7 @@ TestLib_MyTestLibClass* TestLib_MyTestLibClass_CONSTRUCTOR__0();
 // =============
 TestLib_MyTestLibClass* TestLib_MyTestLibClass_CONSTRUCTOR__0()
 {
-	TestLib_MyTestLibClass* this = CS2X_GC_New(sizeof(TestLib_MyTestLibClass));
+	TestLib_MyTestLibClass* this = CS2X_GC_NewAtomic(sizeof(TestLib_MyTestLibClass));
 	return this;
 }
 

@@ -690,13 +690,13 @@ System_Collections_DictionaryEntry System_Collections_DictionaryEntry_CONSTRUCTO
 
 System_Attribute* System_Attribute_CONSTRUCTOR__0()
 {
-	System_Attribute* this = CS2X_GC_New(sizeof(System_Attribute));
+	System_Attribute* this = CS2X_GC_NewAtomic(sizeof(System_Attribute));
 	return this;
 }
 
 System_AttributeUsageAttribute* System_AttributeUsageAttribute_CONSTRUCTOR__0(System_Int32 validOn)
 {
-	System_AttributeUsageAttribute* this = CS2X_GC_New(sizeof(System_AttributeUsageAttribute));
+	System_AttributeUsageAttribute* this = CS2X_GC_NewAtomic(sizeof(System_AttributeUsageAttribute));
 	this->_attributeTarget = validOn;
 	return this;
 }
@@ -707,7 +707,7 @@ System_Void System_Buffer_BlockCopy__0(System_Array* src, System_Int32 srcOffset
 
 System_CLSCompliantAttribute* System_CLSCompliantAttribute_CONSTRUCTOR__0(System_Boolean isCompliant)
 {
-	System_CLSCompliantAttribute* this = CS2X_GC_New(sizeof(System_CLSCompliantAttribute));
+	System_CLSCompliantAttribute* this = CS2X_GC_NewAtomic(sizeof(System_CLSCompliantAttribute));
 	this->_isCompliant = isCompliant;
 	return this;
 }
@@ -719,7 +719,7 @@ System_Void System_Console_WriteLine__0(System_String* value)
 
 System_FlagsAttribute* System_FlagsAttribute_CONSTRUCTOR__0()
 {
-	System_FlagsAttribute* this = CS2X_GC_New(sizeof(System_FlagsAttribute));
+	System_FlagsAttribute* this = CS2X_GC_NewAtomic(sizeof(System_FlagsAttribute));
 	return this;
 }
 
@@ -730,49 +730,49 @@ System_Collections_IEnumerator* System_Array_GetEnumerator__0(System_Array* this
 
 System_Array* System_Array_CONSTRUCTOR__0()
 {
-	System_Array* this = CS2X_GC_New(sizeof(System_Array));
+	System_Array* this = CS2X_GC_NewAtomic(sizeof(System_Array));
 	return this;
 }
 
 System_CancelEventArgs* System_CancelEventArgs_CONSTRUCTOR__0()
 {
-	System_CancelEventArgs* this = CS2X_GC_New(sizeof(System_CancelEventArgs));
+	System_CancelEventArgs* this = CS2X_GC_NewAtomic(sizeof(System_CancelEventArgs));
 	return this;
 }
 
 System_Delegate* System_Delegate_CONSTRUCTOR__0()
 {
-	System_Delegate* this = CS2X_GC_New(sizeof(System_Delegate));
+	System_Delegate* this = CS2X_GC_NewAtomic(sizeof(System_Delegate));
 	return this;
 }
 
 System_Enum* System_Enum_CONSTRUCTOR__0()
 {
-	System_Enum* this = CS2X_GC_New(sizeof(System_Enum));
+	System_Enum* this = CS2X_GC_NewAtomic(sizeof(System_Enum));
 	return this;
 }
 
 System_EventArgs* System_EventArgs_CONSTRUCTOR__0()
 {
-	System_EventArgs* this = CS2X_GC_New(sizeof(System_EventArgs));
+	System_EventArgs* this = CS2X_GC_NewAtomic(sizeof(System_EventArgs));
 	return this;
 }
 
 System_Exception* System_Exception_CONSTRUCTOR__0()
 {
-	System_Exception* this = CS2X_GC_New(sizeof(System_Exception));
+	System_Exception* this = CS2X_GC_NewAtomic(sizeof(System_Exception));
 	return this;
 }
 
 System_Exception* System_Exception_CONSTRUCTOR__1(System_String* message)
 {
-	System_Exception* this = CS2X_GC_New(sizeof(System_Exception));
+	System_Exception* this = CS2X_GC_NewAtomic(sizeof(System_Exception));
 	return this;
 }
 
 System_MulticastDelegate* System_MulticastDelegate_CONSTRUCTOR__0()
 {
-	System_MulticastDelegate* this = CS2X_GC_New(sizeof(System_MulticastDelegate));
+	System_MulticastDelegate* this = CS2X_GC_NewAtomic(sizeof(System_MulticastDelegate));
 	return this;
 }
 
@@ -788,7 +788,7 @@ System_String* System_Object_ToString__0(System_Object* this)
 
 System_Object* System_Object_CONSTRUCTOR__0()
 {
-	System_Object* this = CS2X_GC_New(sizeof(System_Object));
+	System_Object* this = CS2X_GC_NewAtomic(sizeof(System_Object));
 	return this;
 }
 
@@ -815,13 +815,13 @@ System_ObsoleteAttribute* System_ObsoleteAttribute_CONSTRUCTOR__2(System_String*
 
 System_ParamArrayAttribute* System_ParamArrayAttribute_CONSTRUCTOR__0()
 {
-	System_ParamArrayAttribute* this = CS2X_GC_New(sizeof(System_ParamArrayAttribute));
+	System_ParamArrayAttribute* this = CS2X_GC_NewAtomic(sizeof(System_ParamArrayAttribute));
 	return this;
 }
 
 System_String* System_String_CONSTRUCTOR__0(System_Char* value)
 {
-	System_String* this = CS2X_GC_New(sizeof(System_String));
+	System_String* this = CS2X_GC_NewAtomic(sizeof(System_String));
 	GC_register_finalizer(this, System_String_Finalize, 0, 0, 0);
 	this->Length = wcslen(value);
 	System_Void* size = (System_Void*)(this->Length * sizeof(System_Char));
@@ -838,19 +838,19 @@ System_Void System_String_Finalize(System_String* this, void* data)
 
 System_StringBuilder* System_StringBuilder_CONSTRUCTOR__0()
 {
-	System_StringBuilder* this = CS2X_GC_New(sizeof(System_StringBuilder));
+	System_StringBuilder* this = CS2X_GC_NewAtomic(sizeof(System_StringBuilder));
 	return this;
 }
 
 System_Type* System_Type_CONSTRUCTOR__0()
 {
-	System_Type* this = CS2X_GC_New(sizeof(System_Type));
+	System_Type* this = CS2X_GC_NewAtomic(sizeof(System_Type));
 	return this;
 }
 
 System_ValueType* System_ValueType_CONSTRUCTOR__0()
 {
-	System_ValueType* this = CS2X_GC_New(sizeof(System_ValueType));
+	System_ValueType* this = CS2X_GC_NewAtomic(sizeof(System_ValueType));
 	return this;
 }
 
@@ -869,7 +869,7 @@ System_Collections_IEnumerator* System_Collections_ArrayList_GetEnumerator__0(Sy
 
 System_Collections_ArrayList* System_Collections_ArrayList_CONSTRUCTOR__0()
 {
-	System_Collections_ArrayList* this = CS2X_GC_New(sizeof(System_Collections_ArrayList));
+	System_Collections_ArrayList* this = CS2X_GC_NewAtomic(sizeof(System_Collections_ArrayList));
 	return this;
 }
 
@@ -880,7 +880,7 @@ System_Collections_IEnumerator* System_Collections_Queue_GetEnumerator__0(System
 
 System_Collections_Queue* System_Collections_Queue_CONSTRUCTOR__0()
 {
-	System_Collections_Queue* this = CS2X_GC_New(sizeof(System_Collections_Queue));
+	System_Collections_Queue* this = CS2X_GC_NewAtomic(sizeof(System_Collections_Queue));
 	return this;
 }
 
@@ -891,25 +891,25 @@ System_Collections_IEnumerator* System_Collections_Stack_GetEnumerator__0(System
 
 System_Collections_Stack* System_Collections_Stack_CONSTRUCTOR__0()
 {
-	System_Collections_Stack* this = CS2X_GC_New(sizeof(System_Collections_Stack));
+	System_Collections_Stack* this = CS2X_GC_NewAtomic(sizeof(System_Collections_Stack));
 	return this;
 }
 
 System_ComponentModel_BrowsableAttribute* System_ComponentModel_BrowsableAttribute_CONSTRUCTOR__0()
 {
-	System_ComponentModel_BrowsableAttribute* this = CS2X_GC_New(sizeof(System_ComponentModel_BrowsableAttribute));
+	System_ComponentModel_BrowsableAttribute* this = CS2X_GC_NewAtomic(sizeof(System_ComponentModel_BrowsableAttribute));
 	return this;
 }
 
 System_ComponentModel_DependencyAttribute* System_ComponentModel_DependencyAttribute_CONSTRUCTOR__0()
 {
-	System_ComponentModel_DependencyAttribute* this = CS2X_GC_New(sizeof(System_ComponentModel_DependencyAttribute));
+	System_ComponentModel_DependencyAttribute* this = CS2X_GC_NewAtomic(sizeof(System_ComponentModel_DependencyAttribute));
 	return this;
 }
 
 System_ComponentModel_EditorBrowsableAttribute* System_ComponentModel_EditorBrowsableAttribute_CONSTRUCTOR__0(System_Int32 state)
 {
-	System_ComponentModel_EditorBrowsableAttribute* this = CS2X_GC_New(sizeof(System_ComponentModel_EditorBrowsableAttribute));
+	System_ComponentModel_EditorBrowsableAttribute* this = CS2X_GC_NewAtomic(sizeof(System_ComponentModel_EditorBrowsableAttribute));
 	this->_browsableState = state;
 	return this;
 }
@@ -931,25 +931,25 @@ System_Diagnostics_ConditionalAttribute* System_Diagnostics_ConditionalAttribute
 
 System_Diagnostics_Debug* System_Diagnostics_Debug_CONSTRUCTOR__0()
 {
-	System_Diagnostics_Debug* this = CS2X_GC_New(sizeof(System_Diagnostics_Debug));
+	System_Diagnostics_Debug* this = CS2X_GC_NewAtomic(sizeof(System_Diagnostics_Debug));
 	return this;
 }
 
 System_Diagnostics_CodeAnalysis_SuppressMessageAttribute* System_Diagnostics_CodeAnalysis_SuppressMessageAttribute_CONSTRUCTOR__0()
 {
-	System_Diagnostics_CodeAnalysis_SuppressMessageAttribute* this = CS2X_GC_New(sizeof(System_Diagnostics_CodeAnalysis_SuppressMessageAttribute));
+	System_Diagnostics_CodeAnalysis_SuppressMessageAttribute* this = CS2X_GC_NewAtomic(sizeof(System_Diagnostics_CodeAnalysis_SuppressMessageAttribute));
 	return this;
 }
 
 System_Globalization_CultureInfo* System_Globalization_CultureInfo_CONSTRUCTOR__0()
 {
-	System_Globalization_CultureInfo* this = CS2X_GC_New(sizeof(System_Globalization_CultureInfo));
+	System_Globalization_CultureInfo* this = CS2X_GC_NewAtomic(sizeof(System_Globalization_CultureInfo));
 	return this;
 }
 
 System_Globalization_NumberFormatInfo* System_Globalization_NumberFormatInfo_CONSTRUCTOR__0()
 {
-	System_Globalization_NumberFormatInfo* this = CS2X_GC_New(sizeof(System_Globalization_NumberFormatInfo));
+	System_Globalization_NumberFormatInfo* this = CS2X_GC_NewAtomic(sizeof(System_Globalization_NumberFormatInfo));
 	return this;
 }
 
@@ -983,7 +983,7 @@ System_Reflection_AssemblyCultureAttribute* System_Reflection_AssemblyCultureAtt
 
 System_Reflection_AssemblyDelaySignAttribute* System_Reflection_AssemblyDelaySignAttribute_CONSTRUCTOR__0(System_Boolean delaySign)
 {
-	System_Reflection_AssemblyDelaySignAttribute* this = CS2X_GC_New(sizeof(System_Reflection_AssemblyDelaySignAttribute));
+	System_Reflection_AssemblyDelaySignAttribute* this = CS2X_GC_NewAtomic(sizeof(System_Reflection_AssemblyDelaySignAttribute));
 	this->_delaySign = delaySign;
 	return this;
 }
@@ -1053,13 +1053,13 @@ System_Reflection_DefaultMemberAttribute* System_Reflection_DefaultMemberAttribu
 
 System_Runtime_CompilerServices_CompilerGeneratedAttribute* System_Runtime_CompilerServices_CompilerGeneratedAttribute_CONSTRUCTOR__0()
 {
-	System_Runtime_CompilerServices_CompilerGeneratedAttribute* this = CS2X_GC_New(sizeof(System_Runtime_CompilerServices_CompilerGeneratedAttribute));
+	System_Runtime_CompilerServices_CompilerGeneratedAttribute* this = CS2X_GC_NewAtomic(sizeof(System_Runtime_CompilerServices_CompilerGeneratedAttribute));
 	return this;
 }
 
 System_Runtime_InteropServices_OutAttribute* System_Runtime_InteropServices_OutAttribute_CONSTRUCTOR__0()
 {
-	System_Runtime_InteropServices_OutAttribute* this = CS2X_GC_New(sizeof(System_Runtime_InteropServices_OutAttribute));
+	System_Runtime_InteropServices_OutAttribute* this = CS2X_GC_NewAtomic(sizeof(System_Runtime_InteropServices_OutAttribute));
 	return this;
 }
 

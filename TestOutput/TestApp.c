@@ -188,7 +188,7 @@ TestStruct TestStruct_CONSTRUCTOR__1()
 
 TestClassE* TestClassE_CONSTRUCTOR__0(System_Int32 key, TestIn* testIn)
 {
-	TestClassE* this = CS2X_GC_New(sizeof(TestClassE));
+	TestClassE* this = CS2X_GC_NewAtomic(sizeof(TestClassE));
 	TestClassE_Get__0(TestIn_GetObj__0(TestIn_singleton))->key = 123;
 	TestIn_set_GetObjProp(TestIn_singleton, null);
 	this->key = TestClassE_Add__0(this, key);
@@ -243,25 +243,25 @@ System_Void MyPartial_Foo__0(MyPartial* this)
 
 MyPartial* MyPartial_CONSTRUCTOR__0()
 {
-	MyPartial* this = CS2X_GC_New(sizeof(MyPartial));
+	MyPartial* this = CS2X_GC_NewAtomic(sizeof(MyPartial));
 	return this;
 }
 
 TestApp_Blaa_A2* TestApp_Blaa_A2_CONSTRUCTOR__0()
 {
-	TestApp_Blaa_A2* this = CS2X_GC_New(sizeof(TestApp_Blaa_A2));
+	TestApp_Blaa_A2* this = CS2X_GC_NewAtomic(sizeof(TestApp_Blaa_A2));
 	return this;
 }
 
 TestApp_C_MyBase* TestApp_C_MyBase_CONSTRUCTOR__0()
 {
-	TestApp_C_MyBase* this = CS2X_GC_New(sizeof(TestApp_C_MyBase));
+	TestApp_C_MyBase* this = CS2X_GC_NewAtomic(sizeof(TestApp_C_MyBase));
 	return this;
 }
 
 TestApp_C_B* TestApp_C_B_CONSTRUCTOR__0()
 {
-	TestApp_C_B* this = CS2X_GC_New(sizeof(TestApp_C_B));
+	TestApp_C_B* this = CS2X_GC_NewAtomic(sizeof(TestApp_C_B));
 	return this;
 }
 

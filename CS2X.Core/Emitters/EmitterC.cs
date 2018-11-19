@@ -533,6 +533,9 @@ namespace CS2X.Core.Emitters
 			IMethodSymbol deconstructorMethod = null;
 			if (!obj.IsValueType) deconstructorMethod = GetDeconstructorMethod(obj);
 
+			// check if method is atomic
+			bool isAtomic = IsAtomicObject(obj);
+
 			// generate normal methods
 			var members = obj.GetMembers();
 			var overloads = new List<MethodOverload>();
@@ -576,7 +579,8 @@ namespace CS2X.Core.Emitters
 						}
 						else
 						{
-							writer.WriteLine($"\t{typeName}* {thisKeyword} = CS2X_GC_New(sizeof({typeName}));");
+							if (isAtomic) writer.WriteLine($"\t{typeName}* {thisKeyword} = CS2X_GC_NewAtomic(sizeof({typeName}));");
+							else writer.WriteLine($"\t{typeName}* {thisKeyword} = CS2X_GC_New(sizeof({typeName}));");
 							if (deconstructorMethod != null)
 							{
 								switch (gc)
