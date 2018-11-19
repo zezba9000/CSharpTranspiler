@@ -464,7 +464,9 @@ namespace CS2X.Core.Emitters
 				if (!method.IsStatic && !method.ContainingType.IsStatic)
 				{
 					string paramEnd = (method.Parameters != null && method.Parameters.Length != 0) ? ", " : "";
-					writer.Write(string.Format("{0}* {1}{2}", GetFullNameFlat(method.ContainingType), thisKeyword, paramEnd));
+					writer.Write($"{GetFullNameFlat(method.ContainingType)}* {thisKeyword}");
+					if (method.MethodKind == MethodKind.Destructor && gc == GCTypes.Boehm) writer.Write(", void* data");
+					writer.Write(paramEnd);
 				}
 			}
 
