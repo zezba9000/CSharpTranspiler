@@ -11,7 +11,7 @@ namespace System.IO
 	{
 		public static string prefix = string.Empty;
 
-		public static void Tab()
+		public static void AddTab()
 		{
 			prefix += '\t';
 		}

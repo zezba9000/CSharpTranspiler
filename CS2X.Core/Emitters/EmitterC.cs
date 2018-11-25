@@ -694,7 +694,7 @@ namespace CS2X.Core.Emitters
 		private void WriteBlockSyntax(BlockSyntax block, bool writeBrackets)
 		{
 			if (writeBrackets) writer.WriteLinePrefix('{');
-			StreamWriterEx.Tab();
+			StreamWriterEx.AddTab();
 			if (cVersion == CVersions.c89) WriteBlockStartStackVariables(block);
 			foreach (var statement in block.Statements) WriteStatementSyntax(statement);
 			StreamWriterEx.RemoveTab();
@@ -711,6 +711,7 @@ namespace CS2X.Core.Emitters
 			else if (statement is WhileStatementSyntax) WriteWhileStatement((WhileStatementSyntax)statement);
 			else if (statement is DoStatementSyntax) WriteDoStatement((DoStatementSyntax)statement);
 			else if (statement is ForStatementSyntax) WriteForStatement((ForStatementSyntax)statement);
+			else if (statement is SwitchStatementSyntax) WriteSwitchStatement((SwitchStatementSyntax)statement);
 			else if (statement is EmptyStatementSyntax) WriteEmptyStatement((EmptyStatementSyntax)statement);
 			else if (statement is BreakStatementSyntax) WriteBreakStatement((BreakStatementSyntax)statement);
 			else if (statement is ContinueStatementSyntax) WriteContinueStatement((ContinueStatementSyntax)statement);
@@ -782,7 +783,7 @@ namespace CS2X.Core.Emitters
 				StreamWriterEx.RemoveTab();
 				writer.Write(") ");
 				WriteStatementSyntax(statement);
-				StreamWriterEx.Tab();
+				StreamWriterEx.AddTab();
 			}
 		}
 
@@ -865,6 +866,46 @@ namespace CS2X.Core.Emitters
 
 			// write statement
 			WriteFlowStatement(statement.Statement);
+		}
+
+		private void WriteSwitchStatement(SwitchStatementSyntax statement)
+		{
+			writer.WritePrefix("switch (");
+			WriteExperesion(statement.Expression);
+			writer.WriteLine(')');
+			writer.WriteLinePrefix('{');
+			foreach (var section in statement.Sections)
+			{
+				StreamWriterEx.AddTab();
+				foreach (var label in section.Labels)
+				{
+					if (label is CaseSwitchLabelSyntax)
+					{
+						var caseLabel = (CaseSwitchLabelSyntax)label;
+						writer.WritePrefix("case ");
+						WriteExperesion(caseLabel.Value);
+						writer.WriteLine(':');
+					}
+					else if (label is DefaultSwitchLabelSyntax)
+					{
+						var caseLabel = (DefaultSwitchLabelSyntax)label;
+						writer.WriteLinePrefix("default:");
+					}
+					else
+					{
+						throw new Exception("Unsuported case statement label type: " + label.GetType());
+					}
+				}
+
+				StreamWriterEx.AddTab();
+				foreach (var subStatement in section.Statements)
+				{
+					WriteStatementSyntax(subStatement);
+				}
+				StreamWriterEx.RemoveTab();
+				StreamWriterEx.RemoveTab();
+			}
+			writer.WriteLinePrefix('}');
 		}
 
 		private void WriteEmptyStatement(EmptyStatementSyntax statement)

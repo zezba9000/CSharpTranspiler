@@ -63,18 +63,20 @@ struct TestStruct
 			continue;
 		}
 
-		/*switch (i)
+		switch (i)
 		{
+			case 66 + 1:
 			case 55:
 				i = 5;
 				break;
 
+			case 33: i = 6; break;
 			case 22: break;
 
 			default:
 				i = 9;
 				break;
-		}*/
+		}
 	}
 
 	private int Foo()
