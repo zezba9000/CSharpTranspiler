@@ -35,7 +35,7 @@ namespace CS2X.Core.Emitters
 		public enum CompilerTargets
 		{
 			/// <summary>
-			/// Don't try handle any C compiler edge case (just output C)
+			/// Don't try to handle any C compiler edge case (just output C)
 			/// </summary>
 			Unspecified,
 
@@ -68,20 +68,20 @@ namespace CS2X.Core.Emitters
 			Standalone,
 
 			/// <summary>
-			/// Exe projects are output as headers to be compiled in a C compiler
-			/// 'void Main' is output as 'void ExeMain'
+			/// Exe projects are output as headers to be compiled in a C compiler manually
+			/// 'void/int Main' is output as 'void/int ExeMain'
 			/// </summary>
 			EmbeddedC,
 
 			/// <summary>
-			/// Exe projects are output as headers to be compiled in a C++ compiler
-			/// 'void Main' is output as 'void ExeMain'
+			/// Exe projects are output as headers to be compiled in a C++ compiler manually
+			/// 'void/int Main' is output as 'void/int ExeMain'
 			/// </summary>
 			EmbeddedCpp,
 
 			/// <summary>
 			/// Exe projects are output as .ino files in name-matched folders while dll projects as .h headers
-			/// void Main' is output as 'void setup'
+			/// void/int Main' is output as 'void/int ExeMain' which is invoked by 'void setup'
 			/// </summary>
 			Arduino
 		}
@@ -92,7 +92,7 @@ namespace CS2X.Core.Emitters
 			/// Deterministic Sweep,Compact,Repeat GC
 			/// Use on low memory embedded devices with no OS
 			/// Heap objects are NOT thread safe!
-			/// Uses brk and sbrk
+			/// Uses brk and sbrk for heap allocations
 			/// </summary>
 			Micro,
 
@@ -100,7 +100,7 @@ namespace CS2X.Core.Emitters
 			/// Deterministic Mark,Sweep GC
 			/// Use on modern desktops, consoles, classic systems, homebrew or high memory embedded devices
 			/// Heap objects are NOT thread safe!
-			/// Uses malloc
+			/// Uses malloc for heap allocations
 			/// </summary>
 			Deterministic,
 
