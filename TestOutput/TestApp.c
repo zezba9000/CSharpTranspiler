@@ -18,7 +18,7 @@ typedef EMPTY_OBJECT TestApp_C_B;
 typedef struct TestApp_C_Program TestApp_C_Program;
 
 // =============
-// Types Definitions
+// Type Definitions
 // =============
 #define TestApp_Blaa_MyEnum_A 1
 #define TestApp_Blaa_MyEnum_B 2
@@ -166,6 +166,39 @@ TestStruct TestStruct_CONSTRUCTOR__0(System_Double y)
 			System_Int32 i2 = 1;
 			this.x = y + i + i2;
 		}
+	}
+	while (true)
+	{
+		break;
+	}
+	while (true) continue;
+	do
+	{
+		return;
+	} while (false);
+	{
+		for (i = 0; i != 1; i++)
+		{
+			continue;
+		}
+		for (System_Int32 x2 = 0; x2 != 1; ++x2)
+		{
+			continue;
+		}
+	}
+	for (System_Int32 x2 = 0; ; ++x2)
+	{
+		continue;
+	}
+	for (System_Single x2 = 0, y2 = 1; x2 != 1 && y2 != 0; ++x2, --y2)
+	{
+		continue;
+	}
+	System_Int32 x3;
+	System_Int32 y3;
+	for (x3 = 0, y3 = 1, y = 0; x3 != 1 && y3 != 0 && y != 0; ++x3, --y3, y = y + 1)
+	{
+		continue;
 	}
 	return this;
 }

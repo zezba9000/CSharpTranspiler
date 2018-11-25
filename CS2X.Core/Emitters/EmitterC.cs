@@ -1,12 +1,12 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using CoreSolution = CS2X.Core.Solution;
+using CoreProject = CS2X.Core.Project;
+
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
-
-using CoreSolution = CS2X.Core.Solution;
-using CoreProject = CS2X.Core.Project;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Generic;
 using System.CS2X;
@@ -215,7 +215,8 @@ namespace CS2X.Core.Emitters
 
 							default: throw new Exception("Unsuported GC: " + gc);
 						}
-						
+
+						writer.WriteLine("#define EMPTY_OBJECT void*");
 						writer.WriteLine($"#define {nullKeyword} 0");
 						if (!isCppEnviroment)
 						{
@@ -223,7 +224,7 @@ namespace CS2X.Core.Emitters
 							writer.WriteLine($"#define {falseKeyword} 0");
 						}
 					}
-					writer.WriteLine("#define EMPTY_OBJECT void*");
+					
 					writer.WriteLine();
 				}
 
@@ -242,7 +243,7 @@ namespace CS2X.Core.Emitters
 				foreach (var obj in project.classObjects) WriteObject(obj, false);
 
 				// write objects
-				writer.WriteLine(string.Format("{0}// ============={0}// Types Definitions{0}// =============", Environment.NewLine));
+				writer.WriteLine(string.Format("{0}// ============={0}// Type Definitions{0}// =============", Environment.NewLine));
 				foreach (var obj in project.enumObjects) WriteObject(obj, true);
 				foreach (var obj in project.interfaceObjects) WriteObject(obj, true);
 				foreach (var obj in project.structObjects) WriteObject(obj, true);
@@ -651,9 +652,42 @@ namespace CS2X.Core.Emitters
 
 		private void WriteBlockStartStackVariables(BlockSyntax block)
 		{
+			List<string> c89TypeBuff = null;
 			foreach (var variable in GetStackVariables(block))
 			{
-				WriteLocalDeclarationStatement(variable, false);
+				if (variable is LocalDeclarationStatementSyntax)
+				{
+					WriteLocalDeclarationStatement((LocalDeclarationStatementSyntax)variable, false);
+				}
+				else if (variable is VariableDeclarationSyntax && cVersion == CVersions.c89)
+				{
+					if (c89TypeBuff == null) c89TypeBuff = new List<string>();
+					WriteVariableDeclaration((VariableDeclarationSyntax)variable, c89TypeBuff);
+				}
+			}
+		}
+
+		private string GetCompactLocalTypeIdentifier(string identifier, ITypeSymbol symbol)
+		{
+			if (cVersion == CVersions.c89) return $"{identifier}__{symbol.Name}";
+			else return identifier;
+		}
+
+		private void WriteVariableDeclaration(VariableDeclarationSyntax declaration, List<string> c89TypeBuff)
+		{
+			var typeSymbol = semanticModel.GetTypeInfo(declaration.Type);
+			string typeName = GetNativeCTypeInstance(typeSymbol.Type);
+
+			foreach (var variable in declaration.Variables)
+			{
+				string compactTypeName = GetCompactLocalTypeIdentifier(variable.Identifier.ValueText, typeSymbol.Type);
+				if (c89TypeBuff != null)
+				{
+					if (c89TypeBuff.Contains(compactTypeName)) continue;
+					c89TypeBuff.Add(compactTypeName);
+				}
+
+				writer.WriteLinePrefix($"{typeName} {compactTypeName};");
 			}
 		}
 
@@ -674,7 +708,12 @@ namespace CS2X.Core.Emitters
 			else if (statement is ReturnStatementSyntax) WriteReturnStatement((ReturnStatementSyntax)statement);
 			else if (statement is LocalDeclarationStatementSyntax) WriteLocalDeclarationStatement((LocalDeclarationStatementSyntax)statement, true);
 			else if (statement is IfStatementSyntax) WriteIfStatement((IfStatementSyntax)statement);
+			else if (statement is WhileStatementSyntax) WriteWhileStatement((WhileStatementSyntax)statement);
+			else if (statement is DoStatementSyntax) WriteDoStatement((DoStatementSyntax)statement);
+			else if (statement is ForStatementSyntax) WriteForStatement((ForStatementSyntax)statement);
 			else if (statement is EmptyStatementSyntax) WriteEmptyStatement((EmptyStatementSyntax)statement);
+			else if (statement is BreakStatementSyntax) WriteBreakStatement((BreakStatementSyntax)statement);
+			else if (statement is ContinueStatementSyntax) WriteContinueStatement((ContinueStatementSyntax)statement);
 			else throw new NotImplementedException("Unsuported statement type: " + statement.GetType());
 		}
 
@@ -687,8 +726,12 @@ namespace CS2X.Core.Emitters
 
 		private void WriteReturnStatement(ReturnStatementSyntax statement)
 		{
-			writer.WritePrefix("return ");
-			WriteExperesion(statement.Expression);
+			writer.WritePrefix("return");
+			if (statement.Expression != null)
+			{
+				writer.Write(' ');
+				WriteExperesion(statement.Expression);
+			}
 			writer.WriteLine(';');
 		}
 
@@ -696,17 +739,50 @@ namespace CS2X.Core.Emitters
 		{
 			var typeInfo = semanticModel.GetTypeInfo(statement.Declaration.Type);
 			string typeName = GetNativeCTypeInstance(typeInfo.Type);
-			var variables = GetVariables(statement, semanticModel);
-			foreach (var variable in variables)
+			foreach (var variable in statement.Declaration.Variables)
 			{
-				if (cVersion == CVersions.c89 && writeInitializer) writer.WritePrefix(variable.Identifier.ValueText);
-				else writer.WritePrefix($"{typeName} {variable.Identifier.ValueText}");
+				// write identifier
+				if (cVersion == CVersions.c89 && writeInitializer)
+				{
+					if (variable.Initializer != null) writer.WritePrefix(variable.Identifier.ValueText);
+				}
+				else
+				{
+					writer.WritePrefix($"{typeName} {variable.Identifier.ValueText}");
+				}
+
+				// write initializer
 				if (writeInitializer && variable.Initializer != null && variable.Initializer.Value != null)
 				{
 					writer.Write(" = ");
 					WriteExperesion(variable.Initializer.Value);
 				}
-				writer.WriteLine(';');
+
+				// close statement
+				if (cVersion == CVersions.c89 && writeInitializer)
+				{
+					if (variable.Initializer != null) writer.WriteLine(';');
+				}
+				else
+				{
+					writer.WriteLine(';');
+				}
+			}
+		}
+
+		private void WriteFlowStatement(StatementSyntax statement)
+		{
+			if (statement is BlockSyntax)
+			{
+				writer.WriteLine(')');
+				WriteStatementSyntax(statement);
+			}
+			else
+			{
+				StreamWriterEx.RemoveTab();
+				writer.Write(") ");
+				WriteStatementSyntax(statement);
+				StreamWriterEx.Tab();
 			}
 		}
 
@@ -715,18 +791,7 @@ namespace CS2X.Core.Emitters
 			if (statement.Parent is ElseClauseSyntax) writer.Write("if (");
 			else writer.WritePrefix("if (");
 			WriteExperesion(statement.Condition);
-			if (statement.Statement is BlockSyntax)
-			{
-				writer.WriteLine(')');
-				WriteStatementSyntax(statement.Statement);
-			}
-			else
-			{
-				StreamWriterEx.RemoveTab();
-				writer.Write(") ");
-				WriteStatementSyntax(statement.Statement);
-				StreamWriterEx.Tab();
-			}
+			WriteFlowStatement(statement.Statement);
 
 			if (statement.Else != null)
 			{
@@ -736,9 +801,85 @@ namespace CS2X.Core.Emitters
 			}
 		}
 
+		private void WriteWhileStatement(WhileStatementSyntax statement)
+		{
+			writer.WritePrefix("while (");
+			WriteExperesion(statement.Condition);
+			WriteFlowStatement(statement.Statement);
+		}
+
+		private void WriteDoStatement(DoStatementSyntax statement)
+		{
+			writer.WriteLinePrefix("do");
+			writer.WriteLinePrefix('{');
+			WriteBlockSyntax((BlockSyntax)statement.Statement, false);
+			writer.WritePrefix("} while (");
+			WriteExperesion(statement.Condition);
+			writer.WriteLine(");");
+		}
+		
+		private void WriteForStatement(ForStatementSyntax statement)
+		{
+			writer.WritePrefix("for (");
+
+			// write declarations
+			if (statement.Declaration != null)
+			{
+				var typeSymbol = semanticModel.GetTypeInfo(statement.Declaration.Type);
+				if (cVersion != CVersions.c89) writer.Write($"{GetNativeCTypeInstance(typeSymbol.Type)} ");
+				var variables = statement.Declaration.Variables;
+				var lastVariable = variables.LastOrDefault();
+				foreach (var variable in variables)
+				{
+					writer.Write(GetCompactLocalTypeIdentifier(variable.Identifier.ValueText, typeSymbol.Type));
+					if (variable.Initializer != null)
+					{
+						writer.Write(" = ");
+						WriteExperesion(variable.Initializer.Value);
+					}
+					if (variable != lastVariable) writer.Write(", ");
+				}
+				writer.Write("; ");
+			}
+
+			// write initializers
+			var lastInitializer = statement.Initializers.LastOrDefault();
+			foreach (var initializer in statement.Initializers)
+			{
+				WriteExperesion(initializer);
+				if (initializer != lastInitializer) writer.Write(", ");
+			}
+			if (lastInitializer != null) writer.Write("; ");
+
+			// write condition
+			if (statement.Condition != null) WriteExperesion(statement.Condition);
+			writer.Write("; ");
+
+			// write incrementors
+			var lastIncrementor = statement.Incrementors.LastOrDefault();
+			foreach (var incrementor in statement.Incrementors)
+			{
+				WriteExperesion(incrementor);
+				if (incrementor != lastIncrementor) writer.Write(", ");
+			}
+
+			// write statement
+			WriteFlowStatement(statement.Statement);
+		}
+
 		private void WriteEmptyStatement(EmptyStatementSyntax statement)
 		{
 			writer.WriteLine(';');
+		}
+
+		private void WriteBreakStatement(BreakStatementSyntax statement)
+		{
+			writer.WriteLinePrefix("break;");
+		}
+
+		private void WriteContinueStatement(ContinueStatementSyntax statement)
+		{
+			writer.WriteLinePrefix("continue;");
 		}
 
 		private void WriteExperesion(ExpressionSyntax expression)
@@ -754,6 +895,8 @@ namespace CS2X.Core.Emitters
 			else if (expression is InvocationExpressionSyntax) WriteInvocationExpression((InvocationExpressionSyntax)expression);
 			else if (expression is ObjectCreationExpressionSyntax) WriteObjectCreationExpression((ObjectCreationExpressionSyntax)expression);
 			else if (expression is SizeOfExpressionSyntax) WriteSizeOfExpression((SizeOfExpressionSyntax)expression);
+			else if (expression is PostfixUnaryExpressionSyntax) WritePostfixUnaryExpression((PostfixUnaryExpressionSyntax)expression);
+			else if (expression is PrefixUnaryExpressionSyntax) WritePrefixUnaryExpression((PrefixUnaryExpressionSyntax)expression);
 			else throw new NotImplementedException("Unsuported expression type: " + expression.GetType());
 		}
 
@@ -827,6 +970,27 @@ namespace CS2X.Core.Emitters
 				string name = $"{GetFullNameFlat(symbol)}__{GetMethodOverloadIndex(methodSymbol)}";
 				writer.Write(GetNativeName(symbol, name));
 
+			}
+			else if (symbol.Kind == SymbolKind.Local)
+			{
+				if (cVersion == CVersions.c89)
+				{
+					var decSyntaxRef = symbol.DeclaringSyntaxReferences.First();
+					var decSyntax = decSyntaxRef.GetSyntax();
+					if (decSyntax.Parent is VariableDeclarationSyntax && decSyntax.Parent.Parent is ForStatementSyntax)
+					{
+						var typeSymbol = (ILocalSymbol)symbol;
+						writer.Write(GetCompactLocalTypeIdentifier(symbol.Name, typeSymbol.Type));
+					}
+					else
+					{
+						writer.Write(symbol.Name);
+					}
+				}
+				else
+				{
+					writer.Write(symbol.Name);
+				}
 			}
 			else if (symbol.IsStatic)
 			{
@@ -1007,6 +1171,18 @@ namespace CS2X.Core.Emitters
 		{
 			var symbolInfo = semanticModel.GetSymbolInfo(expression.Type);
 			writer.Write($"sizeof({GetFullNameFlat(symbolInfo.Symbol)})");
+		}
+
+		private void WritePostfixUnaryExpression(PostfixUnaryExpressionSyntax expression)
+		{
+			WriteExperesion(expression.Operand);
+			writer.Write(expression.OperatorToken);
+		}
+
+		private void WritePrefixUnaryExpression(PrefixUnaryExpressionSyntax expression)
+		{
+			writer.Write(expression.OperatorToken);
+			WriteExperesion(expression.Operand);
 		}
 		#endregion
 	}

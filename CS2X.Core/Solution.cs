@@ -1,11 +1,11 @@
-﻿using Microsoft.CodeAnalysis.MSBuild;
+﻿using RoslynSolution = Microsoft.CodeAnalysis.Solution;
+
+using Microsoft.CodeAnalysis.MSBuild;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.IO;
 using Microsoft.Build.Locator;
-
-using RoslynSolution = Microsoft.CodeAnalysis.Solution;
 
 namespace CS2X.Core
 {

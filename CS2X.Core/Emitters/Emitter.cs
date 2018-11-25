@@ -1,10 +1,10 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using CoreSolution = CS2X.Core.Solution;
+
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Linq;
-
-using CoreSolution = CS2X.Core.Solution;
 using System.CS2X;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis.CSharp;
@@ -69,12 +69,6 @@ namespace CS2X.Core.Emitters
 		protected bool IsLogicalType(TypeKind typeKind)
 		{
 			return typeKind == TypeKind.Struct || typeKind == TypeKind.Class || typeKind == TypeKind.Interface;
-		}
-
-		protected SeparatedSyntaxList<VariableDeclaratorSyntax> GetVariables(LocalDeclarationStatementSyntax statement, SemanticModel semanticModel)
-		{
-			var typeInfo = semanticModel.GetTypeInfo(statement.Declaration.Type);
-			return statement.Declaration.Variables;
 		}
 
 		protected bool ObjectHasNonStaticFields(ITypeSymbol obj)
@@ -250,12 +244,20 @@ namespace CS2X.Core.Emitters
 			return null;
 		}
 
-		protected List<LocalDeclarationStatementSyntax> GetStackVariables(BlockSyntax body)
+		protected List<CSharpSyntaxNode> GetStackVariables(BlockSyntax body)
 		{
-			var nodes = new List<LocalDeclarationStatementSyntax>();
+			var nodes = new List<CSharpSyntaxNode>();
 			foreach (var member in body.Statements)
 			{
-				if (member is LocalDeclarationStatementSyntax) nodes.Add((LocalDeclarationStatementSyntax)member);
+				if (member is LocalDeclarationStatementSyntax)
+				{
+					nodes.Add(member);
+				}
+				else if (member is ForStatementSyntax)
+				{
+					var forStatement = (ForStatementSyntax)member;
+					if (forStatement.Declaration != null) nodes.Add(forStatement.Declaration);
+				}
 			}
 			return nodes;
 		}

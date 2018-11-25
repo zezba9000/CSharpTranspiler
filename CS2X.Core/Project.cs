@@ -1,10 +1,10 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using RoslynProject = Microsoft.CodeAnalysis.Project;
+
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
-using RoslynProject = Microsoft.CodeAnalysis.Project;
 
 namespace CS2X.Core
 {

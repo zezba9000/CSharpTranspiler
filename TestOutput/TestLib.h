@@ -1,6 +1,5 @@
 #pragma once
 #include <stdio.h>
-#define EMPTY_OBJECT void*
 
 // =============
 // Library References
@@ -13,7 +12,7 @@
 typedef struct TestLib_MyTestLibClass TestLib_MyTestLibClass;
 
 // =============
-// Types Definitions
+// Type Definitions
 // =============
 struct TestLib_MyTestLibClass
 {

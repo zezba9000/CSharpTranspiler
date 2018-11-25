@@ -21,6 +21,60 @@ struct TestStruct
 				x = y + i + i2;
 			}
 		}
+
+		while (true)
+		{
+			break;
+		}
+
+		while (true) continue;
+
+		do
+		{
+			return;
+		} while (false);
+
+		// block
+		{
+			for (i = 0; i != 1; i++)
+			{
+				continue;
+			}
+
+			for (int x2 = 0; x2 != 1; ++x2)
+			{
+				continue;
+			}
+		}
+
+		for (int x2 = 0; ; ++x2)// test duplicate c89 stack vars with the same name
+		{
+			continue;
+		}
+
+		for (float x2 = 0, y2 = 1; x2 != 1 && y2 != 0; ++x2, --y2)
+		{
+			continue;
+		}
+
+		int x3, y3;
+		for (x3 = 0, y3 = 1, y = 0; x3 != 1 && y3 != 0 && y != 0; ++x3, --y3, y = y + 1)
+		{
+			continue;
+		}
+
+		/*switch (i)
+		{
+			case 55:
+				i = 5;
+				break;
+
+			case 22: break;
+
+			default:
+				i = 9;
+				break;
+		}*/
 	}
 
 	private int Foo()

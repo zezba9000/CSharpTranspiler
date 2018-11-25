@@ -1,10 +1,10 @@
 #pragma once
 #include <stdio.h>
 #include "GC_Boehm.h"
+#define EMPTY_OBJECT void*
 #define null 0
 #define true 1
 #define false 0
-#define EMPTY_OBJECT void*
 
 // =============
 // Library References
@@ -91,7 +91,7 @@ typedef EMPTY_OBJECT System_Runtime_CompilerServices_RuntimeHelpers;
 typedef EMPTY_OBJECT System_Runtime_InteropServices_OutAttribute;
 
 // =============
-// Types Definitions
+// Type Definitions
 // =============
 #define System_AttributeTargets_Assembly 1
 #define System_AttributeTargets_Module 2
