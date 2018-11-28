@@ -17,6 +17,12 @@ namespace CS2X.Core.Emitters
 		public int count;
 	}
 
+	public class FieldInitializer
+	{
+		public IFieldSymbol field;
+		public VariableDeclaratorSyntax syntaxDeclaration;
+	}
+
 	public abstract class Emitter
 	{
 		protected delegate void CallbackMethod();
@@ -71,8 +77,13 @@ namespace CS2X.Core.Emitters
 			return typeKind == TypeKind.Struct || typeKind == TypeKind.Class || typeKind == TypeKind.Interface;
 		}
 
-		protected bool ObjectHasNonStaticFields(ITypeSymbol obj)
+		protected bool ObjectHasNonStaticFields(ITypeSymbol obj, bool recursive)
 		{
+			if (recursive && obj.BaseType != null)
+			{
+				if (ObjectHasNonStaticFields(obj.BaseType, recursive)) return true;
+			}
+
 			foreach (var member in obj.GetMembers())
 			{
 				if (member.Kind != SymbolKind.Field || member.IsStatic) continue;
@@ -125,6 +136,36 @@ namespace CS2X.Core.Emitters
 			return true;
 		}
 
+		protected List<FieldInitializer> GetFieldInitializers(INamedTypeSymbol obj, bool? staticFields = null)
+		{
+			var items = new List<FieldInitializer>();
+			foreach (var member in obj.GetMembers())
+			{
+				if (member.Kind != SymbolKind.Field) continue;
+				var field = (IFieldSymbol)member;
+				if (staticFields.HasValue && staticFields.Value != field.IsStatic) continue;
+				foreach (var syntaxRef in field.DeclaringSyntaxReferences)
+				{
+					var syntax = syntaxRef.GetSyntax();
+					if (syntax is VariableDeclaratorSyntax)
+					{
+						var syntaxDeclaration = (VariableDeclaratorSyntax)syntax;
+						if (syntaxDeclaration.Initializer != null)
+						{
+							var item = new FieldInitializer()
+							{
+								syntaxDeclaration = syntaxDeclaration,
+								field = field
+							};
+							items.Add(item);
+						}
+					}
+				}
+			}
+
+			return items;
+		}
+
 		protected IMethodSymbol GetDeconstructorMethod(INamedTypeSymbol obj)
 		{
 			foreach (var member in obj.GetMembers())
@@ -159,6 +200,37 @@ namespace CS2X.Core.Emitters
 			}
 
 			return defaultValue;
+		}
+
+		protected bool TryGetNativeName(ISymbol obj, string defaultValue, out string result)
+		{
+			var attribute = GetAttribute(obj, "NativeNameAttribute");
+			if (attribute == null)
+			{
+				result = defaultValue;
+				return false;
+			}
+
+			var args = attribute.ConstructorArguments;
+			if (args != null && args.Length == 2 && (NativeTargets)args[0].Value == target)
+			{
+				result = (string)args[1].Value;
+				return true;
+			}
+
+			result = defaultValue;
+			return false;
+		}
+
+		protected bool ProjectIsDependency(Project project, Project referenceProject, bool checkReferenceProjectsOnly)
+		{
+			if (!checkReferenceProjectsOnly && project.references.Any(x => x == referenceProject)) return true;
+			foreach (var reference in project.references)
+			{
+				if (ProjectIsDependency(reference, referenceProject, false)) return true;
+			}
+
+			return false;
 		}
 
 		protected bool IsResultValueType(ISymbol obj)

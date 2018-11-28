@@ -57,9 +57,14 @@ namespace CS2X.Core.Emitters
 			/// <summary>
 			/// A freeware C compiler for 6502 based systems (https://www.cc65.org/)
 			/// </summary>
-			cc65
-		}
+			CC65,
 
+			/// <summary>
+			/// Small Device C Compiler (http://sdcc.sourceforge.net/)
+			/// </summary>
+			SDCC
+		}
+		
 		public enum PlatformTypes
 		{
 			/// <summary>
@@ -149,11 +154,11 @@ namespace CS2X.Core.Emitters
 			this.gc = gc;
 
 			// validate compiler option compatibility
-			if (target == CompilerTargets.cc65) throw new NotImplementedException("cc65 compiler requires float to FixedPoint convertion. TODO");
+			if (target == CompilerTargets.CC65) throw new NotImplementedException("cc65 compiler requires float to FixedPoint convertion. TODO");
 
 			if (cVersion == CVersions.c99)
 			{
-				if (target == CompilerTargets.cc65) throw new Exception("cc65 isn't fully c99 compliant and thus must be used with c89");
+				if (target == CompilerTargets.CC65) throw new Exception("cc65 isn't fully c99 compliant and thus must be used with c89");
 			}
 
 			if (platform == PlatformTypes.EmbeddedCpp)
@@ -232,7 +237,7 @@ namespace CS2X.Core.Emitters
 				writer.WriteLine(string.Format("// ============={0}// Library References{0}// =============", Environment.NewLine));
 				foreach (var reference in project.references)
 				{
-					writer.WriteLine($"#include \"{reference.AssemblyName}.h\"");
+					writer.WriteLine($"#include \"{reference.roslynProject.AssemblyName}.h\"");
 				}
 
 				// write object forward declares
@@ -269,6 +274,21 @@ namespace CS2X.Core.Emitters
 				foreach (var obj in project.structObjects) WriteObjectMethods(obj, true);
 				foreach (var obj in project.classObjects) WriteObjectMethods(obj, true);
 
+				// write object static initializers
+				writer.WriteLine(string.Format("// ============={0}// Static Initializers{0}// =============", Environment.NewLine));
+				string projectInitMethodName = GetProjectInitMethodName(project);
+				writer.WriteLine($"void {projectInitMethodName}()");
+				writer.WriteLine('{');
+				StreamWriterEx.AddTab();
+				foreach (var reference in project.references)// init reference projects
+				{
+					if (!ProjectIsDependency(project, reference, true)) writer.WriteLinePrefix($"{GetProjectInitMethodName(reference)}();");
+				}
+				foreach (var obj in project.structObjects) WriteObjectStaticInits(obj);
+				foreach (var obj in project.classObjects) WriteObjectStaticInits(obj);
+				StreamWriterEx.RemoveTab();
+				writer.WriteLine('}' + Environment.NewLine);
+
 				// write entry point
 				if (project.type == ProjectTypes.Exe && platform == PlatformTypes.Standalone)
 				{
@@ -279,6 +299,7 @@ namespace CS2X.Core.Emitters
 						writer.WriteLine("void main()");
 						writer.WriteLine('{');
 						writer.WriteLine("\tCS2X_GC_Init();");
+						writer.WriteLine($"\t{projectInitMethodName}();");
 						writer.WriteLine($"\t{GetFullNameFlat(entryPointMethod)}__0();");
 						writer.WriteLine("\tCS2X_GC_Collect();");// must force collection so deconstructors fire
 						writer.WriteLine('}');
@@ -289,6 +310,11 @@ namespace CS2X.Core.Emitters
 					}
 				}
 			}
+		}
+
+		private string GetProjectInitMethodName(CoreProject project)
+		{
+			return $"CS2X_{project.roslynProject.Name.Replace(' ', '_').Replace('.', '_')}_INIT";
 		}
 
 		private string GetNativeCTypeInstance(ITypeSymbol type)
@@ -324,12 +350,18 @@ namespace CS2X.Core.Emitters
 			// get type name
 			if (IsLogicalType(type))
 			{
-				if (ObjectHasNonStaticFields(obj))
+				if (ObjectHasNonStaticFields(obj, true))
 				{
-					string formatString;
-					if (writeBody) formatString = "struct {0}";
-					else formatString = "typedef struct {0} {0}";
-					writer.Write(string.Format(formatString, GetFullNameFlat(obj)));
+					if (writeBody)
+					{
+						writer.Write($"struct {GetFullNameFlat(obj)}");
+					}
+					else
+					{
+						string fullName = GetFullNameFlat(obj);
+						if (TryGetNativeName(obj, fullName, out string nativeName)) writer.Write($"typedef {nativeName} {fullName}");
+						else writer.Write($"typedef struct {nativeName} {fullName}");
+					}
 				}
 				else
 				{
@@ -341,8 +373,7 @@ namespace CS2X.Core.Emitters
 					}
 					else
 					{
-						string nativeName = GetNativeName(obj, "EMPTY_OBJECT");
-						writer.Write($"typedef {nativeName} {GetFullNameFlat(obj)}");
+						writer.Write($"typedef {GetNativeName(obj, "EMPTY_OBJECT")} {GetFullNameFlat(obj)}");
 					}
 				}
 			}
@@ -534,8 +565,37 @@ namespace CS2X.Core.Emitters
 			IMethodSymbol deconstructorMethod = null;
 			if (!obj.IsValueType) deconstructorMethod = GetDeconstructorMethod(obj);
 
-			// check if method is atomic
+			// check if object is atomic
 			bool isAtomic = IsAtomicObject(obj);
+
+			// check if object has field initializers and write default initializer method if so
+			bool hasFieldInitializers = false;
+			var initializers = GetFieldInitializers(obj, false);
+			if (initializers.Count != 0)
+			{
+				hasFieldInitializers = true;
+				string typeName = GetFullNameFlat(obj);
+				string initMethodName = $"void {typeName}__INIT({typeName}* {thisKeyword})";
+				if (writeBody)
+				{
+					writer.WriteLine(initMethodName);
+					writer.WriteLine('{');
+					StreamWriterEx.AddTab();
+					foreach (var initializer in initializers)
+					{
+						semanticModel = project.compilation.GetSemanticModel(initializer.syntaxDeclaration.SyntaxTree);
+						writer.WritePrefix($"{thisKeyword}->{initializer.field.Name} = ");
+						WriteExperesion(initializer.syntaxDeclaration.Initializer.Value);
+						writer.WriteLine(';');
+					}
+					StreamWriterEx.RemoveTab();
+					writer.WriteLine('}' + Environment.NewLine);
+				}
+				else
+				{
+					writer.WriteLine(initMethodName + ';');
+				}
+			}
 
 			// generate normal methods
 			var members = obj.GetMembers();
@@ -590,6 +650,7 @@ namespace CS2X.Core.Emitters
 									default: throw new Exception("TODO: Missing GC deconstructor method");
 								}
 							}
+							if (hasFieldInitializers) writer.WriteLine($"\t{typeName}__INIT({thisKeyword});");
 						}
 					}
 					if (!isDefaultConstructor) WriteMethodBody(method);
@@ -602,6 +663,17 @@ namespace CS2X.Core.Emitters
 				}
 
 				++overload.count;
+			}
+		}
+
+		private void WriteObjectStaticInits(INamedTypeSymbol obj)
+		{
+			foreach (var initializer in GetFieldInitializers(obj, true))
+			{
+				semanticModel = project.compilation.GetSemanticModel(initializer.syntaxDeclaration.SyntaxTree);
+				writer.WritePrefix($"{GetFullNameFlat(initializer.field.ContainingType)}_{initializer.field.Name} = ");
+				WriteExperesion(initializer.syntaxDeclaration.Initializer.Value);
+				writer.WriteLine(';');
 			}
 		}
 		#endregion

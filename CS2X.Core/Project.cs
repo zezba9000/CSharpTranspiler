@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace CS2X.Core
 {
@@ -21,7 +22,7 @@ namespace CS2X.Core
 
 		public readonly ProjectTypes type;
 		public readonly OptimizationLevel optimizationLevel;
-		public readonly IReadOnlyList<RoslynProject> references;
+		public IReadOnlyList<Project> references { get; private set;}
 		
 		public CSharpCompilation compilation { get; private set; }
 		public IReadOnlyList<INamedTypeSymbol> classObjects { get; private set; }
@@ -49,21 +50,22 @@ namespace CS2X.Core
 
 			// check optimization level
 			optimizationLevel = compilationOptions.OptimizationLevel;
-
-			// gather references
-			var references = new List<RoslynProject>();
-			var sln = roslynProject.Solution;
-			foreach (var reference in roslynProject.AllProjectReferences)
-			{
-				var proj = sln.GetProject(reference.ProjectId);
-				references.Add(proj);
-			}
-
-			this.references = references;
 		}
 
 		public async Task Parse()
 		{
+			// gather references
+			var references = new List<Project>();
+			var sln = roslynProject.Solution;
+			foreach (var reference in roslynProject.AllProjectReferences)
+			{
+				var project = solution.projects.FirstOrDefault(x => x.roslynProject.Id == reference.ProjectId);
+				if (project == null) throw new Exception("Project reference not found in solution: " + reference.ProjectId);
+				references.Add(project);
+			}
+
+			this.references = references;
+
 			// init main objects
 			enumObjects = new List<INamedTypeSymbol>();
 			classObjects = new List<INamedTypeSymbol>();

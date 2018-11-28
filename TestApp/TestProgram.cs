@@ -5,6 +5,7 @@ using TestLib;
 struct TestStruct
 {
 	public double x;
+	public static int hi = 99;
 
 	public TestStruct(double y)
 	{
@@ -92,7 +93,9 @@ struct TestStruct
 
 class TestClassE
 {
+	int blaa777 = 777;
 	public int key { get; set; }
+
 	public TestClassE(int key, TestIn testIn)
 	{
 		TestIn.singleton.GetObj().Get().key = 123;
@@ -226,6 +229,7 @@ namespace TestApp.C
 		{
 			static int i = 123;
 			int iBlaa;
+			static Program p = new Program();
 
 			void Yahoo(Program p)
 			{

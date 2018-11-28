@@ -40,3 +40,11 @@ TestLib_MyTestLibClass* TestLib_MyTestLibClass_CONSTRUCTOR__0()
 	return this;
 }
 
+// =============
+// Static Initializers
+// =============
+void CS2X_TestLib_INIT()
+{
+	CS2X_CoreLib_INIT();
+}
+

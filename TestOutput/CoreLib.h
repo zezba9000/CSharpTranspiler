@@ -318,6 +318,7 @@ System_UIntPtr System_UIntPtr_CONSTRUCTOR__1();
 System_Collections_DictionaryEntry System_Collections_DictionaryEntry_CONSTRUCTOR__0(System_Object* key, System_Object* value);
 System_Collections_DictionaryEntry System_Collections_DictionaryEntry_CONSTRUCTOR__1();
 System_Attribute* System_Attribute_CONSTRUCTOR__0();
+void System_AttributeUsageAttribute__INIT(System_AttributeUsageAttribute* this);
 System_AttributeUsageAttribute* System_AttributeUsageAttribute_CONSTRUCTOR__0(System_Int32 validOn);
 System_Void System_Buffer_BlockCopy__0(System_Array* src, System_Int32 srcOffset, System_Array* dst, System_Int32 dstOffset, System_Int32 count);
 System_CLSCompliantAttribute* System_CLSCompliantAttribute_CONSTRUCTOR__0(System_Boolean isCompliant);
@@ -694,9 +695,15 @@ System_Attribute* System_Attribute_CONSTRUCTOR__0()
 	return this;
 }
 
+void System_AttributeUsageAttribute__INIT(System_AttributeUsageAttribute* this)
+{
+	this->_attributeTarget = System_AttributeTargets_All;
+}
+
 System_AttributeUsageAttribute* System_AttributeUsageAttribute_CONSTRUCTOR__0(System_Int32 validOn)
 {
 	System_AttributeUsageAttribute* this = CS2X_GC_NewAtomic(sizeof(System_AttributeUsageAttribute));
+	System_AttributeUsageAttribute__INIT(this);
 	this->_attributeTarget = validOn;
 	return this;
 }
@@ -1061,5 +1068,12 @@ System_Runtime_InteropServices_OutAttribute* System_Runtime_InteropServices_OutA
 {
 	System_Runtime_InteropServices_OutAttribute* this = CS2X_GC_NewAtomic(sizeof(System_Runtime_InteropServices_OutAttribute));
 	return this;
+}
+
+// =============
+// Static Initializers
+// =============
+void CS2X_CoreLib_INIT()
+{
 }
 

@@ -33,8 +33,11 @@ struct TestStruct
 	System_Double x;
 };
 
+System_Int32 TestStruct_hi;
+
 struct TestClassE
 {
+	System_Int32 blaa777;
 	System_Int32 key;
 };
 
@@ -70,6 +73,7 @@ struct TestApp_C_Program
 
 TestApp_Blaa_A2* TestApp_C_Program_a;
 System_Int32 TestApp_C_Program_i;
+TestApp_C_Program* TestApp_C_Program_p;
 System_Int32 TestApp_C_Program__i2;
 System_Single TestApp_C_Program_i8;
 
@@ -90,6 +94,7 @@ TestStruct TestStruct_CONSTRUCTOR__0(System_Double y);
 System_Int32 TestStruct_Foo__0(TestStruct* this);
 TestStruct TestStruct_NewMe__0(TestStruct* this);
 TestStruct TestStruct_CONSTRUCTOR__1();
+void TestClassE__INIT(TestClassE* this);
 TestClassE* TestClassE_CONSTRUCTOR__0(System_Int32 key, TestIn* testIn);
 System_Int32 TestClassE_Add__0(TestClassE* this, System_Int32 key);
 System_Int32 TestClassE_AddStatic__0(System_Int32 key);
@@ -234,9 +239,15 @@ TestStruct TestStruct_CONSTRUCTOR__1()
 	return this;
 }
 
+void TestClassE__INIT(TestClassE* this)
+{
+	this->blaa777 = 777;
+}
+
 TestClassE* TestClassE_CONSTRUCTOR__0(System_Int32 key, TestIn* testIn)
 {
 	TestClassE* this = CS2X_GC_NewAtomic(sizeof(TestClassE));
+	TestClassE__INIT(this);
 	TestClassE_Get__0(TestIn_GetObj__0(TestIn_singleton))->key = 123;
 	TestIn_set_GetObjProp(TestIn_singleton, null);
 	this->key = TestClassE_Add__0(this, key);
@@ -354,11 +365,25 @@ System_Void TestApp_C_Program_Yahoo__0(TestApp_C_Program* this, TestApp_C_Progra
 }
 
 // =============
+// Static Initializers
+// =============
+void CS2X_TestApp_INIT()
+{
+	CS2X_TestLib_INIT();
+	TestStruct_hi = 99;
+	TestApp_C_Program_a = null;
+	TestApp_C_Program_i = 123;
+	TestApp_C_Program_p = TestApp_C_Program_CONSTRUCTOR__0();
+	TestApp_C_Program__i2 = 22;
+}
+
+// =============
 // Entry Point
 // =============
 void main()
 {
 	CS2X_GC_Init();
+	CS2X_TestApp_INIT();
 	TestApp_C_Program_Main__0();
 	CS2X_GC_Collect();
 }
